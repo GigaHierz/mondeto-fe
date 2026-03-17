@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        mono: ['IBM Plex Mono', 'Courier New', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,6 +55,19 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        cream: {
+          50: '#fdf9f4', 100: '#faf7f2', 200: '#f5f1ea',
+          300: '#ede8df', 400: '#e0d8ce', 500: '#c0b8ae',
+          600: '#a09080', 700: '#6a5f54', 800: '#2d2520',
+        },
+        ocean: '#ddeef7',
+        selected: '#facc15',
+        success: '#2d6a4f',
+        link: '#4a7fa5',
+      },
+      letterSpacing: {
+        widest2: '3px',
+        button: '1.5px',
       },
       borderRadius: {
         lg: "var(--radius)",
