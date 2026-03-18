@@ -93,7 +93,7 @@ export default function ProfilePage() {
         <AvatarBlock color={color} name={name} />
         <StatsRow
           pixels={pixelCount}
-          usdt={parseFloat(walletBalance.balance).toFixed(2)}
+          usdt={parseFloat(walletBalance.balance) < 1 ? parseFloat(walletBalance.balance).toFixed(4) : parseFloat(walletBalance.balance).toFixed(2)}
           rank={rank}
         />
 
