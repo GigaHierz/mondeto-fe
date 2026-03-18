@@ -28,17 +28,29 @@ export async function fetchLandMaskFromContract(
     const wordCount = Math.ceil(TOTAL_PIXELS / 256)
     const mask = new Uint8Array(TOTAL_PIXELS)
 
-    // Fetch all words in parallel
-    const promises = Array.from({ length: wordCount }, (_, i) =>
-      readContract({
+    // Try getLandMask() first (single call), fall back to per-word reads
+    let words: bigint[]
+    try {
+      const result = await readContract({
         address: contractAddress,
         abi,
-        functionName: 'landMask',
-        args: [BigInt(i)],
-      }) as Promise<bigint>
-    )
-
-    const words = await Promise.all(promises)
+        functionName: 'getLandMask',
+        args: [],
+      }) as bigint[]
+      words = result
+      console.log(`getLandMask() returned ${words.length} words`)
+    } catch {
+      console.log('getLandMask() not available, fetching per-word...')
+      const promises = Array.from({ length: wordCount }, (_, i) =>
+        readContract({
+          address: contractAddress,
+          abi,
+          functionName: 'landMask',
+          args: [BigInt(i)],
+        }) as Promise<bigint>
+      )
+      words = await Promise.all(promises)
+    }
 
     // Decode bit-packed words into per-pixel boolean array
     for (let pixelId = 0; pixelId < TOTAL_PIXELS; pixelId++) {

@@ -1,18 +1,18 @@
 'use client'
 import React from 'react'
-import { WIDTH, HEIGHT, DOT_RADIUS, ZERO_ADDRESS } from '@/constants/map'
+import { WIDTH, HEIGHT, TILE_GAP, TILE_RADIUS, ZERO_ADDRESS } from '@/constants/map'
 import { idToXY } from '@/lib/pixelMath'
 import { isLand } from '@/lib/landMask'
 import type { PixelView } from '@/lib/mock'
 
-// Warm heatmap: yellow → orange → red (used only for heatmap mode)
+// Warm heatmap: yellow → orange → red
 function interpolateWarmGradient(ratio: number): string {
   const t = Math.max(0, Math.min(1, ratio))
   const stops = [
-    { p: 0.0, r: 255, g: 224, b: 102 },  // light yellow
-    { p: 0.3, r: 255, g: 170, b: 51 },    // orange
-    { p: 0.6, r: 255, g: 102, b: 51 },    // red-orange
-    { p: 1.0, r: 204, g: 0, b: 0 },       // deep red
+    { p: 0.0, r: 255, g: 224, b: 102 },
+    { p: 0.3, r: 255, g: 170, b: 51 },
+    { p: 0.6, r: 255, g: 102, b: 51 },
+    { p: 1.0, r: 204, g: 0, b: 0 },
   ]
   let lo = stops[0], hi = stops[stops.length - 1]
   for (let i = 0; i < stops.length - 1; i++) {
@@ -33,6 +33,9 @@ export function drawPixels(
 ) {
   ctx.clearRect(0, 0, WIDTH, HEIGHT)
 
+  const gap = TILE_GAP
+  const r = TILE_RADIUS
+
   if (isHeatmap) {
     let maxPrice = 0n
     for (let i = 0; i < pixelData.length; i++) {
@@ -45,17 +48,18 @@ export function drawPixels(
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
       const pixel = pixelData[i]
-      if (pixel.saleCount === 0) continue // only show pixels that have been bought
+      if (pixel.saleCount === 0) continue
       const { x, y } = idToXY(i)
       const ratio = maxPriceNum > 0 ? Number(pixel.currentPrice) / maxPriceNum : 0
-      const color = interpolateWarmGradient(ratio)
-      ctx.fillStyle = color
+      ctx.fillStyle = interpolateWarmGradient(ratio)
       ctx.beginPath()
-      ctx.arc(x + 0.5, y + 0.5, DOT_RADIUS, 0, Math.PI * 2)
+      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, r)
       ctx.fill()
     }
   } else {
-    const unownedColor = isDark ? '#aaaaaa' : '#999999'
+    // Rounded rectangle tiles — matching the dot-matrix reference
+    // Dark mode: bright white dots. Light mode: dark gray dots.
+    const unownedColor = isDark ? '#dddddd' : '#555555'
 
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
@@ -63,15 +67,13 @@ export function drawPixels(
       const { x, y } = idToXY(i)
 
       if (pixel.owner !== ZERO_ADDRESS) {
-        // Owned pixel: use owner's color
         ctx.fillStyle = pixel.color || '#888888'
       } else {
-        // Unowned land: neutral dot
         ctx.fillStyle = unownedColor
       }
 
       ctx.beginPath()
-      ctx.arc(x + 0.5, y + 0.5, DOT_RADIUS, 0, Math.PI * 2)
+      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, r)
       ctx.fill()
     }
   }

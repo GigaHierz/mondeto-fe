@@ -18,6 +18,7 @@ export const MONDETO_ABI = [
   {"type":"function","name":"feeRate","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
   {"type":"function","name":"getPixelBatch","inputs":[{"name":"x","type":"uint16","internalType":"uint16"},{"name":"y","type":"uint16","internalType":"uint16"},{"name":"w","type":"uint16","internalType":"uint16"},{"name":"h","type":"uint16","internalType":"uint16"}],"outputs":[{"name":"","type":"bytes","internalType":"bytes"}],"stateMutability":"view"},
   {"type":"function","name":"initialPrice","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
+  {"type":"function","name":"getLandMask","inputs":[],"outputs":[{"name":"","type":"uint256[]","internalType":"uint256[]"}],"stateMutability":"view"},
   {"type":"function","name":"isLand","inputs":[{"name":"x","type":"uint16","internalType":"uint16"},{"name":"y","type":"uint16","internalType":"uint16"}],"outputs":[{"name":"","type":"bool","internalType":"bool"}],"stateMutability":"view"},
   {"type":"function","name":"landMask","inputs":[{"name":"","type":"uint256","internalType":"uint256"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
   {"type":"function","name":"minPrice","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},
