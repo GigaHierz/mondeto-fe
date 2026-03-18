@@ -1,15 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
-
-import { Navbar } from '@/components/navbar';
 import { WalletProvider } from "@/components/wallet-provider"
 
-const inter = Inter({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
-  title: 'my-celo-app',
-  description: 'A new Celo blockchain project',
+  title: 'Mondeto',
+  description: 'Own the world, one pixel at a time',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -19,11 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* Navbar is included on all pages */}
+      <body className="font-mono antialiased">
         <div className="relative flex min-h-screen flex-col">
           <WalletProvider>
-            <Navbar />
             <main className="flex-1">
               {children}
             </main>

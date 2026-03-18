@@ -1,80 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --border: 214.3 31.8% 91.4%;
-    --input: 216 33% 97%;
-    --ring: 215 20.2% 65.1%;
+    /* Cream palette */
+    --cream-50:  #fdf9f4;
+    --cream-100: #faf7f2;
+    --cream-200: #f5f1ea;
+    --cream-300: #ede8df;
+    --cream-400: #e0d8ce;
+    --cream-500: #c0b8ae;
+    --cream-600: #a09080;
+    --cream-700: #6a5f54;
+    --cream-800: #2d2520;
 
+    /* Map / Ocean */
+    --ocean:      #ddeef7;
+    --land-green: #c5d9a8;
+    --land-tan:   #d4c0a0;
+
+    /* Selection */
+    --selected:      #facc15;
+    --selected-ring: #2d2520;
+
+    /* Heatmap (all 8 stops from spec 01) */
+    --heat-bg:    #0a0a0a;
+    --heat-cheap: #4444ff;
+    --heat-low:   #2288ff;
+    --heat-mid1:  #00ccff;
+    --heat-mid2:  #00ff88;
+    --heat-high1: #ffff00;
+    --heat-high2: #ff8800;
+    --heat-hot:   #ff4400;
+    --heat-max:   #ffffff;
+
+    /* Semantic */
+    --success:    #2d6a4f;
+    --tx-pending: #6a5f54;
+    --link:       #4a7fa5;
+
+    /* Spacing */
+    --space-1: 4px;
+    --space-2: 6px;
+    --space-3: 8px;
+    --space-4: 10px;
+    --space-5: 12px;
+    --space-6: 14px;
+    --space-8: 20px;
+
+    /* Radii */
+    --radius-sm:   3px;
+    --radius-md:   8px;
+    --radius-lg:   10px;
+    --radius-xl:   18px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast:   150ms ease;
+    --transition-base:   250ms ease;
+    --transition-slow:   400ms ease;
+    --transition-drawer: 300ms cubic-bezier(0.32, 0.72, 0, 1);
+
+    /* Typography scale */
+    --text-2xs:  7px;
+    --text-xs:   8px;
+    --text-sm:   9px;
+    --text-base: 10px;
+    --text-md:   11px;
+    --text-lg:   13px;
+    --text-xl:   18px;
+
+    /* Letter spacing */
+    --tracking-wide:   1px;
+    --tracking-wider:  2px;
+    --tracking-widest: 3px;
+    --tracking-button: 1.5px;
+
+    /* shadcn compatibility */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
-
     --radius: 0.5rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--cream-50);
+    color: var(--cream-800);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
+}
+
+/* Frosted glass — bottom nav, panels */
+.frosted {
+  background: rgba(250, 247, 242, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 0.5px solid rgba(200, 190, 175, 0.5);
+}
+
+/* Frosted glass — top bar (spec 02: 0.82 opacity, 12px blur) */
+.frosted-topbar {
+  background: rgba(250, 247, 242, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(200, 190, 175, 0.4);
+}
+
+/* Frosted glass — dark heatmap nav */
+.frosted-dark {
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 0.5px solid rgba(80, 80, 80, 0.3);
+}
+
+/* Frosted glass — dark heatmap top bar */
+.frosted-topbar-dark {
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 0.5px solid rgba(80, 80, 80, 0.3);
+}
+
+/* Heatmap full dark UI chrome */
+[data-heatmap="true"] {
+  background-color: #0a0a0a !important;
+}
+
+/* Spin animation for tx progress */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin 0.8s linear infinite;
 }
