@@ -23,7 +23,7 @@ export default function Home() {
   const { address } = useAccount()
   const addrStr = address as string | undefined
 
-  const { pixelDataRef, loadState, load, refresh } = usePixelMap()
+  const { pixelDataRef, loadState, load, refresh, version } = usePixelMap()
   const {
     selectedIds,
     togglePixel,
@@ -206,6 +206,7 @@ export default function Home() {
           onAddPixel={handleAddPixel}
           onInspectPixel={handleInspectPixel}
           onScaleChange={handleScaleChange}
+          version={version}
           loadState={loadState}
         />
       </div>

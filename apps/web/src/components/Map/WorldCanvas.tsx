@@ -35,6 +35,7 @@ interface WorldCanvasProps {
   onInspectPixel?: (id: number) => void
   onScaleChange?: (scale: number) => void
   loadState: LoadState
+  version?: number
 }
 
 interface InnerCanvasProps extends WorldCanvasProps {
@@ -51,6 +52,7 @@ function InnerCanvas({
   onInspectPixel,
   onScaleChange,
   pixelCanvasRef,
+  version,
 }: InnerCanvasProps) {
   const context = useTransformContext()
   const prevScaleRef = useRef(1)
@@ -77,7 +79,7 @@ function InnerCanvas({
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     drawPixels(ctx, pixelData, isHeatmap)
-  }, [pixelData, isHeatmap, pixelCanvasRef])
+  }, [pixelData, isHeatmap, pixelCanvasRef, version])
 
   return (
     <div style={{ position: 'relative', width: WIDTH, height: HEIGHT }}>

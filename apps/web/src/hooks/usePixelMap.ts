@@ -7,6 +7,7 @@ export type LoadState = 'loading' | 'ready' | 'error'
 export function usePixelMap() {
   const pixelDataRef = useRef<PixelView[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
+  const [version, setVersion] = useState(0)
 
   const load = useCallback(async () => {
     try {
@@ -14,6 +15,7 @@ export function usePixelMap() {
       const data = await getAllPixels()
       pixelDataRef.current = data
       setLoadState('ready')
+      setVersion(v => v + 1)
     } catch {
       setLoadState('error')
     }
@@ -23,7 +25,8 @@ export function usePixelMap() {
     const data = await getAllPixels()
     pixelDataRef.current = data
     setLoadState('ready')
+    setVersion(v => v + 1)
   }, [])
 
-  return { pixelDataRef, loadState, load, refresh }
+  return { pixelDataRef, loadState, load, refresh, version }
 }
