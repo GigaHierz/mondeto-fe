@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { buyPixels, getUSDTBalance } from '@/lib/mock'
+import { buyPixels } from '@/lib/mock'
 
 export type TxStep = 'idle' | 'approving' | 'buying' | 'confirming' | 'success' | 'error'
 
@@ -15,9 +15,9 @@ export function useBuyPixels() {
   const [error, setError] = useState<string | null>(null)
   const [insufficientBalance, setInsufficientBalance] = useState(false)
 
-  const checkBalance = useCallback(async (totalPrice: bigint) => {
-    const balance = await getUSDTBalance()
-    const insufficient = balance < totalPrice
+  // Takes the actual user balance (from chain or mock) instead of querying mock
+  const checkBalance = useCallback((totalPrice: bigint, userBalance: bigint) => {
+    const insufficient = userBalance < totalPrice
     setInsufficientBalance(insufficient)
     return !insufficient
   }, [])

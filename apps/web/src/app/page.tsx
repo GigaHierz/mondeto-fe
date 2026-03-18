@@ -15,6 +15,8 @@ import { usePixelPrice } from '@/hooks/usePixelPrice'
 import { useBuyPixels } from '@/hooks/useBuyPixels'
 import { useProfile } from '@/hooks/useProfile'
 import { getUSDTBalance } from '@/lib/mock'
+import { ConnectButton } from '@/components/connect-button'
+import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { PAINT_SCALE } from '@/constants/map'
 
 export default function Home() {
@@ -35,6 +37,8 @@ export default function Home() {
   const buy = useBuyPixels()
   const profile = useProfile(addrStr)
 
+  const walletBalance = useUSDTBalance()
+
   const [heatmapMode, setHeatmapMode] = useState(false)
   const [currentScale, setCurrentScale] = useState(1)
   const [activeOverlay, setActiveOverlay] = useState<'none' | 'drawer' | 'info'>('none')
@@ -48,15 +52,25 @@ export default function Home() {
 
   useEffect(() => {
     load()
-    getUSDTBalance().then(setUserBalance)
-  }, [load])
+    if (!walletBalance.isConnected) {
+      getUSDTBalance().then(setUserBalance)
+    }
+  }, [load, walletBalance.isConnected])
+
+  // Use real on-chain balance when wallet connected
+  useEffect(() => {
+    if (walletBalance.isConnected && walletBalance.balance) {
+      const parsed = Math.floor(parseFloat(walletBalance.balance) * 1_000_000)
+      setUserBalance(BigInt(parsed))
+    }
+  }, [walletBalance.isConnected, walletBalance.balance])
 
   // Check balance when price changes
   useEffect(() => {
     if (totalPrice > 0n) {
-      buy.checkBalance(totalPrice)
+      buy.checkBalance(totalPrice, userBalance)
     }
-  }, [totalPrice, buy.checkBalance])
+  }, [totalPrice, userBalance, buy.checkBalance])
 
   const handleScaleChange = useCallback((scale: number) => {
     setCurrentScale(scale)
@@ -183,21 +197,24 @@ export default function Home() {
           </span>
         )}
 
-        <button
-          onClick={() => setHeatmapMode(h => !h)}
-          style={{
-            fontSize: 7,
-            letterSpacing: 0.5,
-            borderRadius: 10,
-            padding: '3px 8px',
-            background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
-            color: '#2d2520',
-            border: heatmapMode ? '0.5px solid #2d2520' : '0.5px solid #c0b8ae',
-            cursor: 'pointer',
-          }}
-        >
-          heatmap
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            onClick={() => setHeatmapMode(h => !h)}
+            style={{
+              fontSize: 7,
+              letterSpacing: 0.5,
+              borderRadius: 10,
+              padding: '3px 8px',
+              background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
+              color: heatmapMode ? '#faf7f2' : '#2d2520',
+              border: '0.5px solid #c0b8ae',
+              cursor: 'pointer',
+            }}
+          >
+            heatmap
+          </button>
+          <ConnectButton />
+        </div>
       </div>
 
       {/* WorldCanvas */}
