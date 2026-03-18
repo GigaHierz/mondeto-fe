@@ -29,6 +29,7 @@ export interface WorldCanvasRef {
 interface WorldCanvasProps {
   pixelData: PixelView[]
   isHeatmap: boolean
+  isDark: boolean
   selectedIds: Set<number>
   onTogglePixel: (id: number) => void
   onAddPixel: (id: number) => void
@@ -46,6 +47,7 @@ interface InnerCanvasProps extends WorldCanvasProps {
 function InnerCanvas({
   pixelData,
   isHeatmap,
+  isDark,
   selectedIds,
   onTogglePixel,
   onAddPixel,
@@ -78,29 +80,15 @@ function InnerCanvas({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    drawPixels(ctx, pixelData, isHeatmap)
-  }, [pixelData, isHeatmap, pixelCanvasRef, version])
+    drawPixels(ctx, pixelData, isHeatmap, isDark)
+  }, [pixelData, isHeatmap, isDark, pixelCanvasRef, version])
 
   return (
     <div style={{ position: 'relative', width: WIDTH, height: HEIGHT }}>
-      <img
-        src="/world-map.png"
-        width={WIDTH}
-        height={HEIGHT}
-        draggable={false}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          imageRendering: 'pixelated',
-          opacity: isHeatmap ? 0.5 : 1,
-          transition: 'opacity 250ms ease',
-        }}
-        alt="World map"
-      />
       <PixelLayer
         pixelData={pixelData}
         isHeatmap={isHeatmap}
+        isDark={isDark}
         canvasRef={pixelCanvasRef}
       />
       <SelectionLayer

@@ -10,7 +10,7 @@ function rankColor(rank: number): string {
   if (rank === 1) return '#c9962a'
   if (rank === 2) return '#8a9aaa'
   if (rank === 3) return '#a07050'
-  return '#a09080'
+  return 'var(--text-muted)'
 }
 
 function truncateAddress(addr: string): string {
@@ -24,8 +24,8 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
         display: 'flex',
         alignItems: 'center',
         gap: 7,
-        background: '#faf7f2',
-        border: '0.5px solid #e0d8ce',
+        background: 'var(--card-bg)',
+        border: '1px solid var(--border)',
         borderRadius: 9,
         padding: '7px 10px',
         margin: '3px 7px',
@@ -51,10 +51,10 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
           flexShrink: 0,
         }}
       />
-      <span style={{ fontSize: 8, flex: 1, color: '#2d2520' }}>
+      <span style={{ fontSize: 8, flex: 1, color: 'var(--text)' }}>
         {entry.label || truncateAddress(entry.owner)}
       </span>
-      <span style={{ fontSize: 8, color: '#6a5f54', whiteSpace: 'nowrap' }}>
+      <span style={{ fontSize: 8, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
         {entry.value} {entry.unit}
       </span>
     </div>

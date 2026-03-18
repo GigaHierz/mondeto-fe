@@ -15,8 +15,8 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
         bottom: 68,
         left: 10,
         right: 10,
-        background: 'rgba(250,247,242,0.9)',
-        border: '0.5px solid #e0d8ce',
+        background: 'var(--card-bg)',
+        border: '1px solid var(--border)',
         borderRadius: 8,
         padding: '6px 10px',
         zIndex: 5,
@@ -37,10 +37,10 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
           marginTop: 2,
         }}
       >
-        <span style={{ fontSize: 6, color: '#a09080', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 6, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
           cheap
         </span>
-        <span style={{ fontSize: 6, color: '#a09080', fontFamily: 'monospace' }}>
+        <span style={{ fontSize: 6, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
           hot
         </span>
       </div>

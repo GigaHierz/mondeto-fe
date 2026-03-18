@@ -26,7 +26,7 @@ export default function PixelInfoPanel({
   if (!pixel) return null
 
   const firstLetter = pixel.label ? pixel.label[0].toUpperCase() : '?'
-  const firstLetterColor = pixel.label ? 'white' : '#a09080'
+  const firstLetterColor = pixel.label ? 'white' : 'var(--text-muted)'
   const prevPrice = pixel.currentPrice / 2n
   const ownerDisplay = pixel.label || truncateAddress(pixel.owner)
 
@@ -38,7 +38,7 @@ export default function PixelInfoPanel({
         left: 0,
         right: 0,
         zIndex: 50,
-        background: '#faf7f2',
+        background: 'var(--card-bg)',
         borderRadius: '18px 18px 0 0',
         transform: visible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 300ms cubic-bezier(0.32, 0.72, 0, 1)',
@@ -59,14 +59,14 @@ export default function PixelInfoPanel({
       <div
         style={{
           padding: '8px 14px 10px',
-          borderBottom: '0.5px solid #f0ebe3',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           gap: 10,
         }}
       >
-        {/* Avatar */}
+        {/* Avatar — owner color stays as-is */}
         <div
           style={{
             width: 40,
@@ -85,29 +85,29 @@ export default function PixelInfoPanel({
 
         {/* Middle */}
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, fontWeight: 500, color: '#2d2520' }}>{ownerDisplay}</div>
-          <div style={{ fontSize: 7, color: '#a09080', letterSpacing: 0.5 }}>
+          <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--text)' }}>{ownerDisplay}</div>
+          <div style={{ fontSize: 7, color: 'var(--text-muted)', letterSpacing: 0.5 }}>
             {truncateAddress(pixel.owner)}
           </div>
         </div>
 
         {/* Sale count */}
         <div>
-          <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 0.5 }}>SALE #</div>
-          <div style={{ fontSize: 8, color: '#2d2520' }}>{pixel.saleCount}</div>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 0.5 }}>SALE #</div>
+          <div style={{ fontSize: 8, color: 'var(--text)' }}>{pixel.saleCount}</div>
         </div>
       </div>
 
       {/* Label field */}
-      <div style={{ padding: '7px 14px', borderBottom: '0.5px solid #f0ebe3' }}>
-        <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 1 }}>LABEL</div>
-        <div style={{ fontSize: 9, color: '#2d2520' }}>{pixel.label || '—'}</div>
+      <div style={{ padding: '7px 14px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>LABEL</div>
+        <div style={{ fontSize: 9, color: 'var(--text)' }}>{pixel.label || '—'}</div>
       </div>
 
       {/* URL field */}
-      <div style={{ padding: '7px 14px', borderBottom: '0.5px solid #f0ebe3' }}>
-        <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 1 }}>URL</div>
-        <div style={{ fontSize: 9, color: '#4a7fa5' }}>
+      <div style={{ padding: '7px 14px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>URL</div>
+        <div style={{ fontSize: 9, color: 'var(--accent)' }}>
           {pixel.url ? `${pixel.url} →` : '—'}
         </div>
       </div>
@@ -118,57 +118,57 @@ export default function PixelInfoPanel({
         <div
           style={{
             flex: 1,
-            background: '#f5f1ea',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '6px 8px',
           }}
         >
-          <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 1, marginBottom: 2 }}>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 2 }}>
             BUY PRICE
           </div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: '#2d2520' }}>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)' }}>
             {formatUSDT(pixel.currentPrice)}
           </div>
-          <div style={{ fontSize: 6, color: '#a09080', marginTop: 1 }}>USDT</div>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', marginTop: 1 }}>USDT</div>
         </div>
 
         {/* PREV SALE */}
         <div
           style={{
             flex: 1,
-            background: '#f5f1ea',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '6px 8px',
           }}
         >
-          <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 1, marginBottom: 2 }}>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 2 }}>
             PREV SALE
           </div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: '#2d2520' }}>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)' }}>
             {formatUSDT(prevPrice)}
           </div>
-          <div style={{ fontSize: 6, color: '#a09080', marginTop: 1 }}>USDT</div>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', marginTop: 1 }}>USDT</div>
         </div>
 
         {/* SOLD */}
         <div
           style={{
             flex: 1,
-            background: '#f5f1ea',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '6px 8px',
           }}
         >
-          <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 1, marginBottom: 2 }}>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 2 }}>
             SOLD
           </div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: '#2d2520' }}>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)' }}>
             {pixel.saleCount}
           </div>
-          <div style={{ fontSize: 6, color: '#a09080', marginTop: 1 }}>×</div>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', marginTop: 1 }}>×</div>
         </div>
       </div>
 
@@ -177,8 +177,8 @@ export default function PixelInfoPanel({
         onClick={() => onBuyThisPixel(pixelId)}
         style={{
           margin: '2px 14px 0',
-          background: '#2d2520',
-          color: '#faf7f2',
+          background: 'var(--button-bg)',
+          color: 'var(--button-text)',
           borderRadius: 11,
           padding: 10,
           fontSize: 9,
@@ -197,7 +197,7 @@ export default function PixelInfoPanel({
       <div
         style={{
           fontSize: 7,
-          color: '#a09080',
+          color: 'var(--text-muted)',
           textAlign: 'center',
           marginTop: 5,
           paddingBottom: 14,

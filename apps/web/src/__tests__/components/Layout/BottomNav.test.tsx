@@ -23,12 +23,12 @@ describe('BottomNav', () => {
     expect(hrefs).toContain('/profile')
   })
 
-  it('active route item has darker color styling', () => {
+  it('active route item uses theme text color', () => {
     render(<BottomNav activeRoute="/ranks" />)
     const ranksLabel = screen.getByText('RANKS')
-    expect(ranksLabel).toHaveStyle({ color: '#2d2520' })
+    expect(ranksLabel).toHaveStyle({ color: 'var(--text)' })
 
     const mapLabel = screen.getByText('MAP')
-    expect(mapLabel).toHaveStyle({ color: '#a09080' })
+    expect(mapLabel).toHaveStyle({ color: 'var(--text-muted)' })
   })
 })

@@ -60,7 +60,7 @@ export default function ProfilePage() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          background: '#f5f1ea',
+          background: 'var(--bg)',
           paddingBottom: 56,
         }}
       >
@@ -70,8 +70,8 @@ export default function ProfilePage() {
         {/* Name field */}
         <div
           style={{
-            background: '#faf7f2',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '6px 9px',
             margin: '0 10px 6px',
@@ -80,7 +80,7 @@ export default function ProfilePage() {
           <div
             style={{
               fontSize: 6,
-              color: '#a09080',
+              color: 'var(--text-muted)',
               letterSpacing: 1,
               textTransform: 'uppercase',
               marginBottom: 2,
@@ -97,7 +97,7 @@ export default function ProfilePage() {
             style={{
               fontSize: 9,
               fontFamily: 'monospace',
-              color: '#2d2520',
+              color: 'var(--text)',
               background: 'transparent',
               border: 'none',
               width: '100%',
@@ -109,8 +109,8 @@ export default function ProfilePage() {
         {/* URL field */}
         <div
           style={{
-            background: '#faf7f2',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '6px 9px',
             margin: '0 10px 6px',
@@ -119,7 +119,7 @@ export default function ProfilePage() {
           <div
             style={{
               fontSize: 6,
-              color: '#a09080',
+              color: 'var(--text-muted)',
               letterSpacing: 1,
               textTransform: 'uppercase',
               marginBottom: 2,
@@ -135,7 +135,7 @@ export default function ProfilePage() {
             style={{
               fontSize: 9,
               fontFamily: 'monospace',
-              color: url ? '#4a7fa5' : '#2d2520',
+              color: url ? 'var(--accent)' : 'var(--text)',
               background: 'transparent',
               border: 'none',
               width: '100%',
@@ -154,8 +154,8 @@ export default function ProfilePage() {
             display: 'block',
             margin: '6px 10px',
             width: 'calc(100% - 20px)',
-            background: saveState === 'saving' ? '#6a5f54' : '#2d2520',
-            color: '#faf7f2',
+            background: saveState === 'saving' ? 'var(--text-muted)' : 'var(--button-bg)',
+            color: 'var(--button-text)',
             borderRadius: 10,
             padding: 9,
             fontSize: 8,
@@ -174,7 +174,7 @@ export default function ProfilePage() {
           <div
             style={{
               fontSize: 7,
-              color: '#a09080',
+              color: 'var(--text-muted)',
               textAlign: 'center',
               marginTop: 6,
             }}

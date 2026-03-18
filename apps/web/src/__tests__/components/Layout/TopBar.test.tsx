@@ -6,6 +6,10 @@ vi.mock('@/components/connect-button', () => ({
   ConnectButton: () => <button>Connect</button>,
 }))
 
+vi.mock('@/lib/theme', () => ({
+  useTheme: () => ({ theme: 'dark', toggleTheme: () => {}, isDark: true }),
+}))
+
 describe('TopBar', () => {
   it('renders the title', () => {
     render(<TopBar title="MONDETO" />)
@@ -24,5 +28,15 @@ describe('TopBar', () => {
       </TopBar>
     )
     expect(screen.getByText('child element')).toBeInTheDocument()
+  })
+
+  it('renders CELO indicator', () => {
+    render(<TopBar title="MONDETO" />)
+    expect(screen.getByText('CELO')).toBeInTheDocument()
+  })
+
+  it('renders theme toggle button', () => {
+    render(<TopBar title="MONDETO" />)
+    expect(screen.getByLabelText('Toggle theme')).toBeInTheDocument()
   })
 })

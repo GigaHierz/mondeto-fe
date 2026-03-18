@@ -26,8 +26,8 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
   return (
     <div
       style={{
-        background: '#faf7f2',
-        border: '0.5px solid #e0d8ce',
+        background: 'var(--card-bg)',
+        border: '1px solid var(--border)',
         borderRadius: 8,
         padding: '8px 9px',
         margin: '0 10px 6px',
@@ -36,7 +36,7 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
       <div
         style={{
           fontSize: 6,
-          color: '#a09080',
+          color: 'var(--text-muted)',
           letterSpacing: 1,
           textTransform: 'uppercase',
           marginBottom: 4,
@@ -54,7 +54,7 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
               width: 36,
               height: 36,
               borderRadius: '50%',
-              border: '2px solid #e0d8ce',
+              border: '2px solid var(--border)',
               appearance: 'none',
               WebkitAppearance: 'none',
               cursor: 'pointer',
@@ -83,12 +83,12 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
             style={{
               fontSize: 8,
               fontFamily: 'monospace',
-              background: '#f5f1ea',
-              border: '0.5px solid #e0d8ce',
+              background: 'var(--bg)',
+              border: '1px solid var(--border)',
               borderRadius: 4,
               padding: '3px 6px',
               width: '100%',
-              color: '#2d2520',
+              color: 'var(--text)',
               outline: 'none',
             }}
           />

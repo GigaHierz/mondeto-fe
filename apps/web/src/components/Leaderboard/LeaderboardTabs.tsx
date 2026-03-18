@@ -14,8 +14,8 @@ export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardT
     <div
       style={{
         height: 30,
-        background: '#faf7f2',
-        borderBottom: '0.5px solid #e0d8ce',
+        background: 'var(--card-bg)',
+        borderBottom: '1px solid var(--border)',
         display: 'flex',
       }}
     >
@@ -33,13 +33,12 @@ export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardT
               letterSpacing: 0.3,
               lineHeight: '30px',
               cursor: 'pointer',
-              color: isActive ? '#2d2520' : '#a09080',
-              borderBottom: isActive ? '2px solid #2d2520' : '2px solid transparent',
+              color: isActive ? 'var(--text)' : 'var(--text-muted)',
               background: 'none',
               border: 'none',
               borderBottomWidth: 2,
               borderBottomStyle: 'solid',
-              borderBottomColor: isActive ? '#2d2520' : 'transparent',
+              borderBottomColor: isActive ? 'var(--text)' : 'transparent',
               padding: 0,
             }}
           >

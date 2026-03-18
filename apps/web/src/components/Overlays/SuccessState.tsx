@@ -35,7 +35,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
         style={{
           fontSize: 11,
           fontWeight: 500,
-          color: '#2d2520',
+          color: 'var(--text)',
           letterSpacing: 1,
           textAlign: 'center',
         }}
@@ -47,7 +47,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
       <div
         style={{
           fontSize: 8,
-          color: '#a09080',
+          color: 'var(--text-muted)',
           marginTop: 4,
           textAlign: 'center',
         }}
@@ -56,7 +56,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
       </div>
 
       {/* Receipt */}
-      <div style={{ fontSize: 8, color: '#a09080', textAlign: 'center', marginTop: 8 }}>
+      <div style={{ fontSize: 8, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8 }}>
         paid {totalPaid}
       </div>
 

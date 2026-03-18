@@ -1,11 +1,11 @@
 'use client'
 import React from 'react'
-import { WIDTH, HEIGHT, TILE_GAP, TILE_RADIUS, ZERO_ADDRESS } from '@/constants/map'
+import { WIDTH, HEIGHT, DOT_RADIUS, ZERO_ADDRESS } from '@/constants/map'
 import { idToXY } from '@/lib/pixelMath'
 import { isLand } from '@/lib/landMask'
 import type { PixelView } from '@/lib/mock'
 
-// Warm heatmap: yellow → orange → red
+// Warm heatmap: yellow → orange → red (used only for heatmap mode)
 function interpolateWarmGradient(ratio: number): string {
   const t = Math.max(0, Math.min(1, ratio))
   const stops = [
@@ -29,6 +29,7 @@ export function drawPixels(
   ctx: CanvasRenderingContext2D,
   pixelData: PixelView[],
   isHeatmap: boolean,
+  isDark: boolean,
 ) {
   ctx.clearRect(0, 0, WIDTH, HEIGHT)
 
@@ -49,49 +50,29 @@ export function drawPixels(
       const ratio = maxPriceNum > 0 ? Number(pixel.currentPrice) / maxPriceNum : 0
       const color = interpolateWarmGradient(ratio)
       ctx.fillStyle = color
-      const gap = TILE_GAP
-      const r = TILE_RADIUS
       ctx.beginPath()
-      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, r)
+      ctx.arc(x + 0.5, y + 0.5, DOT_RADIUS, 0, Math.PI * 2)
       ctx.fill()
     }
   } else {
+    const unownedColor = isDark ? '#333333' : '#999999'
+
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
       const pixel = pixelData[i]
-      if (pixel.owner === ZERO_ADDRESS) continue
       const { x, y } = idToXY(i)
-      const gap = TILE_GAP
-      const r = TILE_RADIUS
-      const rx = x + gap / 2
-      const ry = y + gap / 2
-      const rw = 1 - gap
-      const rh = 1 - gap
 
-      // Base color
-      ctx.fillStyle = pixel.color || '#888888'
+      if (pixel.owner !== ZERO_ADDRESS) {
+        // Owned pixel: use owner's color
+        ctx.fillStyle = pixel.color || '#888888'
+      } else {
+        // Unowned land: neutral dot
+        ctx.fillStyle = unownedColor
+      }
+
       ctx.beginPath()
-      ctx.roundRect(rx, ry, rw, rh, r)
+      ctx.arc(x + 0.5, y + 0.5, DOT_RADIUS, 0, Math.PI * 2)
       ctx.fill()
-
-      // Lego highlight (top-left lighter edge)
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'
-      ctx.fillRect(rx, ry, rw, 0.15)
-      ctx.fillRect(rx, ry, 0.15, rh)
-
-      // Lego shadow (bottom-right darker edge)
-      ctx.fillStyle = 'rgba(0,0,0,0.2)'
-      ctx.fillRect(rx, ry + rh - 0.15, rw, 0.15)
-      ctx.fillRect(rx + rw - 0.15, ry, 0.15, rh)
-
-      // Lego stud (center dot)
-      ctx.fillStyle = 'rgba(255,255,255,0.25)'
-      ctx.beginPath()
-      ctx.arc(x + 0.5, y + 0.5, 0.18, 0, Math.PI * 2)
-      ctx.fill()
-      ctx.strokeStyle = 'rgba(0,0,0,0.15)'
-      ctx.lineWidth = 0.04
-      ctx.stroke()
     }
   }
 }
@@ -99,6 +80,7 @@ export function drawPixels(
 interface PixelLayerProps {
   pixelData: PixelView[]
   isHeatmap: boolean
+  isDark: boolean
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
 }
 

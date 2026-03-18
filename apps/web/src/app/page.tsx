@@ -18,8 +18,10 @@ import { useProfile } from '@/hooks/useProfile'
 import { getUSDTBalance } from '@/lib/mock'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { PAINT_SCALE } from '@/constants/map'
+import { useTheme } from '@/lib/theme'
 
 export default function Home() {
+  const { isDark } = useTheme()
   const { address } = useAccount()
   const addrStr = address as string | undefined
 
@@ -155,13 +157,13 @@ export default function Home() {
         width: '100%',
         height: '100vh',
         overflow: 'hidden',
-        backgroundColor: 'var(--cream-50)',
+        backgroundColor: 'var(--bg)',
       }}
     >
       {/* Top bar */}
       <TopBar title="MONDETO">
         {isPaintMode && pixelCount > 0 && (
-          <span style={{ fontSize: 7, color: '#a09080' }}>
+          <span style={{ fontSize: 7, color: 'var(--text-muted)' }}>
             {pixelCount} selected
           </span>
         )}
@@ -172,9 +174,9 @@ export default function Home() {
             letterSpacing: 0.5,
             borderRadius: 10,
             padding: '3px 8px',
-            background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
-            color: heatmapMode ? '#faf7f2' : '#2d2520',
-            border: '0.5px solid #c0b8ae',
+            background: heatmapMode ? 'var(--button-bg)' : 'transparent',
+            color: heatmapMode ? 'var(--button-text)' : 'var(--text)',
+            border: '1px solid var(--border)',
             cursor: 'pointer',
           }}
         >
@@ -196,6 +198,7 @@ export default function Home() {
           ref={canvasRef}
           pixelData={pixelDataRef.current}
           isHeatmap={heatmapMode}
+          isDark={isDark}
           selectedIds={selectedIds}
           onTogglePixel={handleTogglePixel}
           onAddPixel={handleAddPixel}
@@ -223,8 +226,8 @@ export default function Home() {
           onClick={() => canvasRef.current?.zoomIn()}
           style={{
             width: 32, height: 32, borderRadius: 8,
-            background: 'rgba(250,247,242,0.85)', border: '0.5px solid #e0d8ce',
-            fontSize: 16, color: '#2d2520', cursor: 'pointer',
+            background: 'var(--card-bg)', border: '1px solid var(--border)',
+            fontSize: 16, color: 'var(--text)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >+</button>
@@ -232,11 +235,11 @@ export default function Home() {
           onClick={() => canvasRef.current?.zoomOut()}
           style={{
             width: 32, height: 32, borderRadius: 8,
-            background: 'rgba(250,247,242,0.85)', border: '0.5px solid #e0d8ce',
-            fontSize: 16, color: '#2d2520', cursor: 'pointer',
+            background: 'var(--card-bg)', border: '1px solid var(--border)',
+            fontSize: 16, color: 'var(--text)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
-        >−</button>
+        >{'\u2212'}</button>
       </div>
 
       {/* Paint mode banner */}
@@ -262,8 +265,8 @@ export default function Home() {
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 15,
-            background: '#2d2520',
-            color: '#faf7f2',
+            background: 'var(--button-bg)',
+            color: 'var(--button-text)',
             fontSize: 9,
             fontFamily: 'monospace',
             letterSpacing: 1,

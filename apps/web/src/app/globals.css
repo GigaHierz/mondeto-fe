@@ -6,7 +6,18 @@
 
 @layer base {
   :root {
-    /* Cream palette */
+    /* Theme colors (dark mode default) */
+    --bg: #0a0a0a;
+    --text: #00ff41;
+    --text-muted: #008f26;
+    --border: #00ff41;
+    --card-bg: #111111;
+    --button-bg: #00ff41;
+    --button-text: #000000;
+    --accent: #00ff41;
+    --error: #ff4444;
+
+    /* Cream palette (kept for data/pixel use) */
     --cream-50:  #fdf9f4;
     --cream-100: #faf7f2;
     --cream-200: #f5f1ea;
@@ -102,52 +113,48 @@
     --radius: 0.5rem;
   }
 
+  [data-theme="light"] {
+    --bg: #fdf9f4;
+    --text: #1a1a1a;
+    --text-muted: #888888;
+    --border: #dddddd;
+    --card-bg: #ffffff;
+    --button-bg: #1a1a1a;
+    --button-text: #ffffff;
+    --accent: #4a7fa5;
+    --error: #e74c3c;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
-    background-color: var(--cream-50);
-    color: var(--cream-800);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: 'IBM Plex Mono', 'Courier New', monospace;
   }
 }
 
-/* Frosted glass — bottom nav, panels */
-.frosted {
-  background: rgba(250, 247, 242, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 0.5px solid rgba(200, 190, 175, 0.5);
-}
-
-/* Frosted glass — top bar (spec 02: 0.82 opacity, 12px blur) */
-.frosted-topbar {
-  background: rgba(250, 247, 242, 0.82);
+/* Theme-aware bar backgrounds */
+.theme-bar {
+  background: var(--card-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 0.5px solid rgba(200, 190, 175, 0.4);
 }
 
-/* Frosted glass — dark heatmap nav */
-.frosted-dark {
-  background: rgba(10, 10, 10, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 0.5px solid rgba(80, 80, 80, 0.3);
-}
-
-/* Frosted glass — dark heatmap top bar */
-.frosted-topbar-dark {
-  background: rgba(10, 10, 10, 0.82);
+.theme-bar-top {
+  background: var(--card-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 0.5px solid rgba(80, 80, 80, 0.3);
+  border-bottom: 1px solid var(--border);
 }
 
-/* Heatmap full dark UI chrome */
-[data-heatmap="true"] {
-  background-color: #0a0a0a !important;
+.theme-bar-bottom {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
 }
 
 /* Spin animation for tx progress */

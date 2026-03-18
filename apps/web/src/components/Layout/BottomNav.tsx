@@ -4,7 +4,6 @@ import Link from 'next/link'
 
 interface BottomNavProps {
   activeRoute: string
-  isHeatmap?: boolean
 }
 
 const navItems = [
@@ -45,10 +44,10 @@ const navItems = [
   },
 ]
 
-export default function BottomNav({ activeRoute, isHeatmap }: BottomNavProps) {
+export default function BottomNav({ activeRoute }: BottomNavProps) {
   return (
     <nav
-      className={isHeatmap ? 'frosted-dark' : 'frosted'}
+      className="theme-bar-bottom"
       style={{
         position: 'fixed',
         bottom: 0,
@@ -63,13 +62,9 @@ export default function BottomNav({ activeRoute, isHeatmap }: BottomNavProps) {
     >
       {navItems.map((item) => {
         const isActive = activeRoute === item.href
-        const strokeColor = isHeatmap
-          ? isActive ? '#faf7f2' : '#666'
-          : isActive ? '#2d2520' : '#a09080'
-        const labelColor = isHeatmap
-          ? isActive ? '#faf7f2' : '#555'
-          : isActive ? '#2d2520' : '#a09080'
-        const barBg = isHeatmap ? '#faf7f2' : '#2d2520'
+        const strokeColor = isActive ? 'var(--text)' : 'var(--text-muted)'
+        const labelColor = isActive ? 'var(--text)' : 'var(--text-muted)'
+        const barBg = 'var(--text)'
 
         return (
           <Link

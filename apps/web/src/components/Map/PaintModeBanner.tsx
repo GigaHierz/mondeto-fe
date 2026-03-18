@@ -22,7 +22,8 @@ export default function PaintModeBanner({
         left: 0,
         right: 0,
         height: 22,
-        background: 'rgba(45,37,32,0.72)',
+        background: 'var(--card-bg)',
+        borderBottom: '1px solid var(--border)',
         backdropFilter: 'blur(6px)',
         display: 'flex',
         alignItems: 'center',
@@ -36,25 +37,25 @@ export default function PaintModeBanner({
       <span
         style={{
           fontSize: 7,
-          color: '#faf7f2',
+          color: 'var(--text)',
           letterSpacing: 1,
         }}
       >
-        ✦ PAINT MODE — drag to select pixels
+        PAINT MODE — drag to select pixels
       </span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <span
           style={{
-            background: '#2d2520',
-            color: '#faf7f2',
+            background: 'var(--button-bg)',
+            color: 'var(--button-text)',
             fontSize: 7,
             padding: '2px 6px',
             borderRadius: 9999,
           }}
         >
-          {scale}×
+          {scale}{'\u00d7'}
         </span>
-        <span style={{ fontSize: 7, color: '#a09080' }}>
+        <span style={{ fontSize: 7, color: 'var(--text-muted)' }}>
           {pixelCount} selected
         </span>
       </div>

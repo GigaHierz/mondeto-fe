@@ -37,7 +37,7 @@ export default function RanksPage() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          background: '#f5f1ea',
+          background: 'var(--bg)',
           padding: '5px 0',
           paddingBottom: 56,
         }}
@@ -55,9 +55,9 @@ export default function RanksPage() {
                   margin: '8px auto',
                   fontSize: 7,
                   fontFamily: 'monospace',
-                  color: '#a09080',
+                  color: 'var(--text-muted)',
                   background: 'none',
-                  border: '0.5px solid #e0d8ce',
+                  border: '1px solid var(--border)',
                   borderRadius: 6,
                   padding: '5px 12px',
                   cursor: 'pointer',
@@ -84,7 +84,7 @@ export default function RanksPage() {
               width={32}
               height={32}
               fill="none"
-              stroke="#c0b8ae"
+              stroke="var(--text-muted)"
               strokeWidth={1}
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -93,8 +93,8 @@ export default function RanksPage() {
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
             </svg>
-            <span style={{ fontSize: 8, color: '#a09080' }}>no claims yet</span>
-            <span style={{ fontSize: 8, color: '#a09080' }}>be the first to own the world</span>
+            <span style={{ fontSize: 8, color: 'var(--text-muted)' }}>no claims yet</span>
+            <span style={{ fontSize: 8, color: 'var(--text-muted)' }}>be the first to own the world</span>
           </div>
         )}
       </div>

@@ -67,7 +67,7 @@ function StepCircle({ state }: { state: StepState }) {
           width: 16,
           height: 16,
           borderRadius: '50%',
-          border: '1.5px solid #2d2520',
+          border: '1.5px solid var(--text)',
           borderTopColor: 'transparent',
         }}
       />
@@ -80,7 +80,7 @@ function StepCircle({ state }: { state: StepState }) {
         width: 16,
         height: 16,
         borderRadius: '50%',
-        border: '1.5px solid #e0d8ce',
+        border: '1.5px solid var(--border)',
       }}
     />
   )
@@ -92,7 +92,7 @@ export default function TxProgress({ step }: TxProgressProps) {
       {steps.map((s) => {
         const state = s.getState(step)
         const color =
-          state === 'done' ? '#2d6a4f' : state === 'active' ? '#2d2520' : '#c0b8ae'
+          state === 'done' ? '#2d6a4f' : state === 'active' ? 'var(--text)' : 'var(--text-muted)'
         return (
           <div
             key={s.label}

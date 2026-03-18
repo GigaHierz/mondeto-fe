@@ -9,8 +9,8 @@ export default function ScreenHeader({ title }: ScreenHeaderProps) {
     <div
       style={{
         height: 42,
-        background: '#faf7f2',
-        borderBottom: '0.5px solid #e0d8ce',
+        background: 'var(--card-bg)',
+        borderBottom: '1px solid var(--border)',
         display: 'flex',
         alignItems: 'center',
         padding: '0 14px',
@@ -21,7 +21,7 @@ export default function ScreenHeader({ title }: ScreenHeaderProps) {
           fontSize: 10,
           fontWeight: 500,
           letterSpacing: 2,
-          color: '#2d2520',
+          color: 'var(--text)',
         }}
       >
         {title}

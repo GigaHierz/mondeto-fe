@@ -20,17 +20,17 @@ export default function StatsRow({ pixels, usdt, rank }: StatsRowProps) {
           key={card.label}
           style={{
             flex: 1,
-            background: '#faf7f2',
-            border: '0.5px solid #e0d8ce',
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border)',
             borderRadius: 8,
             padding: '5px 3px',
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 500, color: '#2d2520' }}>
+          <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)' }}>
             {card.value}
           </div>
-          <div style={{ fontSize: 6, color: '#a09080', letterSpacing: 0.5, marginTop: 1 }}>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 0.5, marginTop: 1 }}>
             {card.label}
           </div>
         </div>

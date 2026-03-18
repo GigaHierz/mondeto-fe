@@ -7,7 +7,7 @@ interface AvatarBlockProps {
 
 export default function AvatarBlock({ color, name }: AvatarBlockProps) {
   const letter = name ? name[0].toUpperCase() : '?'
-  const textColor = name ? 'white' : '#a09080'
+  const textColor = name ? 'white' : 'var(--text-muted)'
 
   return (
     <div
