@@ -315,6 +315,7 @@ export default function Home() {
           userBalance={userBalance}
           txStep={buy.step}
           txHash={buy.txHash}
+          userAddress={effectiveAddr}
           onRemovePixels={handleRemovePixels}
           onClear={handleClear}
           onBuy={handleBuy}

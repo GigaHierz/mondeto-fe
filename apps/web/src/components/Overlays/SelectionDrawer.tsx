@@ -28,6 +28,7 @@ interface SelectionDrawerProps {
   userBalance: bigint
   txStep: TxStep
   txHash: string | null
+  userAddress?: string
   onRemovePixels: (ids: number[]) => void
   onClear: () => void
   onBuy: () => void
@@ -48,6 +49,7 @@ export default function SelectionDrawer({
   userBalance,
   txStep,
   txHash,
+  userAddress,
   onRemovePixels,
   onClear,
   onBuy,
@@ -156,11 +158,20 @@ export default function SelectionDrawer({
             </button>
           </div>
 
-          {/* Balance */}
-          <div style={{ fontSize: 7, color: insufficientBalance ? 'var(--error)' : 'var(--text-muted)', marginBottom: 6, flexShrink: 0 }}>
-            balance: {formatUSDT(userBalance)} USDT
-            {insufficientBalance && <span style={{ marginLeft: 6, color: 'var(--error)' }}>— insufficient</span>}
+          {/* Balance + warnings */}
+          <div style={{ fontSize: 7, color: 'var(--text-muted)', marginBottom: 2, flexShrink: 0 }}>
+            your balance: {formatUSDT(userBalance)} CELO
           </div>
+          {insufficientBalance && (
+            <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 2, flexShrink: 0 }}>
+              not enough balance — you need {formatUSDT(totalPrice)} but only have {formatUSDT(userBalance)}
+            </div>
+          )}
+          {userAddress && groups.some(g => g.owner.toLowerCase() === userAddress.toLowerCase()) && (
+            <div style={{ fontSize: 7, color: '#e6a817', marginBottom: 2, flexShrink: 0 }}>
+              ⚠ you already own some of these pixels — buying again will increase their price
+            </div>
+          )}
 
           {/* Breakdown list */}
           <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 4, flexShrink: 0 }}>BREAKDOWN</div>
@@ -240,7 +251,7 @@ export default function SelectionDrawer({
               flexShrink: 0,
             }}
           >
-            {priceLoading ? '[ CALCULATING... ]' : `[ BUY ALL — ${formatUSDT(totalPrice)} USDT ]`}
+            {priceLoading ? '[ CALCULATING... ]' : insufficientBalance ? '[ INSUFFICIENT BALANCE ]' : `[ BUY ALL — ${formatUSDT(totalPrice)} CELO ]`}
           </button>
         </div>
       )}

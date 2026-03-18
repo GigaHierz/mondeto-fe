@@ -12,12 +12,23 @@ export interface LeaderboardEntry {
   rank: number
   owner: string
   label: string
+  url: string
   color: string
   value: string
   unit: string
 }
 
-export function useLeaderboard(pixelData: PixelView[]) {
+export interface OwnerProfileData {
+  label: string
+  url: string
+  color: string
+}
+
+export function useLeaderboard(pixelData: PixelView[], profilesMap?: Map<string, OwnerProfileData>) {
+  const getProfile = (owner: string): OwnerProfileData => {
+    const p = profilesMap?.get(owner.toLowerCase())
+    return p ?? { label: '', url: '', color: '' }
+  }
   const area = useMemo<LeaderboardEntry[]>(() => {
     const counts = new Map<string, { count: number; label: string; color: string }>()
     for (const px of pixelData) {
@@ -31,14 +42,18 @@ export function useLeaderboard(pixelData: PixelView[]) {
     }
     return [...counts.entries()]
       .sort((a, b) => b[1].count - a[1].count)
-      .map(([owner, data], i) => ({
-        rank: i + 1,
-        owner,
-        label: data.label,
-        color: data.color,
-        value: String(data.count),
-        unit: 'px',
-      }))
+      .map(([owner, data], i) => {
+        const prof = getProfile(owner)
+        return {
+          rank: i + 1,
+          owner,
+          label: prof.label || data.label,
+          url: prof.url,
+          color: prof.color || data.color,
+          value: String(data.count),
+          unit: 'px',
+        }
+      })
   }, [pixelData])
 
   const empire = useMemo<LeaderboardEntry[]>(() => {
@@ -67,14 +82,18 @@ export function useLeaderboard(pixelData: PixelView[]) {
 
     return [...bestEmpire.entries()]
       .sort((a, b) => b[1].size - a[1].size)
-      .map(([owner, data], i) => ({
-        rank: i + 1,
-        owner,
-        label: data.label,
-        color: data.color,
-        value: String(data.size),
-        unit: 'px',
-      }))
+      .map(([owner, data], i) => {
+        const prof = getProfile(owner)
+        return {
+          rank: i + 1,
+          owner,
+          label: prof.label || data.label,
+          url: prof.url,
+          color: prof.color || data.color,
+          value: String(data.size),
+          unit: 'px',
+        }
+      })
   }, [pixelData])
 
   const hotPx = useMemo<LeaderboardEntry[]>(() => {
@@ -93,14 +112,18 @@ export function useLeaderboard(pixelData: PixelView[]) {
         if (b[1].price < a[1].price) return -1
         return 0
       })
-      .map(([owner, data], i) => ({
-        rank: i + 1,
-        owner,
-        label: data.label,
-        color: data.color,
-        value: formatUSDT(data.price),
-        unit: 'USDT',
-      }))
+      .map(([owner, data], i) => {
+        const prof = getProfile(owner)
+        return {
+          rank: i + 1,
+          owner,
+          label: prof.label || data.label,
+          url: prof.url,
+          color: prof.color || data.color,
+          value: formatUSDT(data.price),
+          unit: 'USDT',
+        }
+      })
   }, [pixelData])
 
   return { area, empire, hotPx }

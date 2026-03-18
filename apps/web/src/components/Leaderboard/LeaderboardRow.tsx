@@ -18,43 +18,53 @@ function truncateAddress(addr: string): string {
 }
 
 export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
+  const displayUrl = entry.url?.replace('https://', '').replace('http://', '').replace(/\/$/, '')
+
   return (
     <div
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 7,
+        gap: 10,
         background: 'var(--card-bg)',
         border: '1px solid var(--border)',
         borderRadius: 9,
-        padding: '7px 10px',
+        padding: '10px 12px',
         margin: '3px 7px',
       }}
     >
       <span
         style={{
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: 500,
-          width: 14,
+          width: 18,
           textAlign: 'right',
           color: rankColor(entry.rank),
+          flexShrink: 0,
         }}
       >
         {entry.rank}
       </span>
       <div
         style={{
-          width: 13,
-          height: 13,
-          borderRadius: 3,
-          background: entry.color,
+          width: 16,
+          height: 16,
+          borderRadius: 4,
+          background: entry.color || 'var(--text-muted)',
           flexShrink: 0,
         }}
       />
-      <span style={{ fontSize: 8, flex: 1, color: 'var(--text)' }}>
-        {entry.label || truncateAddress(entry.owner)}
-      </span>
-      <span style={{ fontSize: 8, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {entry.label || truncateAddress(entry.owner)}
+        </div>
+        {displayUrl && (
+          <div style={{ fontSize: 7, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 1 }}>
+            {displayUrl}
+          </div>
+        )}
+      </div>
+      <span style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
         {entry.value} {entry.unit}
       </span>
     </div>
