@@ -110,15 +110,9 @@ export default function Home() {
     buy.reset()
   }, [buy])
 
-  const handleBuy = useCallback(async () => {
-    await buy.execute(
-      [...selectedIds],
-      profile.color,
-      profile.name,
-      profile.url,
-      effectiveAddr,
-    )
-  }, [effectiveAddr, selectedIds, profile.color, profile.name, profile.url, buy])
+  const handleBuy = useCallback(() => {
+    buy.execute([...selectedIds], totalPrice)
+  }, [selectedIds, totalPrice, buy])
 
   const handleDone = useCallback(() => {
     clearSelection()
@@ -146,8 +140,9 @@ export default function Home() {
 
   // Open drawer only when user taps the review pill
   const handleOpenDrawer = useCallback(() => {
+    buy.reset()
     setActiveOverlay('drawer')
-  }, [])
+  }, [buy])
 
   const tappedPixel = tappedPixelId !== null ? pixelDataRef.current[tappedPixelId] ?? null : null
   const showDim = activeOverlay !== 'none'

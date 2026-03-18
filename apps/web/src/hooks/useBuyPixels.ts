@@ -1,49 +1,133 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { buyPixels } from '@/lib/mock'
+import { useWriteContract, useAccount, usePublicClient } from 'wagmi'
+import { celoSepolia } from 'wagmi/chains'
+import { MONDETO_ABI, MONDETO_PROXY, ERC20_ABI } from '@/lib/contract'
+import { USDT_MAINNET, USDT_SEPOLIA } from '@/constants/map'
 
 export type TxStep = 'idle' | 'approving' | 'buying' | 'confirming' | 'success' | 'error'
 
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 export function useBuyPixels() {
+  const { chain, address } = useAccount()
+  const publicClient = usePublicClient()
   const [step, setStep] = useState<TxStep>('idle')
-  const [txHash, setTxHash] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [insufficientBalance, setInsufficientBalance] = useState(false)
+  const [txHash, setTxHash] = useState<string | null>(null)
 
-  // Takes the actual user balance (from chain or mock) instead of querying mock
+  const usdtAddress = chain?.id === celoSepolia.id ? USDT_SEPOLIA : USDT_MAINNET
+
+  const { writeContractAsync } = useWriteContract()
+
   const checkBalance = useCallback((totalPrice: bigint, userBalance: bigint) => {
     const insufficient = userBalance < totalPrice
     setInsufficientBalance(insufficient)
     return !insufficient
   }, [])
 
-  const execute = useCallback(async (
-    ids: number[], color: string, label: string, url: string, buyer: string
-  ) => {
+  const execute = useCallback(async (ids: number[], _totalPriceHint: bigint) => {
+    if (!publicClient || !address) return
+
     try {
       setStep('approving')
-      await delay(500)
+      setError(null)
+
+      const bigIds = ids.map(id => BigInt(id))
+
+      // Get real price from contract
+      let realPrice = _totalPriceHint
+      try {
+        const onChainPrice = await publicClient.readContract({
+          address: MONDETO_PROXY,
+          abi: MONDETO_ABI,
+          functionName: 'selectionPrice',
+          args: [bigIds],
+        }) as bigint
+        realPrice = onChainPrice
+        console.log('On-chain price:', realPrice.toString())
+      } catch (e) {
+        console.warn('Failed to read on-chain price, using hint:', e)
+      }
+
+      // Check current allowance — skip approve if already sufficient
+      const currentAllowance = await publicClient.readContract({
+        address: usdtAddress,
+        abi: ERC20_ABI,
+        functionName: 'allowance',
+        args: [address, MONDETO_PROXY],
+      }) as bigint
+
+      const approveAmount = realPrice * 102n / 100n
+
+      if (currentAllowance < approveAmount) {
+        // Need to approve — use a generous amount to avoid future approvals
+        const generousApprove = realPrice * 10n // 10x the price
+        const approveHash = await writeContractAsync({
+          address: usdtAddress,
+          abi: ERC20_ABI,
+          functionName: 'approve',
+          args: [MONDETO_PROXY, generousApprove],
+        })
+
+        // Wait for approve to fully confirm
+        await publicClient.waitForTransactionReceipt({ hash: approveHash })
+
+        // Wait for nonce to propagate on sequencer
+        await new Promise(r => setTimeout(r, 3000))
+      } else {
+        console.log('Allowance sufficient, skipping approve')
+      }
+
+      // Step 2: Buy pixels
       setStep('buying')
-      const hash = await buyPixels(ids, color, label, url, buyer)
-      setTxHash(hash)
+      const buyHash = await writeContractAsync({
+        address: MONDETO_PROXY,
+        abi: MONDETO_ABI,
+        functionName: 'buyPixels',
+        args: [bigIds],
+      })
+
+      setTxHash(buyHash)
       setStep('confirming')
-      await delay(400)
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: buyHash })
+
+      if (receipt.status === 'reverted') {
+        // Try to get the revert reason
+        try {
+          await publicClient.simulateContract({
+            address: MONDETO_PROXY,
+            abi: MONDETO_ABI,
+            functionName: 'buyPixels',
+            args: [bigIds],
+            account: address,
+          })
+        } catch (simErr) {
+          console.error('Revert reason:', simErr)
+          throw new Error('Transaction reverted: ' + (simErr instanceof Error ? simErr.message.slice(0, 150) : 'unknown reason'))
+        }
+        throw new Error('Transaction reverted on-chain')
+      }
+
       setStep('success')
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Transaction failed')
+      const msg = e instanceof Error ? e.message : 'Transaction failed'
+      console.error('Buy failed:', msg)
+      const short = msg.includes('User rejected') ? 'Transaction rejected by user'
+        : msg.includes('nonce') ? 'Nonce error — please try again in a few seconds'
+        : msg.includes('NotLand') ? 'Selected pixel is not land'
+        : msg.includes('insufficient') || msg.includes('ERC20') ? 'Insufficient USDT balance or allowance'
+        : msg.slice(0, 200)
+      setError(short)
       setStep('error')
     }
-  }, [])
+  }, [writeContractAsync, usdtAddress, publicClient, address])
 
   const reset = useCallback(() => {
     setStep('idle')
-    setTxHash(null)
     setError(null)
+    setTxHash(null)
     setInsufficientBalance(false)
   }, [])
 

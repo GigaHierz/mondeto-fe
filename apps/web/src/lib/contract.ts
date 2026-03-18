@@ -1,6 +1,6 @@
-import { MONDETO_PROXY, USDT_ADDRESS } from '@/constants/map'
+import { MONDETO_PROXY, USDT_MAINNET, USDT_SEPOLIA } from '@/constants/map'
 
-export { MONDETO_PROXY, USDT_ADDRESS }
+export { MONDETO_PROXY, USDT_MAINNET, USDT_SEPOLIA }
 
 // Mondeto implementation ABI — extracted from Mondeto.sol
 export const MONDETO_ABI = [
@@ -162,6 +162,14 @@ export const MONDETO_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  // Errors
+  { inputs: [{ name: 'id', type: 'uint256' }], name: 'NotLand', type: 'error' },
+  { inputs: [{ name: 'id', type: 'uint256' }], name: 'InvalidPixelId', type: 'error' },
+  { inputs: [], name: 'InvalidCoordinates', type: 'error' },
+  { inputs: [], name: 'OutOfBounds', type: 'error' },
+  { inputs: [], name: 'LabelTooLong', type: 'error' },
+  { inputs: [], name: 'UrlTooLong', type: 'error' },
+  { inputs: [], name: 'InvalidMaskLength', type: 'error' },
   // Events
   {
     anonymous: false,
