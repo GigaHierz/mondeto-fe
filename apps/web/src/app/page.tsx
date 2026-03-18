@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import WorldCanvas, { type WorldCanvasRef } from '@/components/Map/WorldCanvas'
 import TopBar from '@/components/Layout/TopBar'
 import PaintModeBanner from '@/components/Map/PaintModeBanner'
@@ -17,6 +17,8 @@ import { useBuyPixels } from '@/hooks/useBuyPixels'
 import { useProfile } from '@/hooks/useProfile'
 import { getUSDTBalance } from '@/lib/mock'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
+import { fetchLandMaskFromContract } from '@/lib/landMask'
+import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { PAINT_SCALE } from '@/constants/map'
 import { useTheme } from '@/lib/theme'
 
@@ -24,6 +26,7 @@ export default function Home() {
   const { isDark } = useTheme()
   const { address } = useAccount()
   const addrStr = address as string | undefined
+  const publicClient = usePublicClient()
 
   const { pixelDataRef, loadState, load, refresh, version } = usePixelMap()
   const {
@@ -57,7 +60,18 @@ export default function Home() {
     if (!walletBalance.isConnected) {
       getUSDTBalance().then(setUserBalance)
     }
-  }, [load, walletBalance.isConnected])
+    // Fetch land mask from contract (replaces static fallback)
+    if (publicClient) {
+      fetchLandMaskFromContract(
+        publicClient.readContract.bind(publicClient) as Parameters<typeof fetchLandMaskFromContract>[0],
+        MONDETO_ADDRESS,
+        MONDETO_ABI,
+      ).then(() => {
+        // Reload pixel data after mask is updated so rendering uses new mask
+        load()
+      })
+    }
+  }, [load, walletBalance.isConnected, publicClient])
 
   // Use real on-chain balance when wallet connected
   useEffect(() => {
