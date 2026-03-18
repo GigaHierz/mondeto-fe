@@ -14,6 +14,7 @@ import { useSelection } from '@/hooks/useSelection'
 import { usePixelPrice } from '@/hooks/usePixelPrice'
 import { useBuyPixels } from '@/hooks/useBuyPixels'
 import { useProfile } from '@/hooks/useProfile'
+import { getUSDTBalance } from '@/lib/mock'
 import { PAINT_SCALE } from '@/constants/map'
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
     selectedIds,
     togglePixel,
     addPixel,
+    removePixel,
     clearSelection,
     pixelCount,
   } = useSelection()
@@ -37,6 +39,7 @@ export default function Home() {
   const [currentScale, setCurrentScale] = useState(1)
   const [activeOverlay, setActiveOverlay] = useState<'none' | 'drawer' | 'info'>('none')
   const [tappedPixelId, setTappedPixelId] = useState<number | null>(null)
+  const [userBalance, setUserBalance] = useState(0n)
 
   const canvasRef = useRef<WorldCanvasRef | null>(null)
   const hasZoomedPast4xRef = useRef(false)
@@ -45,6 +48,7 @@ export default function Home() {
 
   useEffect(() => {
     load()
+    getUSDTBalance().then(setUserBalance)
   }, [load])
 
   // Check balance when price changes
@@ -109,6 +113,10 @@ export default function Home() {
     refresh()
   }, [clearSelection, buy, refresh])
 
+  const handleRemovePixels = useCallback((ids: number[]) => {
+    for (const id of ids) removePixel(id)
+  }, [removePixel])
+
   const handleClear = useCallback(() => {
     clearSelection()
     setActiveOverlay('none')
@@ -133,18 +141,17 @@ export default function Home() {
 
   return (
     <div
-      data-heatmap={heatmapMode}
       style={{
         position: 'relative',
         width: '100%',
         height: '100vh',
         overflow: 'hidden',
-        backgroundColor: heatmapMode ? '#0a0a0a' : 'var(--cream-50)',
+        backgroundColor: 'var(--cream-50)',
       }}
     >
       {/* Top bar */}
       <div
-        className={heatmapMode ? 'frosted-topbar-dark' : 'frosted-topbar'}
+        className="frosted-topbar"
         style={{
           position: 'absolute',
           top: 0,
@@ -163,7 +170,7 @@ export default function Home() {
             fontSize: 11,
             fontWeight: 500,
             letterSpacing: 3,
-            color: heatmapMode ? '#faf7f2' : '#2d2520',
+            color: '#2d2520',
           }}
         >
           MONDETO
@@ -184,7 +191,7 @@ export default function Home() {
             borderRadius: 10,
             padding: '3px 8px',
             background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
-            color: heatmapMode ? '#faf7f2' : '#2d2520',
+            color: '#2d2520',
             border: heatmapMode ? '0.5px solid #2d2520' : '0.5px solid #c0b8ae',
             cursor: 'pointer',
           }}
@@ -214,6 +221,39 @@ export default function Home() {
           onScaleChange={handleScaleChange}
           loadState={loadState}
         />
+      </div>
+
+      {/* Zoom +/- buttons */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 10,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+        }}
+      >
+        <button
+          onClick={() => canvasRef.current?.zoomIn()}
+          style={{
+            width: 32, height: 32, borderRadius: 8,
+            background: 'rgba(250,247,242,0.85)', border: '0.5px solid #e0d8ce',
+            fontSize: 16, color: '#2d2520', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >+</button>
+        <button
+          onClick={() => canvasRef.current?.zoomOut()}
+          style={{
+            width: 32, height: 32, borderRadius: 8,
+            background: 'rgba(250,247,242,0.85)', border: '0.5px solid #e0d8ce',
+            fontSize: 16, color: '#2d2520', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >−</button>
       </div>
 
       {/* Paint mode banner */}
@@ -267,12 +307,15 @@ export default function Home() {
       {activeOverlay === 'drawer' && (
         <SelectionDrawer
           visible={true}
-          pixelCount={pixelCount}
+          selectedIds={selectedIds}
+          pixelData={pixelDataRef.current}
           totalPrice={totalPrice}
           priceLoading={priceLoading}
           insufficientBalance={buy.insufficientBalance}
+          userBalance={userBalance}
           txStep={buy.step}
           txHash={buy.txHash}
+          onRemovePixels={handleRemovePixels}
           onClear={handleClear}
           onBuy={handleBuy}
           onDone={handleDone}
@@ -291,7 +334,7 @@ export default function Home() {
       )}
 
       {/* Bottom nav */}
-      <BottomNav activeRoute="/" isHeatmap={heatmapMode} />
+      <BottomNav activeRoute="/" />
     </div>
   )
 }

@@ -10,6 +10,7 @@ import {
   TransformWrapper,
   TransformComponent,
   useTransformContext,
+  useControls,
 } from 'react-zoom-pan-pinch'
 import { WIDTH, HEIGHT, PAINT_SCALE } from '@/constants/map'
 import { idToXY } from '@/lib/pixelMath'
@@ -21,6 +22,8 @@ import SelectionLayer from './SelectionLayer'
 export interface WorldCanvasRef {
   drawInspectRing: (pixelId: number) => void
   clearInspectRing: () => void
+  zoomIn: () => void
+  zoomOut: () => void
 }
 
 interface WorldCanvasProps {
@@ -83,7 +86,14 @@ function InnerCanvas({
         width={WIDTH}
         height={HEIGHT}
         draggable={false}
-        style={{ position: 'absolute', top: 0, left: 0, imageRendering: 'pixelated' }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          imageRendering: 'pixelated',
+          opacity: isHeatmap ? 0.5 : 1,
+          transition: 'opacity 250ms ease',
+        }}
         alt="World map"
       />
       <PixelLayer
@@ -103,16 +113,28 @@ function InnerCanvas({
   )
 }
 
+// Invisible component that captures zoom controls into a ref
+function ZoomCapture({ controlsRef }: { controlsRef: React.MutableRefObject<{ zoomIn: () => void; zoomOut: () => void } | null> }) {
+  const { zoomIn, zoomOut } = useControls()
+  useEffect(() => {
+    controlsRef.current = { zoomIn, zoomOut }
+  }, [zoomIn, zoomOut, controlsRef])
+  return null
+}
+
 const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
   function WorldCanvas(props, ref) {
     const pixelCanvasRef = useRef<HTMLCanvasElement | null>(null)
     const selectionCanvasRef = useRef<HTMLCanvasElement | null>(null)
+    const zoomControlsRef = useRef<{ zoomIn: () => void; zoomOut: () => void } | null>(null)
     const inspectRingRef = useRef<{
       x: number
       y: number
     } | null>(null)
 
     useImperativeHandle(ref, () => ({
+      zoomIn() { zoomControlsRef.current?.zoomIn() },
+      zoomOut() { zoomControlsRef.current?.zoomOut() },
       drawInspectRing(pid: number) {
         const canvas = selectionCanvasRef.current
         if (!canvas) return
@@ -152,13 +174,15 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
     return (
       <TransformWrapper
         minScale={1}
-        maxScale={16}
-        initialScale={1}
+        maxScale={40}
+        initialScale={2}
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
-        doubleClick={{ step: 3 }}
+        doubleClick={{ disabled: true }}
+        centerOnInit
         smooth
       >
+        <ZoomCapture controlsRef={zoomControlsRef} />
         <TransformComponent
           wrapperStyle={{ width: '100%', height: '100%' }}
         >

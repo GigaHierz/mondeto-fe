@@ -15,7 +15,8 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
         bottom: 68,
         left: 10,
         right: 10,
-        background: 'rgba(20,20,20,0.8)',
+        background: 'rgba(250,247,242,0.9)',
+        border: '0.5px solid #e0d8ce',
         borderRadius: 8,
         padding: '6px 10px',
         zIndex: 5,
@@ -26,7 +27,7 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
           height: 8,
           borderRadius: 4,
           background:
-            'linear-gradient(to right, #4444ff, #00ccff, #00ff88, #ffff00, #ff4400, #ffffff)',
+            'linear-gradient(to right, #ffe066, #ffaa33, #ff6633, #cc0000)',
         }}
       />
       <div
@@ -36,22 +37,10 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
           marginTop: 2,
         }}
       >
-        <span
-          style={{
-            fontSize: 6,
-            color: '#aaa',
-            fontFamily: 'monospace',
-          }}
-        >
+        <span style={{ fontSize: 6, color: '#a09080', fontFamily: 'monospace' }}>
           cheap
         </span>
-        <span
-          style={{
-            fontSize: 6,
-            color: '#aaa',
-            fontFamily: 'monospace',
-          }}
-        >
+        <span style={{ fontSize: 6, color: '#a09080', fontFamily: 'monospace' }}>
           hot
         </span>
       </div>

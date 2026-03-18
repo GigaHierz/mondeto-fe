@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { WIDTH, HEIGHT } from '@/constants/map'
 import { idToXY, pixelId, screenToPixel } from '@/lib/pixelMath'
+import { isLandXY } from '@/lib/landMask'
 
 interface SelectionLayerProps {
   selectedIds: Set<number>
@@ -36,11 +37,11 @@ export default function SelectionLayer({
 
     selectedIds.forEach(id => {
       const { x, y } = idToXY(id)
-      ctx.fillStyle = '#facc15'
-      ctx.fillRect(x, y, 1, 1)
-      ctx.strokeStyle = '#2d2520'
-      ctx.lineWidth = 0.12
-      ctx.strokeRect(x, y, 1, 1)
+      ctx.fillStyle = '#1a1a1a'
+      ctx.fillRect(x + 0.04, y + 0.04, 0.92, 0.92)
+      ctx.strokeStyle = '#ffffff'
+      ctx.lineWidth = 0.08
+      ctx.strokeRect(x + 0.04, y + 0.04, 0.92, 0.92)
     })
   }, [selectedIds])
 
@@ -90,7 +91,7 @@ export default function SelectionLayer({
 
       if (movedRef.current) {
         const pixel = screenToPixel(e.clientX, e.clientY, canvas, scale)
-        if (pixel) {
+        if (pixel && isLandXY(pixel.x, pixel.y)) {
           onAddPixel(pixelId(pixel.x, pixel.y))
         }
       }
@@ -111,7 +112,7 @@ export default function SelectionLayer({
         const canvas = canvasRef.current
         if (canvas) {
           const pixel = screenToPixel(e.clientX, e.clientY, canvas, scale)
-          if (pixel) {
+          if (pixel && isLandXY(pixel.x, pixel.y)) {
             onTogglePixel(pixelId(pixel.x, pixel.y))
           }
         }

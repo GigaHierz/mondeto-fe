@@ -55,27 +55,9 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
         {pixelCount} pixels now yours
       </div>
 
-      {/* Receipt card */}
-      <div
-        style={{
-          background: '#f5f1ea',
-          border: '0.5px solid #e0d8ce',
-          borderRadius: 10,
-          padding: '10px 12px',
-          margin: '12px 14px',
-        }}
-      >
-        {/* PAID row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 7, color: '#a09080', letterSpacing: 1 }}>PAID</span>
-          <span style={{ fontSize: 9, color: '#2d2520' }}>{totalPaid}</span>
-        </div>
-
-        {/* TX row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
-          <span style={{ fontSize: 7, color: '#a09080', letterSpacing: 1 }}>TX</span>
-          <span style={{ fontSize: 9, color: '#4a7fa5' }}>{truncatedHash}</span>
-        </div>
+      {/* Receipt */}
+      <div style={{ fontSize: 8, color: '#a09080', textAlign: 'center', marginTop: 8 }}>
+        paid {totalPaid}
       </div>
 
       {/* Done button */}
