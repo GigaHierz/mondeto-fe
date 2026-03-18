@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useAccount } from 'wagmi'
 import WorldCanvas, { type WorldCanvasRef } from '@/components/Map/WorldCanvas'
+import TopBar from '@/components/Layout/TopBar'
 import PaintModeBanner from '@/components/Map/PaintModeBanner'
 import HeatmapLegend from '@/components/Map/HeatmapLegend'
 import ZoomHintToast from '@/components/Layout/ZoomHintToast'
@@ -15,7 +16,6 @@ import { usePixelPrice } from '@/hooks/usePixelPrice'
 import { useBuyPixels } from '@/hooks/useBuyPixels'
 import { useProfile } from '@/hooks/useProfile'
 import { getUSDTBalance } from '@/lib/mock'
-import { ConnectButton } from '@/components/connect-button'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { PAINT_SCALE } from '@/constants/map'
 
@@ -164,58 +164,28 @@ export default function Home() {
       }}
     >
       {/* Top bar */}
-      <div
-        className="frosted-topbar"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 36,
-          zIndex: 10,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 14px',
-        }}
-      >
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: 3,
-            color: '#2d2520',
-          }}
-        >
-          MONDETO
-        </span>
-
-        {/* Pixel counter in top bar (paint mode) */}
+      <TopBar title="MONDETO">
         {isPaintMode && pixelCount > 0 && (
           <span style={{ fontSize: 7, color: '#a09080' }}>
             {pixelCount} selected
           </span>
         )}
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button
-            onClick={() => setHeatmapMode(h => !h)}
-            style={{
-              fontSize: 7,
-              letterSpacing: 0.5,
-              borderRadius: 10,
-              padding: '3px 8px',
-              background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
-              color: heatmapMode ? '#faf7f2' : '#2d2520',
-              border: '0.5px solid #c0b8ae',
-              cursor: 'pointer',
-            }}
-          >
-            heatmap
-          </button>
-          <ConnectButton />
-        </div>
-      </div>
+        <button
+          onClick={() => setHeatmapMode(h => !h)}
+          style={{
+            fontSize: 7,
+            letterSpacing: 0.5,
+            borderRadius: 10,
+            padding: '3px 8px',
+            background: heatmapMode ? '#2d2520' : 'rgba(200,190,175,0.25)',
+            color: heatmapMode ? '#faf7f2' : '#2d2520',
+            border: '0.5px solid #c0b8ae',
+            cursor: 'pointer',
+          }}
+        >
+          heatmap
+        </button>
+      </TopBar>
 
       {/* WorldCanvas */}
       <div

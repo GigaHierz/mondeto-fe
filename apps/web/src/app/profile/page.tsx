@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useAccount } from 'wagmi'
-import ScreenHeader from '@/components/Layout/ScreenHeader'
+import TopBar from '@/components/Layout/TopBar'
 import BottomNav from '@/components/Layout/BottomNav'
 import AvatarBlock from '@/components/Profile/AvatarBlock'
 import StatsRow from '@/components/Profile/StatsRow'
@@ -54,8 +54,8 @@ export default function ProfilePage() {
     '[ SAVE ]'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <ScreenHeader title="PROFILE" />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 36 }}>
+      <TopBar title="PROFILE" />
       <div
         style={{
           flex: 1,

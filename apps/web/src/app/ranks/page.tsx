@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import ScreenHeader from '@/components/Layout/ScreenHeader'
+import TopBar from '@/components/Layout/TopBar'
 import BottomNav from '@/components/Layout/BottomNav'
 import LeaderboardTabs from '@/components/Leaderboard/LeaderboardTabs'
 import LeaderboardRow from '@/components/Leaderboard/LeaderboardRow'
@@ -30,8 +30,8 @@ export default function RanksPage() {
   const hasOwned = currentData.length > 0
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <ScreenHeader title="LEADERBOARD" />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 36 }}>
+      <TopBar title="LEADERBOARD" />
       <LeaderboardTabs activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setShowAll(false) }} />
       <div
         style={{
