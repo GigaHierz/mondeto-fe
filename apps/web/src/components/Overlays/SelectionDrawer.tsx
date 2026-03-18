@@ -160,7 +160,7 @@ export default function SelectionDrawer({
 
           {/* Balance + warnings */}
           <div style={{ fontSize: 7, color: 'var(--text-muted)', marginBottom: 2, flexShrink: 0 }}>
-            your balance: {formatUSDT(userBalance)} CELO
+            your balance: {formatUSDT(userBalance)} USDT
           </div>
           {insufficientBalance && (
             <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 2, flexShrink: 0 }}>
@@ -202,9 +202,9 @@ export default function SelectionDrawer({
                       {isUnowned ? 'unowned' : (group.label || truncAddr(group.owner))}
                     </div>
                     {!isUnowned && group.url && (
-                      <div style={{ fontSize: 6, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {group.url.replace('https://', '')}
-                      </div>
+                      <a href={group.url.startsWith('http') ? group.url : `https://${group.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 6, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', textDecoration: 'none' }}>
+                        {group.url.replace('https://', '').replace('http://', '')}
+                      </a>
                     )}
                   </div>
 
@@ -251,7 +251,7 @@ export default function SelectionDrawer({
               flexShrink: 0,
             }}
           >
-            {priceLoading ? '[ CALCULATING... ]' : insufficientBalance ? '[ INSUFFICIENT BALANCE ]' : `[ BUY ALL — ${formatUSDT(totalPrice)} CELO ]`}
+            {priceLoading ? '[ CALCULATING... ]' : insufficientBalance ? '[ INSUFFICIENT BALANCE ]' : `[ BUY ALL — ${formatUSDT(totalPrice)} USDT ]`}
           </button>
         </div>
       )}

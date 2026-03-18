@@ -107,9 +107,13 @@ export default function PixelInfoPanel({
       {/* URL field */}
       <div style={{ padding: '7px 14px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>URL</div>
-        <div style={{ fontSize: 9, color: 'var(--accent)' }}>
-          {pixel.url ? `${pixel.url} →` : '—'}
-        </div>
+        {pixel.url ? (
+          <a href={pixel.url.startsWith('http') ? pixel.url : `https://${pixel.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 9, color: 'var(--accent)', textDecoration: 'none' }}>
+            {pixel.url} →
+          </a>
+        ) : (
+          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>—</div>
+        )}
       </div>
 
       {/* Price cards row */}

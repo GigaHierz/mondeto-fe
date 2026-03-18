@@ -59,9 +59,14 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
           {entry.label || truncateAddress(entry.owner)}
         </div>
         {displayUrl && (
-          <div style={{ fontSize: 7, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 1 }}>
+          <a
+            href={entry.url.startsWith('http') ? entry.url : `https://${entry.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: 7, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 1, display: 'block', textDecoration: 'none' }}
+          >
             {displayUrl}
-          </div>
+          </a>
         )}
       </div>
       <span style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>

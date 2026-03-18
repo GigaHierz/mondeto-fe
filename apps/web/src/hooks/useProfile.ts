@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
 import { MONDETO_ABI, MONDETO_ADDRESS } from '@/lib/contract'
 import { uint24ToHex, hexToUint24 } from '@/lib/colorUtils'
+import { decodeBytes } from '@/lib/decodeBytes'
 
 export type ProfileSaveState = 'idle' | 'saving' | 'confirming' | 'saved' | 'error'
 
@@ -25,23 +26,12 @@ export function useProfile(address: string | undefined) {
   // Load profile data when it arrives
   useEffect(() => {
     if (!profileData) return
-    const [contractColor, labelBytes, urlBytes] = profileData as [number, string, string]
+    const [contractColor, labelBytes, urlBytes] = profileData as [number, unknown, unknown]
     if (contractColor) setColor(uint24ToHex(contractColor))
-    // Decode bytes to string (they come as hex from the contract)
-    try {
-      if (labelBytes && labelBytes !== '0x') {
-        const decoded = Buffer.from(labelBytes.slice(2), 'hex').toString('utf-8')
-        if (decoded) setName(decoded)
-      }
-      if (urlBytes && urlBytes !== '0x') {
-        const decoded = Buffer.from(urlBytes.slice(2), 'hex').toString('utf-8')
-        if (decoded) setUrl(decoded)
-      }
-    } catch {
-      // Bytes might already be decoded strings in some wagmi versions
-      if (typeof labelBytes === 'string' && !labelBytes.startsWith('0x') && labelBytes) setName(labelBytes)
-      if (typeof urlBytes === 'string' && !urlBytes.startsWith('0x') && urlBytes) setUrl(urlBytes)
-    }
+    const label = decodeBytes(labelBytes)
+    const url = decodeBytes(urlBytes)
+    if (label) setName(label)
+    if (url) setUrl(url)
   }, [profileData])
 
   // Write profile to contract

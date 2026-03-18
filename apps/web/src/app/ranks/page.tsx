@@ -12,6 +12,7 @@ import { fetchAllPixelsFromContract } from '@/lib/contractReads'
 import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { ZERO_ADDRESS } from '@/constants/map'
 import { uint24ToHex } from '@/lib/colorUtils'
+import { decodeBytes } from '@/lib/decodeBytes'
 
 export default function RanksPage() {
   const publicClient = usePublicClient()
@@ -67,20 +68,9 @@ export default function RanksPage() {
           for (let j = 0; j < results.length; j++) {
             const result = results[j]
             if (result.status === 'fulfilled' && result.value) {
-              const [color, labelBytes, urlBytes] = result.value as [number, string, string]
-              let label = ''
-              let url = ''
-              try {
-                if (labelBytes && labelBytes !== '0x') {
-                  label = Buffer.from(labelBytes.slice(2), 'hex').toString('utf-8')
-                }
-                if (urlBytes && urlBytes !== '0x') {
-                  url = Buffer.from(urlBytes.slice(2), 'hex').toString('utf-8')
-                }
-              } catch {
-                if (typeof labelBytes === 'string' && !labelBytes.startsWith('0x')) label = labelBytes
-                if (typeof urlBytes === 'string' && !urlBytes.startsWith('0x')) url = urlBytes
-              }
+              const [color, labelBytes, urlBytes] = result.value as [number, unknown, unknown]
+              const label = decodeBytes(labelBytes)
+              const url = decodeBytes(urlBytes)
               profiles.set(batch[j], {
                 label,
                 url,

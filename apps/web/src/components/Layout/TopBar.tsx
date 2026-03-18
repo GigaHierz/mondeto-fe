@@ -28,38 +28,16 @@ export default function TopBar({ title, children }: TopBarProps) {
         padding: '0 14px',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 500,
-            letterSpacing: 3,
-            color: 'var(--text)',
-          }}
-        >
-          {title}
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-          <span
-            style={{
-              width: 5,
-              height: 5,
-              borderRadius: '50%',
-              background: '#35d07f',
-              display: 'inline-block',
-            }}
-          />
-          <span
-            style={{
-              fontSize: 6,
-              letterSpacing: 0.5,
-              color: 'var(--text-muted)',
-            }}
-          >
-            CELO
-          </span>
-        </span>
-      </div>
+      <span
+        style={{
+          fontSize: 11,
+          fontWeight: 500,
+          letterSpacing: 3,
+          color: 'var(--text)',
+        }}
+      >
+        {title}
+      </span>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {children}
