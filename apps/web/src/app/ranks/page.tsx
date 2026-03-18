@@ -1,21 +1,45 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePublicClient } from 'wagmi'
 import TopBar from '@/components/Layout/TopBar'
 import BottomNav from '@/components/Layout/BottomNav'
 import LeaderboardTabs from '@/components/Leaderboard/LeaderboardTabs'
 import LeaderboardRow from '@/components/Leaderboard/LeaderboardRow'
 import { useLeaderboard, type LeaderboardTab } from '@/hooks/useLeaderboard'
 import { getAllPixels, type PixelView } from '@/lib/mock'
+import { fetchAllPixelsFromContract } from '@/lib/contractReads'
 
 export default function RanksPage() {
+  const publicClient = usePublicClient()
   const [pixelData, setPixelData] = useState<PixelView[]>([])
   const [activeTab, setActiveTab] = useState<LeaderboardTab>('AREA')
   const [showAll, setShowAll] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getAllPixels().then(setPixelData)
-  }, [])
+    async function load() {
+      setLoading(true)
+      try {
+        if (publicClient) {
+          const data = await fetchAllPixelsFromContract(
+            publicClient.readContract.bind(publicClient) as Parameters<typeof fetchAllPixelsFromContract>[0]
+          )
+          setPixelData(data)
+        } else {
+          // Fallback to mock
+          const data = await getAllPixels()
+          setPixelData(data)
+        }
+      } catch (e) {
+        console.warn('Failed to fetch from contract, using mock:', e)
+        const data = await getAllPixels()
+        setPixelData(data)
+      }
+      setLoading(false)
+    }
+    load()
+  }, [publicClient])
 
   const { area, empire, hotPx } = useLeaderboard(pixelData)
 
@@ -31,7 +55,7 @@ export default function RanksPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 36 }}>
-      <TopBar title="LEADERBOARD" />
+      <TopBar title="RANKS" />
       <LeaderboardTabs activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setShowAll(false) }} />
       <div
         style={{
@@ -42,7 +66,11 @@ export default function RanksPage() {
           paddingBottom: 56,
         }}
       >
-        {hasOwned ? (
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '40%' }}>
+            <span style={{ fontSize: 8, color: 'var(--text-muted)' }}>loading on-chain data...</span>
+          </div>
+        ) : hasOwned ? (
           <>
             {displayData.map((entry) => (
               <LeaderboardRow key={entry.owner} entry={entry} />
