@@ -118,7 +118,6 @@ export default function RanksPage() {
               <path d="M2 12h20" />
               <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
             </svg>
-            <span style={{ fontSize: 7, color: 'var(--text-muted)', letterSpacing: 0.5 }}>loading on-chain data</span>
           </div>
         ) : hasOwned ? (
           <>
