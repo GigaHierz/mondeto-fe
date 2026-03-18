@@ -1,29 +1,9 @@
-import { HEAT_STOPS } from '@/constants/map'
-
 export function hexToUint24(hex: string): number {
   return parseInt(hex.replace('#', ''), 16)
 }
 
 export function uint24ToHex(n: number): string {
   return '#' + n.toString(16).padStart(6, '0')
-}
-
-export function interpolateHeatGradient(ratio: number): string {
-  const clamped = Math.max(0, Math.min(1, ratio))
-  let lower: { pos: number; color: string } = HEAT_STOPS[0]
-  let upper: { pos: number; color: string } = HEAT_STOPS[HEAT_STOPS.length - 1]
-
-  for (let i = 0; i < HEAT_STOPS.length - 1; i++) {
-    if (clamped >= HEAT_STOPS[i].pos && clamped <= HEAT_STOPS[i + 1].pos) {
-      lower = HEAT_STOPS[i]
-      upper = HEAT_STOPS[i + 1]
-      break
-    }
-  }
-
-  const range = upper.pos - lower.pos
-  const t = range === 0 ? 0 : (clamped - lower.pos) / range
-  return lerpColor(lower.color, upper.color, t)
 }
 
 function lerpColor(a: string, b: string, t: number): string {

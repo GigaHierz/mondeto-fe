@@ -9,7 +9,7 @@ import {
 } from '@/lib/mock'
 import type { PixelView } from '@/lib/mock'
 import { isLand } from '@/lib/landMask'
-import { ZERO_ADDRESS, INITIAL_PRICE, PRICE_DOUBLE_RATE } from '@/constants/map'
+import { ZERO_ADDRESS, INITIAL_PRICE, TOTAL_PIXELS } from '@/constants/map'
 
 let pixels: PixelView[]
 
@@ -18,8 +18,8 @@ beforeAll(async () => {
 })
 
 describe('getAllPixels', () => {
-  it('returns 45000 items', () => {
-    expect(pixels).toHaveLength(45000)
+  it('returns TOTAL_PIXELS items', () => {
+    expect(pixels).toHaveLength(TOTAL_PIXELS)
   })
 
   it('every pixel has required fields', () => {
@@ -60,7 +60,7 @@ describe('buyPixels', () => {
     const updated = await getAllPixels()
     expect(updated[idx].owner).toBe(buyer)
     expect(updated[idx].saleCount).toBe(prevSaleCount + 1)
-    expect(updated[idx].currentPrice).toBe(prevPrice * PRICE_DOUBLE_RATE)
+    expect(updated[idx].currentPrice).toBe(prevPrice * 2n)
   })
 })
 

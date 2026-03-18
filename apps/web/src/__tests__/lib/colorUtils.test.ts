@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import {
   hexToUint24,
   uint24ToHex,
-  interpolateHeatGradient,
   formatUSDT,
   isValidHex,
 } from '@/lib/colorUtils'
@@ -40,29 +39,6 @@ describe('uint24ToHex', () => {
 
   it('round-trips with hexToUint24', () => {
     expect(uint24ToHex(hexToUint24('#e74c3c'))).toBe('#e74c3c')
-  })
-})
-
-describe('interpolateHeatGradient', () => {
-  it('returns first stop color at ratio 0', () => {
-    expect(interpolateHeatGradient(0)).toBe('#4444ff')
-  })
-
-  it('returns last stop color at ratio 1', () => {
-    expect(interpolateHeatGradient(1)).toBe('#ffffff')
-  })
-
-  it('clamps negative ratio to 0', () => {
-    expect(interpolateHeatGradient(-0.5)).toBe('#4444ff')
-  })
-
-  it('clamps ratio > 1 to 1', () => {
-    expect(interpolateHeatGradient(1.5)).toBe('#ffffff')
-  })
-
-  it('returns a valid hex at mid ratio', () => {
-    const result = interpolateHeatGradient(0.5)
-    expect(isValidHex(result)).toBe(true)
   })
 })
 

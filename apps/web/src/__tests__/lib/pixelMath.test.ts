@@ -11,11 +11,11 @@ describe('pixelId', () => {
   })
 
   it('computes id for (0, 1)', () => {
-    expect(pixelId(0, 1)).toBe(300) // WIDTH = 300
+    expect(pixelId(0, 1)).toBe(170) // WIDTH = 170
   })
 
   it('computes id for arbitrary position', () => {
-    expect(pixelId(50, 10)).toBe(10 * 300 + 50)
+    expect(pixelId(50, 10)).toBe(10 * 170 + 50)
   })
 })
 
@@ -24,8 +24,8 @@ describe('idToXY', () => {
     expect(idToXY(0)).toEqual({ x: 0, y: 0 })
   })
 
-  it('converts id 300 to (0,1)', () => {
-    expect(idToXY(300)).toEqual({ x: 0, y: 1 })
+  it('converts id 170 to (0,1)', () => {
+    expect(idToXY(170)).toEqual({ x: 0, y: 1 })
   })
 
   it('round-trips with pixelId', () => {

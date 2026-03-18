@@ -2,7 +2,6 @@
 import React from 'react'
 import { WIDTH, HEIGHT, TILE_GAP, TILE_RADIUS, ZERO_ADDRESS } from '@/constants/map'
 import { idToXY } from '@/lib/pixelMath'
-import { interpolateHeatGradient } from '@/lib/colorUtils'
 import { isLand } from '@/lib/landMask'
 import type { PixelView } from '@/lib/mock'
 
