@@ -54,7 +54,7 @@ export function useLeaderboard(pixelData: PixelView[], profilesMap?: Map<string,
           unit: 'px',
         }
       })
-  }, [pixelData])
+  }, [pixelData, profilesMap])
 
   const empire = useMemo<LeaderboardEntry[]>(() => {
     const ownerMap = new Map<number, string>()
@@ -94,7 +94,7 @@ export function useLeaderboard(pixelData: PixelView[], profilesMap?: Map<string,
           unit: 'px',
         }
       })
-  }, [pixelData])
+  }, [pixelData, profilesMap])
 
   const hotPx = useMemo<LeaderboardEntry[]>(() => {
     const best = new Map<string, { price: bigint; label: string; color: string }>()
@@ -124,7 +124,7 @@ export function useLeaderboard(pixelData: PixelView[], profilesMap?: Map<string,
           unit: 'USDT',
         }
       })
-  }, [pixelData])
+  }, [pixelData, profilesMap])
 
   return { area, empire, hotPx }
 }

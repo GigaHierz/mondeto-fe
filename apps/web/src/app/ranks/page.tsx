@@ -38,9 +38,7 @@ export default function RanksPage() {
         console.warn('Failed to fetch from contract, using mock:', e)
         data = await getAllPixels()
       }
-      setPixelData(data)
-
-      // Fetch profiles for unique owners
+      // Fetch profiles for unique owners before setting data
       if (publicClient) {
         const uniqueOwners = new Set<string>()
         for (const px of data) {
@@ -81,6 +79,8 @@ export default function RanksPage() {
         }
         setProfilesMap(profiles)
       }
+      // Set pixel data after profiles are ready so leaderboard renders with names
+      setPixelData(data)
       setLoading(false)
     }
     load()
