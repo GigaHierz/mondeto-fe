@@ -1,6 +1,7 @@
 {
-  "buildCommand": "pnpm --filter web build",
-  "outputDirectory": "apps/web/.next",
+  "buildCommand": "cd ../.. && pnpm --filter web build",
+  "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "pnpm install"
+  "installCommand": "cd ../.. && pnpm install",
+  "rootDirectory": "apps/web"
 }
