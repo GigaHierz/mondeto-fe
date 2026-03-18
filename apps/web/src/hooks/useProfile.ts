@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
-import { MONDETO_ABI, MONDETO_PROXY } from '@/lib/contract'
+import { MONDETO_ABI, MONDETO_ADDRESS } from '@/lib/contract'
 import { uint24ToHex, hexToUint24 } from '@/lib/colorUtils'
 
 export type ProfileSaveState = 'idle' | 'saving' | 'confirming' | 'saved' | 'error'
@@ -15,7 +15,7 @@ export function useProfile(address: string | undefined) {
 
   // Read profile from contract
   const { data: profileData } = useReadContract({
-    address: MONDETO_PROXY,
+    address: MONDETO_ADDRESS,
     abi: MONDETO_ABI,
     functionName: 'profiles',
     args: [(address ?? '0x0000000000000000000000000000000000000000') as `0x${string}`],
@@ -70,7 +70,7 @@ export function useProfile(address: string | undefined) {
 
     try {
       writeContract({
-        address: MONDETO_PROXY,
+        address: MONDETO_ADDRESS,
         abi: MONDETO_ABI,
         functionName: 'updateProfile',
         args: [hexToUint24(color), name, url],

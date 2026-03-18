@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useReadContract, useAccount } from 'wagmi'
-import { MONDETO_ABI, MONDETO_PROXY } from '@/lib/contract'
+import { MONDETO_ABI, MONDETO_ADDRESS } from '@/lib/contract'
 import { ConnectButton } from '@/components/connect-button'
 
-const CONTRACT = { address: MONDETO_PROXY, abi: MONDETO_ABI } as const
+const CONTRACT = { address: MONDETO_ADDRESS, abi: MONDETO_ABI } as const
 
 export default function TestContractPage() {
   const { address, isConnected, chain } = useAccount()
@@ -104,7 +104,7 @@ export default function TestContractPage() {
     <div style={{ padding: 20, fontFamily: 'monospace', maxWidth: 700, margin: '0 auto' }}>
       <h1 style={{ fontSize: 16, marginBottom: 8 }}>Contract Test Page</h1>
       <p style={{ fontSize: 10, color: '#a09080', marginBottom: 12 }}>
-        Proxy: {MONDETO_PROXY}<br />
+        Proxy: {MONDETO_ADDRESS}<br />
         Chain: {chain?.name ?? 'not connected'} (ID: {chain?.id ?? '—'})
       </p>
 

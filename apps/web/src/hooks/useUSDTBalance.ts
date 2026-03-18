@@ -1,18 +1,14 @@
 'use client'
 
 import { useAccount, useBalance } from 'wagmi'
-import { celoSepolia } from 'wagmi/chains'
-import { USDT_MAINNET, USDT_SEPOLIA } from '@/constants/map'
+import { USDT_ADDRESS } from '@/lib/contract'
 
 export function useUSDTBalance() {
   const { address, isConnected, chain } = useAccount()
 
-  const isSepolia = chain?.id === celoSepolia.id
-  const tokenAddress = isSepolia ? USDT_SEPOLIA : USDT_MAINNET
-
   const { data, isLoading } = useBalance({
     address,
-    token: tokenAddress,
+    token: USDT_ADDRESS,
     query: { enabled: isConnected && !!address },
   })
 

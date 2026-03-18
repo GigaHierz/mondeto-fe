@@ -3,8 +3,8 @@
 import { useState, useCallback } from 'react'
 import { useWriteContract, useAccount, usePublicClient } from 'wagmi'
 import { celoSepolia } from 'wagmi/chains'
-import { MONDETO_ABI, MONDETO_PROXY, ERC20_ABI } from '@/lib/contract'
-import { USDT_MAINNET, USDT_SEPOLIA } from '@/constants/map'
+import { MONDETO_ABI, MONDETO_ADDRESS, USDT_ABI } from '@/lib/contract'
+import { USDT_ADDRESS } from '@/lib/contract'
 
 export type TxStep = 'idle' | 'approving' | 'buying' | 'confirming' | 'success' | 'error'
 
@@ -16,7 +16,7 @@ export function useBuyPixels() {
   const [insufficientBalance, setInsufficientBalance] = useState(false)
   const [txHash, setTxHash] = useState<string | null>(null)
 
-  const usdtAddress = chain?.id === celoSepolia.id ? USDT_SEPOLIA : USDT_MAINNET
+  const usdtAddress = USDT_ADDRESS
 
   const { writeContractAsync } = useWriteContract()
 
@@ -39,7 +39,7 @@ export function useBuyPixels() {
       let realPrice = _totalPriceHint
       try {
         const onChainPrice = await publicClient.readContract({
-          address: MONDETO_PROXY,
+          address: MONDETO_ADDRESS,
           abi: MONDETO_ABI,
           functionName: 'selectionPrice',
           args: [bigIds],
@@ -53,9 +53,9 @@ export function useBuyPixels() {
       // Check current allowance — skip approve if already sufficient
       const currentAllowance = await publicClient.readContract({
         address: usdtAddress,
-        abi: ERC20_ABI,
+        abi: USDT_ABI,
         functionName: 'allowance',
-        args: [address, MONDETO_PROXY],
+        args: [address, MONDETO_ADDRESS],
       }) as bigint
 
       const approveAmount = realPrice * 102n / 100n
@@ -65,9 +65,9 @@ export function useBuyPixels() {
         const generousApprove = realPrice * 10n // 10x the price
         const approveHash = await writeContractAsync({
           address: usdtAddress,
-          abi: ERC20_ABI,
+          abi: USDT_ABI,
           functionName: 'approve',
-          args: [MONDETO_PROXY, generousApprove],
+          args: [MONDETO_ADDRESS, generousApprove],
         })
 
         // Wait for approve to fully confirm
@@ -82,7 +82,7 @@ export function useBuyPixels() {
       // Step 2: Buy pixels
       setStep('buying')
       const buyHash = await writeContractAsync({
-        address: MONDETO_PROXY,
+        address: MONDETO_ADDRESS,
         abi: MONDETO_ABI,
         functionName: 'buyPixels',
         args: [bigIds],
@@ -97,7 +97,7 @@ export function useBuyPixels() {
         // Try to get the revert reason
         try {
           await publicClient.simulateContract({
-            address: MONDETO_PROXY,
+            address: MONDETO_ADDRESS,
             abi: MONDETO_ABI,
             functionName: 'buyPixels',
             args: [bigIds],

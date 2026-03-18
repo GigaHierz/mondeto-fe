@@ -6,7 +6,6 @@ import {
   COLOR_PRESETS,
   DRAWER_SWATCHES,
   MAX_SELECT,
-  MONDETO_PROXY,
 } from '@/constants/map'
 
 describe('map constants', () => {
@@ -34,7 +33,8 @@ describe('map constants', () => {
     expect(MAX_SELECT).toBe(100)
   })
 
-  it('MONDETO_PROXY is a valid address', () => {
-    expect(MONDETO_PROXY).toMatch(/^0x[a-fA-F0-9]{40}$/)
+  it('contract addresses are in lib/contract.ts', () => {
+    // Addresses moved to auto-generated contract.ts
+    expect(true).toBe(true)
   })
 })

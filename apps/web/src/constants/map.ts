@@ -28,7 +28,4 @@ export const DRAWER_SWATCHES = [
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
-// Contract addresses
-export const MONDETO_PROXY = '0x0AD659eF417bB7c884aB574dE6DaC56D3AB82a00' as const
-export const USDT_MAINNET = '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e' as const
-export const USDT_SEPOLIA = '0xd077A400968890Eacc75cdc901F0356c943e4fDb' as const
+// Contract addresses are in src/lib/contract.ts (auto-generated)

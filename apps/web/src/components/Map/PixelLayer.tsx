@@ -55,7 +55,7 @@ export function drawPixels(
       ctx.fill()
     }
   } else {
-    const unownedColor = isDark ? '#333333' : '#999999'
+    const unownedColor = isDark ? '#aaaaaa' : '#999999'
 
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
