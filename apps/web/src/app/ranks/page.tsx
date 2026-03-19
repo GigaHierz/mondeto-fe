@@ -104,8 +104,11 @@ export default function RanksPage() {
           flex: 1,
           overflowY: 'auto',
           background: 'var(--bg)',
-          padding: '5px 0',
+          padding: '8px 0',
           paddingBottom: 56,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
         {loading ? (

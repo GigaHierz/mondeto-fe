@@ -6,6 +6,15 @@ interface LeaderboardRowProps {
   entry: LeaderboardEntry
 }
 
+const PIXEL_FONT = "'Press Start 2P', monospace"
+
+function rankSuffix(rank: number): string {
+  if (rank === 1) return '1ST'
+  if (rank === 2) return '2ND'
+  if (rank === 3) return '3RD'
+  return `${rank}TH`
+}
+
 function rankColor(rank: number): string {
   if (rank === 1) return '#c9962a'
   if (rank === 2) return '#8a9aaa'
@@ -19,43 +28,50 @@ function truncateAddress(addr: string): string {
 
 export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
   const displayUrl = entry.url?.replace('https://', '').replace('http://', '').replace(/\/$/, '')
+  const isTop3 = entry.rank <= 3
 
   return (
     <div
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 10,
-        background: 'var(--card-bg)',
-        border: '1px solid var(--border)',
-        borderRadius: 9,
-        padding: '10px 12px',
-        margin: '3px 7px',
+        gap: 12,
+        padding: isTop3 ? '14px 16px' : '10px 16px',
+        borderBottom: '1px solid var(--border)',
+        maxWidth: 500,
+        margin: '0 auto',
+        width: '100%',
       }}
     >
+      {/* Rank */}
       <span
         style={{
-          fontSize: 11,
-          fontWeight: 500,
-          width: 18,
+          fontSize: isTop3 ? 12 : 9,
+          fontWeight: 700,
+          width: 40,
           textAlign: 'right',
           color: rankColor(entry.rank),
           flexShrink: 0,
+          fontFamily: PIXEL_FONT,
+          letterSpacing: 2,
         }}
       >
-        {entry.rank}
+        {rankSuffix(entry.rank)}
       </span>
-      <div
-        style={{
-          width: 16,
-          height: 16,
-          borderRadius: 4,
-          background: entry.color || 'var(--text-muted)',
-          flexShrink: 0,
-        }}
-      />
+
+      {/* Name + URL */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 10, fontWeight: 500, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div
+          style={{
+            fontSize: isTop3 ? 10 : 8,
+            fontFamily: PIXEL_FONT,
+            letterSpacing: 2,
+            color: 'var(--text)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {entry.label || truncateAddress(entry.owner)}
         </div>
         {displayUrl && (
@@ -63,14 +79,47 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
             href={entry.url.startsWith('http') ? entry.url : `https://${entry.url}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: 7, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: 1, display: 'block', textDecoration: 'none' }}
+            style={{
+              fontSize: 7,
+              color: 'var(--accent)',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              marginTop: 3,
+              display: 'block',
+              textDecoration: 'none',
+              fontFamily: 'monospace',
+            }}
           >
             {displayUrl}
           </a>
         )}
       </div>
-      <span style={{ fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-        {entry.value} {entry.unit}
+
+      {/* Score */}
+      <span
+        style={{
+          fontSize: isTop3 ? 12 : 9,
+          letterSpacing: 2,
+          color: 'var(--text)',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+          fontFamily: PIXEL_FONT,
+        }}
+      >
+        {entry.value}
+      </span>
+
+      {/* Unit */}
+      <span
+        style={{
+          fontSize: 7,
+          color: 'var(--text-muted)',
+          flexShrink: 0,
+          fontFamily: PIXEL_FONT,
+        }}
+      >
+        {entry.unit}
       </span>
     </div>
   )
