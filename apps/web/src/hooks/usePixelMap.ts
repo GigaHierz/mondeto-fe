@@ -1,7 +1,7 @@
 'use client'
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { usePublicClient } from 'wagmi'
-import { getAllPixels, type PixelView } from '@/lib/mock'
+import type { PixelView } from '@/lib/mock'
 import { fetchAllPixelsFromContract } from '@/lib/contractReads'
 
 export type LoadState = 'loading' | 'ready' | 'error'
@@ -16,17 +16,10 @@ export function usePixelMap() {
   const [changedIds, setChangedIds] = useState<number[]>([])
 
   const fetchData = useCallback(async (): Promise<PixelView[]> => {
-    if (publicClient) {
-      try {
-        return await fetchAllPixelsFromContract(
-          publicClient.readContract.bind(publicClient) as Parameters<typeof fetchAllPixelsFromContract>[0]
-        )
-      } catch (e) {
-        console.warn('Contract read failed, falling back to mock:', e)
-        return await getAllPixels()
-      }
-    }
-    return await getAllPixels()
+    if (!publicClient) throw new Error('No wallet connected')
+    return await fetchAllPixelsFromContract(
+      publicClient.readContract.bind(publicClient) as Parameters<typeof fetchAllPixelsFromContract>[0]
+    )
   }, [publicClient])
 
   const load = useCallback(async () => {
@@ -42,10 +35,14 @@ export function usePixelMap() {
   }, [fetchData])
 
   const refresh = useCallback(async () => {
-    const data = await fetchData()
-    pixelDataRef.current = data
-    setLoadState('ready')
-    setVersion(v => v + 1)
+    try {
+      const data = await fetchData()
+      pixelDataRef.current = data
+      setLoadState('ready')
+      setVersion(v => v + 1)
+    } catch {
+      // Silent fail on refresh
+    }
   }, [fetchData])
 
   // Silent poll: fetch new data, diff against current, emit changedIds

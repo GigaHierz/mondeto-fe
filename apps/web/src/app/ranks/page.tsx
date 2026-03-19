@@ -7,7 +7,7 @@ import BottomNav from '@/components/Layout/BottomNav'
 import LeaderboardTabs from '@/components/Leaderboard/LeaderboardTabs'
 import LeaderboardRow from '@/components/Leaderboard/LeaderboardRow'
 import { useLeaderboard, type LeaderboardTab, type OwnerProfileData } from '@/hooks/useLeaderboard'
-import { getAllPixels, type PixelView } from '@/lib/mock'
+import type { PixelView } from '@/lib/mock'
 import { fetchAllPixelsFromContract } from '@/lib/contractReads'
 import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { ZERO_ADDRESS } from '@/constants/map'
@@ -25,18 +25,15 @@ export default function RanksPage() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      let data: PixelView[]
+      let data: PixelView[] = []
       try {
         if (publicClient) {
           data = await fetchAllPixelsFromContract(
             publicClient.readContract.bind(publicClient) as Parameters<typeof fetchAllPixelsFromContract>[0]
           )
-        } else {
-          data = await getAllPixels()
         }
       } catch (e) {
-        console.warn('Failed to fetch from contract, using mock:', e)
-        data = await getAllPixels()
+        console.warn('Failed to fetch from contract:', e)
       }
       // Fetch profiles for unique owners before setting data
       if (publicClient) {

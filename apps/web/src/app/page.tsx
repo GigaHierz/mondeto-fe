@@ -16,7 +16,6 @@ import { useSelection } from '@/hooks/useSelection'
 import { usePixelPrice } from '@/hooks/usePixelPrice'
 import { useBuyPixels } from '@/hooks/useBuyPixels'
 import { useProfile } from '@/hooks/useProfile'
-import { getUSDTBalance } from '@/lib/mock'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { fetchLandMaskFromContract } from '@/lib/landMask'
 import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
@@ -64,9 +63,6 @@ export default function Home() {
 
   useEffect(() => {
     load()
-    if (!walletBalance.isConnected) {
-      getUSDTBalance().then(setUserBalance)
-    }
     // Fetch land mask from contract (replaces static fallback)
     if (publicClient) {
       fetchLandMaskFromContract(
