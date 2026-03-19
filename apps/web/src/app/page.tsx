@@ -31,7 +31,7 @@ export default function Home() {
   const addrStr = address as string | undefined
   const publicClient = usePublicClient()
 
-  const { pixelDataRef, loadState, load, refresh, version } = usePixelMap()
+  const { pixelDataRef, loadState, load, refresh, version, changedIds } = usePixelMap()
   const {
     selectedIds,
     togglePixel,
@@ -253,6 +253,7 @@ export default function Home() {
           version={version}
           loadState={loadState}
           userAddress={addrStr}
+          changedIds={changedIds}
         />
       </div>
 

@@ -18,6 +18,7 @@ import type { PixelView } from '@/lib/mock'
 import type { LoadState } from '@/hooks/usePixelMap'
 import PixelLayer, { drawPixels } from './PixelLayer'
 import OwnershipPulse from './OwnershipPulse'
+import FlashLayer from './FlashLayer'
 import TerritoryLabels from './TerritoryLabels'
 import SelectionLayer from './SelectionLayer'
 
@@ -40,6 +41,7 @@ interface WorldCanvasProps {
   loadState: LoadState
   version?: number
   userAddress?: string
+  changedIds?: number[]
   profilesMap?: Map<string, { label: string; url?: string; color?: string }>
 }
 
@@ -60,6 +62,7 @@ function InnerCanvas({
   pixelCanvasRef,
   version,
   userAddress,
+  changedIds,
   profilesMap,
 }: InnerCanvasProps) {
   const context = useTransformContext()
@@ -98,6 +101,7 @@ function InnerCanvas({
         canvasRef={pixelCanvasRef}
       />
       <OwnershipPulse pixelData={pixelData} userAddress={userAddress} />
+      <FlashLayer changedIds={changedIds ?? []} pixelData={pixelData} />
       <TerritoryLabels pixelData={pixelData} scale={scale} profilesMap={profilesMap} />
       <SelectionLayer
         selectedIds={selectedIds}
