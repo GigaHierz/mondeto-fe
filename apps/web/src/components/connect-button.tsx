@@ -1,69 +1,51 @@
 "use client";
 
-import { ConnectButton as RainbowKitConnectButton } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
 
 export function ConnectButton() {
-  const [isMinipay, setIsMinipay] = useState(false);
+  const { login, logout, authenticated, ready } = usePrivy();
+  const { chain } = useAccount();
 
-  useEffect(() => {
-    // @ts-ignore
-    if (window.ethereum?.isMiniPay) {
-      setIsMinipay(true);
-    }
-  }, []);
+  if (!ready) return null;
 
-  if (isMinipay) {
-    return null;
+  if (!authenticated) {
+    return (
+      <button
+        onClick={login}
+        style={{
+          fontSize: 7,
+          fontFamily: "'Press Start 2P', monospace",
+          letterSpacing: 1,
+          padding: "4px 8px",
+          borderRadius: 10,
+          border: "1px solid var(--text-muted)",
+          background: "transparent",
+          color: "var(--text)",
+          cursor: "pointer",
+        }}
+      >
+        connect
+      </button>
+    );
   }
 
   return (
-    <RainbowKitConnectButton.Custom>
-      {({ account, chain, openChainModal, openConnectModal, mounted }) => {
-        const connected = mounted && account && chain;
-
-        if (!mounted) return null;
-
-        if (!connected) {
-          return (
-            <button
-              onClick={openConnectModal}
-              style={{
-                fontSize: 7,
-                fontFamily: "'Press Start 2P', monospace",
-                letterSpacing: 1,
-                padding: "4px 8px",
-                borderRadius: 10,
-                border: "1px solid var(--text-muted)",
-                background: "transparent",
-                color: "var(--text)",
-                cursor: "pointer",
-              }}
-            >
-              connect
-            </button>
-          );
-        }
-
-        return (
-          <button
-            onClick={openChainModal}
-            style={{
-              fontSize: 6,
-              fontFamily: "'Press Start 2P', monospace",
-              letterSpacing: 1,
-              padding: "4px 8px",
-              borderRadius: 8,
-              border: "1px solid var(--text-muted)",
-              background: "transparent",
-              color: "var(--text-muted)",
-              cursor: "pointer",
-            }}
-          >
-            {chain.name?.replace("Celo ", "").replace(" Testnet", "")}
-          </button>
-        );
+    <button
+      onClick={logout}
+      style={{
+        fontSize: 6,
+        fontFamily: "'Press Start 2P', monospace",
+        letterSpacing: 1,
+        padding: "4px 8px",
+        borderRadius: 8,
+        border: "1px solid var(--text-muted)",
+        background: "transparent",
+        color: "var(--text-muted)",
+        cursor: "pointer",
       }}
-    </RainbowKitConnectButton.Custom>
+    >
+      {chain?.name?.replace("Celo ", "").replace(" Testnet", "") || "connected"}
+    </button>
   );
 }

@@ -17,7 +17,7 @@ describe('SuccessState', () => {
 
   it('shows a random title from the list', () => {
     render(<SuccessState {...defaultProps} />)
-    const titles = ['POWER MOVE', 'NAILED IT', 'BIG FLEX', 'GG WP']
+    const titles = ['POWER MOVE', 'NAILED IT', 'BIG FLEX', 'NICE ONE']
     const foundTitle = titles.some((t) => screen.queryByText(t) !== null)
     expect(foundTitle).toBe(true)
   })
