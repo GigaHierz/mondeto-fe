@@ -6,7 +6,7 @@ import { ZERO_ADDRESS } from '@/constants/map'
 import { computeEmpires } from '@/lib/pixelMath'
 import { formatUSDT } from '@/lib/colorUtils'
 
-export type LeaderboardTab = 'AREA' | 'EMPIRE' | 'HOT_PX'
+export type LeaderboardTab = 'AREA' | 'EMPIRE' | 'TYCOONS'
 
 export interface LeaderboardEntry {
   rank: number
@@ -126,5 +126,5 @@ export function useLeaderboard(pixelData: PixelView[], profilesMap?: Map<string,
       })
   }, [pixelData, profilesMap])
 
-  return { area, empire, hotPx }
+  return { area, empire, tycoons: hotPx }
 }

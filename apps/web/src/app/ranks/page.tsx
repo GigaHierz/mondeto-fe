@@ -86,12 +86,12 @@ export default function RanksPage() {
     load()
   }, [publicClient])
 
-  const { area, empire, hotPx } = useLeaderboard(pixelData, profilesMap)
+  const { area, empire, tycoons } = useLeaderboard(pixelData, profilesMap)
 
   const dataMap: Record<LeaderboardTab, typeof area> = {
     AREA: area,
     EMPIRE: empire,
-    HOT_PX: hotPx,
+    TYCOONS: tycoons,
   }
 
   const currentData = dataMap[activeTab]

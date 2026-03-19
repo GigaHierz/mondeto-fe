@@ -7,45 +7,80 @@ interface LeaderboardTabsProps {
   onTabChange: (tab: LeaderboardTab) => void
 }
 
-const tabs: LeaderboardTab[] = ['AREA', 'EMPIRE', 'HOT_PX']
+const tabConfig: { key: LeaderboardTab; label: string; description: string }[] = [
+  {
+    key: 'AREA',
+    label: 'LAND',
+    description: 'Who owns the most pixels on the map.',
+  },
+  {
+    key: 'EMPIRE',
+    label: 'EMPIRE',
+    description: 'Largest connected territory held by a single owner.',
+  },
+  {
+    key: 'TYCOONS',
+    label: 'TYCOONS',
+    description: 'Who holds the single most valuable pixel.',
+  },
+]
 
 export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardTabsProps) {
+  const active = tabConfig.find(t => t.key === activeTab)
+
   return (
-    <div
-      style={{
-        height: 30,
-        background: 'var(--card-bg)',
-        borderBottom: '1px solid var(--border)',
-        display: 'flex',
-      }}
-    >
-      {tabs.map((tab) => {
-        const isActive = tab === activeTab
-        return (
-          <button
-            key={tab}
-            onClick={() => onTabChange(tab)}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontSize: 7,
-              fontFamily: 'monospace',
-              letterSpacing: 0.3,
-              lineHeight: '30px',
-              cursor: 'pointer',
-              color: isActive ? 'var(--text)' : 'var(--text-muted)',
-              background: 'none',
-              border: 'none',
-              borderBottomWidth: 2,
-              borderBottomStyle: 'solid',
-              borderBottomColor: isActive ? 'var(--text)' : 'transparent',
-              padding: 0,
-            }}
-          >
-            {tab}
-          </button>
-        )
-      })}
+    <div>
+      <div
+        style={{
+          height: 30,
+          background: 'var(--card-bg)',
+          borderBottom: '1px solid var(--border)',
+          display: 'flex',
+        }}
+      >
+        {tabConfig.map((tab) => {
+          const isActive = tab.key === activeTab
+          return (
+            <button
+              key={tab.key}
+              onClick={() => onTabChange(tab.key)}
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                fontSize: 7,
+                fontFamily: 'monospace',
+                letterSpacing: 0.3,
+                lineHeight: '30px',
+                cursor: 'pointer',
+                color: isActive ? 'var(--text)' : 'var(--text-muted)',
+                background: 'none',
+                border: 'none',
+                borderBottomWidth: 2,
+                borderBottomStyle: 'solid',
+                borderBottomColor: isActive ? 'var(--text)' : 'transparent',
+                padding: 0,
+              }}
+            >
+              {tab.label}
+            </button>
+          )
+        })}
+      </div>
+      {active && (
+        <div
+          style={{
+            padding: '6px 12px',
+            fontSize: 7,
+            color: 'var(--text-muted)',
+            fontFamily: 'monospace',
+            letterSpacing: 0.3,
+            borderBottom: '1px solid var(--border)',
+            background: 'var(--card-bg)',
+          }}
+        >
+          {active.description}
+        </div>
+      )}
     </div>
   )
 }

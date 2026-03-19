@@ -67,13 +67,13 @@ describe('useLeaderboard', () => {
     ]
 
     const { result } = renderHook(() => useLeaderboard(data))
-    const { hotPx } = result.current
+    const { tycoons } = result.current
 
-    expect(hotPx).toHaveLength(2)
+    expect(tycoons).toHaveLength(2)
     // Alice's best is 100000, Bob's is 80000
-    expect(hotPx[0].owner).toBe('0xAlice')
-    expect(hotPx[0].unit).toBe('USDT')
-    expect(hotPx[1].owner).toBe('0xBob')
+    expect(tycoons[0].owner).toBe('0xAlice')
+    expect(tycoons[0].unit).toBe('USDT')
+    expect(tycoons[1].owner).toBe('0xBob')
   })
 
   it('excludes ZERO_ADDRESS pixels', () => {
