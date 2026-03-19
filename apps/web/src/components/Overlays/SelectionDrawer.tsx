@@ -123,16 +123,14 @@ export default function SelectionDrawer({
 
       {/* TX in progress */}
       {isTxActive && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 14px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div>
-              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>THE DAMAGE</div>
-              <div style={{ fontSize: 18, fontWeight: 500, color: 'var(--text)' }}>{formatUSDT(totalPrice)} USDT</div>
-            </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 20px', maxWidth: 500, margin: '0 auto', width: '100%' }}>
+          <div style={{ textAlign: 'center', marginBottom: 8 }}>
+            <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 6 }}>THE DAMAGE</div>
+            <div style={{ fontSize: 18, fontFamily: "'Press Start 2P', monospace", color: 'var(--text)' }}>{formatUSDT(totalPrice)} <span style={{ fontSize: 9, color: 'var(--text-muted)' }}>USDT</span></div>
           </div>
           <TxProgress step={txStep} />
           <div style={{ flex: 1 }} />
-          <button disabled style={{ background: 'var(--button-bg)', color: 'var(--button-text)', opacity: 0.5, borderRadius: 11, padding: 12, fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 2, textAlign: 'center', width: '100%', border: 'none', pointerEvents: 'none' }}>
+          <button disabled style={{ background: 'var(--button-bg)', color: 'var(--button-text)', opacity: 0.5, borderRadius: 11, padding: 14, fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 2, textAlign: 'center', width: '100%', border: 'none', pointerEvents: 'none' }}>
             [ MAKING MOVES... ]
           </button>
         </div>
@@ -151,12 +149,12 @@ export default function SelectionDrawer({
               {pixelCount} spots · {ownerCount > 0 ? `${ownerCount} player${ownerCount > 1 ? 's' : ''} to outbid` : 'free real estate'}
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6, flexShrink: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8, flexShrink: 0 }}>
             <button
               onClick={onClear}
-              style={{ fontSize: 6, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 8, padding: '3px 8px', cursor: 'pointer', background: 'transparent', letterSpacing: 1 }}
+              style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--error)', border: '1px solid var(--error)', borderRadius: 11, padding: '8px 20px', cursor: 'pointer', background: 'transparent', letterSpacing: 2 }}
             >
-              x clear
+              [ CLEAR ]
             </button>
           </div>
 

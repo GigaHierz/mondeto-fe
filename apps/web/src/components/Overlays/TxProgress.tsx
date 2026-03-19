@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
 import type { TxStep } from '@/hooks/useBuyPixels'
+
+const PF = "'Press Start 2P', monospace"
 
 interface TxProgressProps {
   step: TxStep
@@ -45,16 +46,16 @@ function StepCircle({ state }: { state: StepState }) {
     return (
       <div
         style={{
-          width: 16,
-          height: 16,
+          width: 18,
+          height: 18,
           borderRadius: '50%',
-          background: '#2d6a4f',
+          background: 'var(--button-bg)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <span style={{ fontSize: 9, color: 'white' }}>✓</span>
+        <span style={{ fontSize: 8, fontFamily: PF, color: 'var(--button-text)' }}>ok</span>
       </div>
     )
   }
@@ -64,10 +65,10 @@ function StepCircle({ state }: { state: StepState }) {
       <div
         className="animate-spin-slow"
         style={{
-          width: 16,
-          height: 16,
+          width: 18,
+          height: 18,
           borderRadius: '50%',
-          border: '1.5px solid var(--text)',
+          border: '2px solid var(--text)',
           borderTopColor: 'transparent',
         }}
       />
@@ -77,10 +78,11 @@ function StepCircle({ state }: { state: StepState }) {
   return (
     <div
       style={{
-        width: 16,
-        height: 16,
+        width: 18,
+        height: 18,
         borderRadius: '50%',
-        border: '1.5px solid var(--border)',
+        border: '2px solid var(--border)',
+        opacity: 0.4,
       }}
     />
   )
@@ -88,18 +90,18 @@ function StepCircle({ state }: { state: StepState }) {
 
 export default function TxProgress({ step }: TxProgressProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 14 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '8px 0' }}>
       {steps.map((s) => {
         const state = s.getState(step)
         const color =
-          state === 'done' ? '#2d6a4f' : state === 'active' ? 'var(--text)' : 'var(--text-muted)'
+          state === 'done' ? 'var(--text)' : state === 'active' ? 'var(--text)' : 'var(--text-muted)'
         return (
           <div
             key={s.label}
             style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}
           >
             <StepCircle state={state} />
-            <span style={{ fontSize: 8, color, letterSpacing: 0.5 }}>{s.label}</span>
+            <span style={{ fontSize: 7, fontFamily: PF, color, letterSpacing: 1 }}>{s.label}</span>
           </div>
         )
       })}
