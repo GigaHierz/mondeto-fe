@@ -80,7 +80,7 @@ export default function ProfilePage() {
     '[ SAVE ]'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 48 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 56 }}>
       <TopBar title="PROFILE" />
       <div
         style={{

@@ -10,14 +10,19 @@ export interface UseSelectionReturn {
   clearSelection: () => void
   pixelCount: number
   isAtLimit: boolean
+  limitBump: number
 }
 
 export function useSelection(): UseSelectionReturn {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const [limitBump, setLimitBump] = useState(0)
 
   const addPixel = useCallback((id: number) => {
     setSelectedIds(prev => {
-      if (prev.size >= MAX_SELECT) return prev
+      if (prev.size >= MAX_SELECT) {
+        setLimitBump(b => b + 1)
+        return prev
+      }
       const next = new Set(prev)
       next.add(id)
       return next
@@ -37,6 +42,7 @@ export function useSelection(): UseSelectionReturn {
       const next = new Set(prev)
       if (next.has(id)) next.delete(id)
       else if (next.size < MAX_SELECT) next.add(id)
+      else setLimitBump(b => b + 1)
       return next
     })
   }, [])
@@ -53,5 +59,6 @@ export function useSelection(): UseSelectionReturn {
     clearSelection,
     pixelCount: selectedIds.size,
     isAtLimit: selectedIds.size >= MAX_SELECT,
+    limitBump,
   }
 }

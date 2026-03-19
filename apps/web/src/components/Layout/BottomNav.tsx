@@ -11,7 +11,7 @@ const navItems = [
     label: 'RANKS',
     href: '/ranks',
     icon: (
-      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 9H4.5a2.5 2.5 0 010-5H6" />
         <path d="M18 9h1.5a2.5 2.5 0 000-5H18" />
         <path d="M4 22h16" />
@@ -25,7 +25,7 @@ const navItems = [
     label: 'MAP',
     href: '/',
     icon: (
-      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
         <circle cx={12} cy={12} r={10} />
         <path d="M2 12h20" />
         <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
@@ -36,7 +36,7 @@ const navItems = [
     label: 'PROFILE',
     href: '/profile',
     icon: (
-      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <svg viewBox="0 0 24 24" width={20} height={20} fill="none" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
         <circle cx={12} cy={7} r={4} />
       </svg>
@@ -81,7 +81,8 @@ export default function BottomNav({ activeRoute }: BottomNavProps) {
             <span style={{ stroke: strokeColor, display: 'flex' }}>{item.icon}</span>
             <span
               style={{
-                fontSize: 7,
+                fontSize: 8,
+                fontWeight: 600,
                 fontFamily: "'IBM Plex Mono', monospace",
                 letterSpacing: 0.5,
                 color: labelColor,

@@ -39,6 +39,7 @@ export default function Home() {
     removePixel,
     clearSelection,
     pixelCount,
+    limitBump,
   } = useSelection()
 
   const { totalPrice, isLoading: priceLoading } = usePixelPrice(selectedIds)
@@ -102,21 +103,13 @@ export default function Home() {
 
   const effectiveAddr = addrStr || '0xYOUR000000000000000000000000000000000001'
 
-  // Skip pixels already owned by the current user
-  const isOwnPixel = useCallback((id: number) => {
-    const px = pixelDataRef.current[id]
-    return px && px.owner.toLowerCase() === effectiveAddr.toLowerCase()
-  }, [effectiveAddr, pixelDataRef])
-
   const handleAddPixel = useCallback((id: number) => {
-    if (isOwnPixel(id)) return
     addPixel(id)
-  }, [addPixel, isOwnPixel])
+  }, [addPixel])
 
   const handleTogglePixel = useCallback((id: number) => {
-    if (isOwnPixel(id)) return
     togglePixel(id)
-  }, [togglePixel, isOwnPixel])
+  }, [togglePixel])
 
   const handleInspectPixel = useCallback((id: number) => {
     setTappedPixelId(id)
@@ -241,7 +234,7 @@ export default function Home() {
       <div
         style={{
           position: 'absolute',
-          top: 48,
+          top: 56,
           bottom: 56,
           left: 0,
           right: 0,
@@ -259,6 +252,7 @@ export default function Home() {
           onScaleChange={handleScaleChange}
           version={version}
           loadState={loadState}
+          userAddress={addrStr}
         />
       </div>
 
@@ -278,18 +272,18 @@ export default function Home() {
         <button
           onClick={() => canvasRef.current?.zoomIn()}
           style={{
-            width: 32, height: 32, borderRadius: 8,
+            width: 40, height: 40, borderRadius: 8,
             background: 'var(--card-bg)', border: '1px solid var(--border)',
-            fontSize: 16, color: 'var(--text)', cursor: 'pointer',
+            fontSize: 20, fontWeight: 700, color: 'var(--text)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >+</button>
         <button
           onClick={() => canvasRef.current?.zoomOut()}
           style={{
-            width: 32, height: 32, borderRadius: 8,
+            width: 40, height: 40, borderRadius: 8,
             background: 'var(--card-bg)', border: '1px solid var(--border)',
-            fontSize: 16, color: 'var(--text)', cursor: 'pointer',
+            fontSize: 20, fontWeight: 700, color: 'var(--text)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >{'\u2212'}</button>
@@ -300,6 +294,7 @@ export default function Home() {
         visible={isPaintMode}
         scale={Math.round(currentScale)}
         pixelCount={pixelCount}
+        limitBump={limitBump}
       />
 
       {/* Heatmap legend */}

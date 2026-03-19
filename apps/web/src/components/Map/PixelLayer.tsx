@@ -25,40 +25,38 @@ function interpolateWarmGradient(ratio: number): string {
   return `rgb(${r},${g},${b})`
 }
 
+// Brighten a hex color by a factor (1.0 = no change, 1.3 = 30% brighter)
+function brighten(hex: string, factor: number): string {
+  const m = hex.match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
+  if (!m) return hex
+  const r = Math.min(255, Math.round(parseInt(m[1], 16) * factor))
+  const g = Math.min(255, Math.round(parseInt(m[2], 16) * factor))
+  const b = Math.min(255, Math.round(parseInt(m[3], 16) * factor))
+  return `rgb(${r},${g},${b})`
+}
+
 export function drawPixels(
   ctx: CanvasRenderingContext2D,
   pixelData: PixelView[],
   isHeatmap: boolean,
   isDark: boolean,
+  userAddress?: string,
 ) {
   ctx.clearRect(0, 0, WIDTH, HEIGHT)
 
   const gap = TILE_GAP
-  const r = TILE_RADIUS
+  const rad = TILE_RADIUS
+  const userAddr = userAddress?.toLowerCase()
 
   if (isHeatmap) {
-    let maxPrice = 0n
+    // Find max sale count for gradient normalization
+    let maxSales = 0
     for (let i = 0; i < pixelData.length; i++) {
-      if (pixelData[i].saleCount > 0 && pixelData[i].currentPrice > maxPrice) {
-        maxPrice = pixelData[i].currentPrice
+      if (pixelData[i].saleCount > maxSales) {
+        maxSales = pixelData[i].saleCount
       }
     }
-    const maxPriceNum = Number(maxPrice)
 
-    for (let i = 0; i < pixelData.length; i++) {
-      if (!isLand(i)) continue
-      const pixel = pixelData[i]
-      if (pixel.saleCount === 0) continue
-      const { x, y } = idToXY(i)
-      const ratio = maxPriceNum > 0 ? Number(pixel.currentPrice) / maxPriceNum : 0
-      ctx.fillStyle = interpolateWarmGradient(ratio)
-      ctx.beginPath()
-      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, r)
-      ctx.fill()
-    }
-  } else {
-    // Rounded rectangle tiles — matching the dot-matrix reference
-    // Dark mode: bright white dots. Light mode: dark gray dots.
     const unownedColor = isDark ? '#dddddd' : '#555555'
 
     for (let i = 0; i < pixelData.length; i++) {
@@ -66,15 +64,48 @@ export function drawPixels(
       const pixel = pixelData[i]
       const { x, y } = idToXY(i)
 
-      if (pixel.owner !== ZERO_ADDRESS) {
-        ctx.fillStyle = pixel.color || '#888888'
+      if (pixel.saleCount === 0) {
+        // Unowned land — same subtle color as normal map
+        ctx.fillStyle = unownedColor
+      } else {
+        // Owned land — gradient by sale count for clear differentiation
+        const ratio = maxSales > 0 ? pixel.saleCount / maxSales : 0
+        ctx.fillStyle = interpolateWarmGradient(ratio)
+      }
+
+      ctx.beginPath()
+      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
+      ctx.fill()
+    }
+  } else {
+    const unownedColor = isDark ? '#dddddd' : '#555555'
+
+    for (let i = 0; i < pixelData.length; i++) {
+      if (!isLand(i)) continue
+      const pixel = pixelData[i]
+      const { x, y } = idToXY(i)
+      const isOwned = pixel.owner !== ZERO_ADDRESS
+      const isMine = userAddr && isOwned && pixel.owner.toLowerCase() === userAddr
+
+      if (isOwned) {
+        // Brighten own pixels
+        ctx.fillStyle = isMine ? brighten(pixel.color || '#888888', 1.3) : (pixel.color || '#888888')
       } else {
         ctx.fillStyle = unownedColor
       }
 
       ctx.beginPath()
-      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, r)
+      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
       ctx.fill()
+
+      // Draw brighter edge for own pixels
+      if (isMine) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'
+        ctx.lineWidth = 0.06
+        ctx.beginPath()
+        ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
+        ctx.stroke()
+      }
     }
   }
 }

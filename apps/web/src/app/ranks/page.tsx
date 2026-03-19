@@ -99,7 +99,7 @@ export default function RanksPage() {
   const hasOwned = currentData.length > 0
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 48 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 56 }}>
       <TopBar title="RANKS" />
       <LeaderboardTabs activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setShowAll(false) }} />
       <div

@@ -10,6 +10,7 @@
 - [x] Map updates after purchase with on-chain data
 - [x] Selection drawer with breakdown by owner (name, link, price)
 - [x] Balance check before buy, own-pixel warning
+- [x] Intro splash screen
 
 ### Contract Integration
 - [x] Full ABI from auto-generated export (Mondeto.sol)
@@ -22,137 +23,160 @@
 
 ### UI/UX
 - [x] Dark mode (default, neon green) + light mode (cream) toggle
-- [x] Intro splash screen with game explanation
-- [x] Leaderboard: AREA / EMPIRE / HOT_PX with real on-chain data
+- [x] Leaderboard: AREA / EMPIRE / HOT_PX with real on-chain data + profile names + clickable URLs
 - [x] Profile page: avatar, stats (pixels, balance, rank), name/URL/color
 - [x] Heatmap mode (yellow→red warm gradient)
-- [x] Clickable URLs everywhere (leaderboard, drawer, pixel info)
 - [x] Wallet: RainbowKit + MiniPay auto-connect
-- [x] Real USDT balance from wallet
 - [x] +/- zoom buttons
 
 ### Infrastructure
 - [x] Vitest test suite (117 tests)
-- [x] Vercel deployment (auto from push)
-- [x] Turborepo monorepo (web + contracts)
-- [x] IBM Plex Mono, CSS variables theme system
+- [x] Vercel deployment
+- [x] Turborepo monorepo
 
 ---
 
-## Phase 1: Polish & UX (next up)
+## Phase 1: Style Hardening & Defaults (quick wins)
 
-### 1.1 — Pixel Info Panel
-- [ ] Tap owned pixel in pan mode → show owner name, link, price, sale count
-- [ ] Fetch profile from contract for tapped pixel
-- [ ] "Buy this pixel" button pre-fills selection
-- [ ] Long-press in paint mode → inspect pixel
+### 1.1 — Bolder UI
+- [ ] TopBar: 56px height, 16-18px title, fontWeight 600
+- [ ] PaintModeBanner: 28-32px height, larger text, bolder
+- [ ] BottomNav: thicker icon strokes (2.5), bolder labels
+- [ ] Zoom buttons: 40x40, 20px font, bolder
+- [ ] All elements feel more substantial and touchable
 
-### 1.2 — Price Display
-- [ ] Show real on-chain prices in drawer (currently shows 0.00 for mock prices)
-- [ ] Use priceCalc.ts with contract config() data
-- [ ] Display price per pixel in breakdown
-
-### 1.3 — Error Handling
-- [ ] Specific error messages: NotLand, insufficient allowance, user rejected
-- [ ] Retry button after failed transaction
-- [ ] Show tx hash link to Blockscout on success
-
-### 1.4 — Responsive Design
-- [ ] Mobile-first layout testing
-- [ ] Touch targets ≥ 44px
-- [ ] Map centered properly on all screen sizes
-- [ ] MiniPay in-app browser testing
+### 1.2 — Default Zoom & Chain
+- [ ] Initial zoom = 4x (as if pressing + twice)
+- [ ] Auto-connect to Celo Sepolia (testnet default)
+- [ ] TODO: flip to mainnet before launch
 
 ---
 
-## Phase 2: Data & Performance
+## Phase 2: Wallet Provider Swap
 
-### 2.1 — Remove Mock Dependency
-- [ ] All data from contract (no more mock.ts in production)
-- [ ] Feature flag: `NEXT_PUBLIC_USE_MOCK=true` for development only
-- [ ] Cached contract reads with React Query stale times
+### 2.1 — Replace RainbowKit with Privy (or ThirdWeb)
+- [ ] Remove @rainbow-me/rainbowkit
+- [ ] Install Privy (@privy-io/react-auth) or ThirdWeb
+- [ ] Custom styled login buttons matching dark/light theme
+- [ ] Social login (email/Google) via Privy
+- [ ] MiniPay injected wallet compat preserved
+- [ ] Chain indicator + auto-switch
 
-### 2.2 — Efficient Data Loading
-- [ ] Load pixel data incrementally (visible viewport only)
-- [ ] Cache getPixelBatch results
-- [ ] Optimistic updates after buy (show immediately, confirm later)
-- [ ] Event listener for PixelsPurchased → auto-refresh affected area
+**Why Privy:** Customizable buttons, social login, embedded wallets, good Celo support
+**Why ThirdWeb:** Highly customizable ConnectButton, themes, Celo support
+**Decision needed:** Privy vs ThirdWeb
 
-### 2.3 — Price Computation
-- [ ] Fetch config() once at startup, cache
-- [ ] Compute all prices client-side from saleCount + config
-- [ ] Show price on hover/tap for any pixel
+---
+
+## Phase 3: Game Mechanics
+
+### 3.1 — Own Pixel Highlight (Priority 1)
+- [ ] Connected wallet's pixels rendered brighter (stud + edges)
+- [ ] Separate ownership pulse canvas (2s breathing glow)
+- [ ] Immediately obvious which pixels are yours
+- [ ] Skip if wallet not connected
+
+### 3.2 — Territory Labels (Priority 2)
+- [ ] BFS finds largest cluster per owner
+- [ ] Float profile label over centroid (cluster ≥ 10 pixels)
+- [ ] HTML overlay, scales with zoom, visible at 3x+
+- [ ] Top owners (cluster ≥ 20) also get labels, max 8 visible
+- [ ] Collision avoidance for overlapping labels
+
+### 3.3 — Real-time Polling (Priority 3)
+- [ ] Poll getPixelBatch every 30s
+- [ ] Detect ownership changes
+- [ ] Flash animation: white → owner color (1.2s)
+- [ ] Separate flash canvas layer
+- [ ] World feels alive without websockets
+
+### 3.4 — Price Decay Tooltip (Priority 4, low)
+- [ ] Hover/tap pixel → show price + "halves in Xd"
+- [ ] Creates FOMO, educates on price mechanics
+- [ ] Only on owned pixels, 300ms delay
+
+---
+
+## Phase 4: Data & Performance
+
+### 4.1 — Remove Mock Dependency
+- [ ] Feature flag: NEXT_PUBLIC_USE_MOCK for dev only
+- [ ] All production reads from contract
+- [ ] Cached contract reads with stale times
+
+### 4.2 — Efficient Loading
+- [ ] Viewport-based pixel loading
+- [ ] Optimistic updates after buy
+- [ ] PixelsPurchased event listener → auto-refresh
+
+### 4.3 — Real Prices Everywhere
+- [ ] Fetch config() once, cache
+- [ ] Client-side price computation for all pixels
+- [ ] Drawer shows real per-pixel prices
 - [ ] Heatmap uses real computed prices
 
 ---
 
-## Phase 3: Social & Discovery
+## Phase 5: Social & Discovery
 
-### 3.1 — Owner Directory
-- [ ] Browse all pixel owners with their links
-- [ ] Filter by region/continent
-- [ ] Search by name or address
+### 5.1 — Owner Directory
+- [ ] Browse all owners with links
+- [ ] Filter by region
+- [ ] Search by name/address
 
-### 3.2 — Pixel Detail View
-- [ ] Full-screen pixel info: owner, history, price chart
-- [ ] Link to owner's profile
-- [ ] "Buy this pixel" CTA
-
-### 3.3 — Activity Feed
-- [ ] Recent purchases (from PixelsPurchased events)
+### 5.2 — Activity Feed
+- [ ] Recent purchases from events
 - [ ] "X just bought 5 pixels in Europe"
-- [ ] Notifications for your pixels being bought
+- [ ] Your-pixel-bought notifications
 
 ---
 
-## Phase 4: Mainnet Launch
+## Phase 6: Mainnet Launch
 
-### 4.1 — Contract Deployment
+### 6.1 — Deploy
 - [ ] Karl deploys to Celo Mainnet
-- [ ] Update MONDETO_ADDRESS in contract.ts
-- [ ] Verify USDT token address for mainnet
-- [ ] Test full flow on mainnet
+- [ ] Update contract address + USDT address
+- [ ] Flip default chain from Sepolia to Mainnet
+- [ ] Test full flow
 
-### 4.2 — Production Hardening
+### 6.2 — Harden
 - [ ] Remove test-contract page
-- [ ] Remove mock data fallback (or gate behind env var)
-- [ ] Error boundary for contract failures
-- [ ] Rate limiting on RPC calls
-- [ ] Analytics (pixel purchases, page views)
+- [ ] Error boundaries
+- [ ] Analytics
+- [ ] Rate limiting
 
-### 4.3 — MiniPay Submission
+### 6.3 — MiniPay
 - [ ] Test in MiniPay browser
-- [ ] Ensure auto-connect works
-- [ ] Verify USDT approve flow in MiniPay
-- [ ] Submit to MiniPay app directory
+- [ ] Submit to MiniPay directory
 
 ---
 
-## Phase 5: Growth Features
+## Phase 7: Growth
 
-### 5.1 — Gamification
-- [ ] Prizes for top leaderboard positions
-- [ ] Achievement badges (first pixel, first continent, etc.)
-- [ ] Time-limited events (land rush, discount periods)
-
-### 5.2 — Community
-- [ ] Share pixel map screenshot
+- [ ] Leaderboard prizes
+- [ ] Achievement badges
+- [ ] Continent zoom presets
+- [ ] Mini-map overview
+- [ ] Pixel grouping (buy rectangles)
+- [ ] Share map screenshot
 - [ ] Referral links
-- [ ] Governance voting with pixel ownership
-
-### 5.3 — Advanced Map
-- [ ] Continent zoom presets (tap "Europe" → zoom there)
-- [ ] Mini-map overview in corner
-- [ ] Pixel grouping (buy rectangles in one tx)
-- [ ] Animation when pixels change ownership
 
 ---
 
 ## Technical Debt
 
-- [ ] Update all 117 tests to use contract data instead of mock assertions
-- [ ] Extract shared profile-fetching logic (used in leaderboard + drawer + profile page)
-- [ ] Move inline styles to CSS modules or Tailwind classes
-- [ ] Add E2E tests (Playwright)
-- [ ] Accessibility audit (ARIA labels, keyboard nav)
-- [ ] Bundle size optimization (tree-shake unused contract ABI entries)
+- [ ] Extract shared profile-fetching (leaderboard + drawer + profile)
+- [ ] Move inline styles to CSS modules
+- [ ] Update tests for contract data
+- [ ] E2E tests (Playwright)
+- [ ] Accessibility audit
+- [ ] Bundle size optimization
+
+---
+
+## Do Not Do (out of scope)
+
+- Push notifications
+- WebSockets (polling is fine)
+- Sound effects
+- Real-time leaderboard (polling is map-only)

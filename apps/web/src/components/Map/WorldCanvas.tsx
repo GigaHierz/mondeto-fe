@@ -17,6 +17,8 @@ import { idToXY } from '@/lib/pixelMath'
 import type { PixelView } from '@/lib/mock'
 import type { LoadState } from '@/hooks/usePixelMap'
 import PixelLayer, { drawPixels } from './PixelLayer'
+import OwnershipPulse from './OwnershipPulse'
+import TerritoryLabels from './TerritoryLabels'
 import SelectionLayer from './SelectionLayer'
 
 export interface WorldCanvasRef {
@@ -37,6 +39,8 @@ interface WorldCanvasProps {
   onScaleChange?: (scale: number) => void
   loadState: LoadState
   version?: number
+  userAddress?: string
+  profilesMap?: Map<string, { label: string; url?: string; color?: string }>
 }
 
 interface InnerCanvasProps extends WorldCanvasProps {
@@ -55,6 +59,8 @@ function InnerCanvas({
   onScaleChange,
   pixelCanvasRef,
   version,
+  userAddress,
+  profilesMap,
 }: InnerCanvasProps) {
   const context = useTransformContext()
   const prevScaleRef = useRef(1)
@@ -80,8 +86,8 @@ function InnerCanvas({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    drawPixels(ctx, pixelData, isHeatmap, isDark)
-  }, [pixelData, isHeatmap, isDark, pixelCanvasRef, version])
+    drawPixels(ctx, pixelData, isHeatmap, isDark, userAddress)
+  }, [pixelData, isHeatmap, isDark, pixelCanvasRef, version, userAddress])
 
   return (
     <div style={{ position: 'relative', width: WIDTH, height: HEIGHT }}>
@@ -91,6 +97,8 @@ function InnerCanvas({
         isDark={isDark}
         canvasRef={pixelCanvasRef}
       />
+      <OwnershipPulse pixelData={pixelData} userAddress={userAddress} />
+      <TerritoryLabels pixelData={pixelData} scale={scale} profilesMap={profilesMap} />
       <SelectionLayer
         selectedIds={selectedIds}
         isPaintMode={isPaintMode}
@@ -165,7 +173,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
       <TransformWrapper
         minScale={1}
         maxScale={40}
-        initialScale={2}
+        initialScale={4}
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
         doubleClick={{ disabled: true }}

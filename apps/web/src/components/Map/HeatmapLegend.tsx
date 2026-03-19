@@ -38,10 +38,10 @@ export default function HeatmapLegend({ visible }: HeatmapLegendProps) {
         }}
       >
         <span style={{ fontSize: 6, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-          cheap
+          1 sale
         </span>
         <span style={{ fontSize: 6, color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-          hot
+          most sold
         </span>
       </div>
     </div>
