@@ -5,7 +5,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { injectedWallet } from "@rainbow-me/rainbowkit/wallets";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { WagmiProvider, createConfig, http, useConnect, useChainId, useSwitchChain } from "wagmi";
+import { WagmiProvider, createConfig, http, useConnect } from "wagmi";
 import { celo, celoSepolia } from "wagmi/chains";
 import { ConnectButton } from "./connect-button";
 
@@ -37,8 +37,6 @@ const queryClient = new QueryClient();
 
 function WalletProviderInner({ children }: { children: React.ReactNode }) {
   const { connect, connectors } = useConnect();
-  const chainId = useChainId();
-  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     // Check if the app is running inside MiniPay
@@ -50,14 +48,6 @@ function WalletProviderInner({ children }: { children: React.ReactNode }) {
       }
     }
   }, [connect, connectors]);
-
-  // Auto-prompt chain switch if user is on wrong network
-  // TODO: flip target to celo.id before production launch
-  useEffect(() => {
-    if (chainId && chainId !== celoSepolia.id) {
-      switchChain?.({ chainId: celoSepolia.id });
-    }
-  }, [chainId, switchChain]);
 
   return <>{children}</>;
 }
