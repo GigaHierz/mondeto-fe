@@ -17,7 +17,11 @@ export default function PaintModeBanner({
 }: PaintModeBannerProps) {
   const isAtLimit = pixelCount >= MAX_SELECT
   const [shaking, setShaking] = useState(false)
+  const [flash, setFlash] = useState(false)
+  const [floats, setFloats] = useState<number[]>([])
   const prevBumpRef = useRef(limitBump)
+  const prevCountRef = useRef(pixelCount)
+  const floatIdRef = useRef(0)
 
   // Trigger shake each time limitBump increments
   useEffect(() => {
@@ -29,6 +33,26 @@ export default function PaintModeBanner({
     }
     prevBumpRef.current = limitBump
   }, [limitBump])
+
+  // Trigger +1 float and flash when count increases
+  useEffect(() => {
+    if (pixelCount > prevCountRef.current && pixelCount > 0) {
+      // Flash the counter
+      setFlash(true)
+      const t = setTimeout(() => setFlash(false), 200)
+
+      // Spawn a floating +1
+      const id = ++floatIdRef.current
+      setFloats(prev => [...prev, id])
+      const t2 = setTimeout(() => {
+        setFloats(prev => prev.filter(f => f !== id))
+      }, 600)
+
+      prevCountRef.current = pixelCount
+      return () => { clearTimeout(t); clearTimeout(t2) }
+    }
+    prevCountRef.current = pixelCount
+  }, [pixelCount])
 
   if (!visible) return null
 
@@ -63,32 +87,55 @@ export default function PaintModeBanner({
         PAINT MODE — drag to select pixels
       </span>
       <span
-        className={shaking ? 'animate-shake' : ''}
-        style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: isAtLimit ? 'var(--error)' : 'var(--text)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-        }}
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 4 }}
       >
-        {isAtLimit && (
+        {/* Floating +1 animations */}
+        {floats.map(id => (
           <span
+            key={id}
             style={{
-              fontSize: 7,
+              position: 'absolute',
+              right: 0,
+              fontSize: 9,
               fontWeight: 700,
-              background: 'var(--error)',
-              color: '#fff',
-              padding: '1px 4px',
-              borderRadius: 3,
-              letterSpacing: 0.5,
+              color: 'var(--text)',
+              pointerEvents: 'none',
+              animation: 'floatUp 0.6s ease-out forwards',
             }}
           >
-            MAX
+            +1
           </span>
-        )}
-        {pixelCount} / {MAX_SELECT}
+        ))}
+        <span
+          className={shaking ? 'animate-shake' : ''}
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: isAtLimit ? 'var(--error)' : 'var(--text)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            transform: flash ? 'scale(1.3)' : 'scale(1)',
+            transition: 'transform 0.15s ease-out',
+          }}
+        >
+          {isAtLimit && (
+            <span
+              style={{
+                fontSize: 7,
+                fontWeight: 700,
+                background: 'var(--error)',
+                color: '#fff',
+                padding: '1px 4px',
+                borderRadius: 3,
+                letterSpacing: 0.5,
+              }}
+            >
+              MAX
+            </span>
+          )}
+          {pixelCount} / {MAX_SELECT}
+        </span>
       </span>
     </div>
   )

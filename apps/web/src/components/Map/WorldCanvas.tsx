@@ -100,7 +100,9 @@ function InnerCanvas({
         canvasRef={pixelCanvasRef}
       />
       <FlashLayer changedIds={changedIds ?? []} pixelData={pixelData} />
-      <TerritoryLabels pixelData={pixelData} scale={scale} profilesMap={profilesMap} />
+      {mapView === 'normal' && (
+        <TerritoryLabels pixelData={pixelData} scale={scale} profilesMap={profilesMap} />
+      )}
       <SelectionLayer
         selectedIds={selectedIds}
         isPaintMode={isPaintMode}

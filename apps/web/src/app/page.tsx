@@ -49,6 +49,7 @@ export default function Home() {
   const walletBalance = useUSDTBalance()
 
   const [drawerProfiles, setDrawerProfiles] = useState<Map<string, { label: string; url: string }>>(new Map())
+  const [mapProfiles, setMapProfiles] = useState<Map<string, { label: string; url?: string; color?: string }>>(new Map())
 
   const [mapView, setMapView] = useState<'normal' | 'heatmap' | 'myland'>('normal')
   const [currentScale, setCurrentScale] = useState(1)
@@ -78,6 +79,49 @@ export default function Home() {
       })
     }
   }, [load, walletBalance.isConnected, publicClient])
+
+  // Fetch profiles for territory labels
+  useEffect(() => {
+    if (!publicClient || loadState !== 'ready') return
+    const owners = new Set<string>()
+    for (const px of pixelDataRef.current) {
+      if (px.owner !== '0x0000000000000000000000000000000000000000') {
+        owners.add(px.owner.toLowerCase())
+      }
+    }
+    if (owners.size === 0) return
+
+    async function fetchProfiles() {
+      const profiles = new Map<string, { label: string; url?: string; color?: string }>()
+      const ownerArr = [...owners]
+      for (let i = 0; i < ownerArr.length; i += 10) {
+        const batch = ownerArr.slice(i, i + 10)
+        const results = await Promise.allSettled(
+          batch.map(addr =>
+            publicClient!.readContract({
+              address: MONDETO_ADDRESS,
+              abi: MONDETO_ABI,
+              functionName: 'profiles',
+              args: [addr as `0x${string}`],
+            })
+          )
+        )
+        for (let j = 0; j < results.length; j++) {
+          const r = results[j]
+          if (r.status === 'fulfilled' && r.value) {
+            const [color, labelBytes, urlBytes] = r.value as [number, unknown, unknown]
+            const label = decodeBytes(labelBytes)
+            const url = decodeBytes(urlBytes)
+            if (label) {
+              profiles.set(batch[j], { label, url, color: color ? uint24ToHex(color) : '' })
+            }
+          }
+        }
+      }
+      setMapProfiles(profiles)
+    }
+    fetchProfiles()
+  }, [publicClient, loadState, version])
 
   // Use real on-chain balance when wallet connected
   useEffect(() => {
@@ -208,11 +252,6 @@ export default function Home() {
     >
       {/* Top bar */}
       <TopBar title="MONDETO">
-        {isPaintMode && pixelCount > 0 && (
-          <span style={{ fontSize: 7, color: 'var(--text-muted)' }}>
-            {pixelCount} selected
-          </span>
-        )}
         {(['heatmap', 'myland'] as const).map(v => (
           <button
             key={v}
@@ -257,6 +296,7 @@ export default function Home() {
           loadState={loadState}
           userAddress={addrStr}
           changedIds={changedIds}
+          profilesMap={mapProfiles}
         />
       </div>
 

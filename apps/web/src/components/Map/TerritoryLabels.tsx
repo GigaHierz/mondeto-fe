@@ -21,7 +21,7 @@ interface LabelInfo {
 
 const MIN_CLUSTER = 10
 const SHOW_LIMIT = 10
-const MIN_SCALE = 3
+const MIN_SCALE = 2.5
 const COLLISION_PX = 20
 
 export default function TerritoryLabels({ pixelData, scale, profilesMap }: TerritoryLabelsProps) {
@@ -90,7 +90,8 @@ export default function TerritoryLabels({ pixelData, scale, profilesMap }: Terri
     return visible
   }, [pixelData, scale, profilesMap])
 
-  if (scale < MIN_SCALE || labels.length === 0) return null
+  if (scale < MIN_SCALE) return null
+  if (labels.length === 0) return null
 
   return (
     <>

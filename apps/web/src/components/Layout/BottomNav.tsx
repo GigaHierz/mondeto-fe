@@ -79,14 +79,6 @@ export default function BottomNav({ activeRoute }: BottomNavProps) {
             }}
           >
             <span style={{ stroke: strokeColor, display: 'flex' }}>{item.icon}</span>
-            <div
-              style={{
-                width: 16,
-                height: 2,
-                borderRadius: 1,
-                background: isActive ? barBg : 'transparent',
-              }}
-            />
           </Link>
         )
       })}
