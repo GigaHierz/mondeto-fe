@@ -205,6 +205,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
         doubleClick={{ step: 0.7 }}
+        limitToBounds={false}
         centerOnInit
         smooth
       >
