@@ -79,17 +79,6 @@ export default function BottomNav({ activeRoute }: BottomNavProps) {
             }}
           >
             <span style={{ stroke: strokeColor, display: 'flex' }}>{item.icon}</span>
-            <span
-              style={{
-                fontSize: 8,
-                fontWeight: 600,
-                fontFamily: "'IBM Plex Mono', monospace",
-                letterSpacing: 0.5,
-                color: labelColor,
-              }}
-            >
-              {item.label}
-            </span>
             <div
               style={{
                 width: 16,
