@@ -5,13 +5,15 @@ import { idToXY } from '@/lib/pixelMath'
 import { isLand } from '@/lib/landMask'
 import type { PixelView } from '@/lib/mock'
 
-interface OwnershipPulseProps {
+const S = 4
+
+interface OwnerMarkersProps {
   pixelData: PixelView[]
   userAddress?: string
   isDark?: boolean
 }
 
-export default function OwnershipPulse({ pixelData, userAddress, isDark = true }: OwnershipPulseProps) {
+export default function OwnerMarkers({ pixelData, userAddress, isDark = true }: OwnerMarkersProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number>(0)
 
@@ -23,12 +25,12 @@ export default function OwnershipPulse({ pixelData, userAddress, isDark = true }
     if (!ctx) return
 
     const addr = userAddress.toLowerCase()
-    const accent = isDark ? [0, 255, 65] : [26, 26, 26] // #00ff41 or #1a1a1a
 
-    // Collect owned pixel positions
+    // Collect own pixel positions once
     const ownedPixels: { x: number; y: number }[] = []
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
+      if (pixelData[i].owner === ZERO_ADDRESS) continue
       if (pixelData[i].owner.toLowerCase() === addr) {
         ownedPixels.push(idToXY(i))
       }
@@ -36,23 +38,37 @@ export default function OwnershipPulse({ pixelData, userAddress, isDark = true }
 
     if (ownedPixels.length === 0) return
 
+    const accentRGB = isDark ? [0, 255, 65] : [34, 34, 34]
+
     const animate = () => {
-      ctx.clearRect(0, 0, WIDTH, HEIGHT)
-      // Pulsing outer glow: expands and fades over 2s cycle
+      ctx.clearRect(0, 0, WIDTH * S, HEIGHT * S)
+
+      // Pulsing opacity: 0.4 → 1.0 over 2s sine
       const t = (Date.now() % 2000) / 2000
-      const phase = Math.sin(t * Math.PI * 2)
+      const alpha = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * Math.PI * 2))
 
-      // Glow ring: varies size and opacity
-      const spread = 0.08 + 0.06 * phase
-      const alpha = 0.3 + 0.25 * phase
-
-      ctx.strokeStyle = `rgba(${accent[0]},${accent[1]},${accent[2]},${alpha})`
-      ctx.lineWidth = 0.12 + 0.06 * phase
+      const accent = `rgba(${accentRGB[0]},${accentRGB[1]},${accentRGB[2]},${alpha})`
 
       for (const { x, y } of ownedPixels) {
+        const sx = x * S
+        const sy = y * S
+
+        // Border
+        ctx.strokeStyle = accent
+        ctx.lineWidth = 1
+        ctx.strokeRect(sx + 0.5, sy + 0.5, S - 1, S - 1)
+
+        // Center stud
+        ctx.fillStyle = accent
         ctx.beginPath()
-        ctx.rect(x - spread, y - spread, 1 + spread * 2, 1 + spread * 2)
-        ctx.stroke()
+        ctx.arc(sx + S / 2, sy + S / 2, S * 0.22, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Stud highlight
+        ctx.fillStyle = `rgba(255,255,255,${alpha * 0.5})`
+        ctx.beginPath()
+        ctx.arc(sx + S / 2 - S * 0.05, sy + S / 2 - S * 0.05, S * 0.12, 0, Math.PI * 2)
+        ctx.fill()
       }
 
       rafRef.current = requestAnimationFrame(animate)
@@ -67,8 +83,8 @@ export default function OwnershipPulse({ pixelData, userAddress, isDark = true }
   return (
     <canvas
       ref={canvasRef}
-      width={WIDTH}
-      height={HEIGHT}
+      width={WIDTH * S}
+      height={HEIGHT * S}
       style={{
         position: 'absolute',
         top: 0,
@@ -76,7 +92,6 @@ export default function OwnershipPulse({ pixelData, userAddress, isDark = true }
         width: WIDTH,
         height: HEIGHT,
         pointerEvents: 'none',
-        imageRendering: 'pixelated',
       }}
     />
   )

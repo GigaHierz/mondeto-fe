@@ -50,7 +50,7 @@ export default function Home() {
 
   const [drawerProfiles, setDrawerProfiles] = useState<Map<string, { label: string; url: string }>>(new Map())
 
-  const [heatmapMode, setHeatmapMode] = useState(false)
+  const [mapView, setMapView] = useState<'normal' | 'heatmap' | 'myland'>('normal')
   const [currentScale, setCurrentScale] = useState(1)
   const [activeOverlay, setActiveOverlay] = useState<'none' | 'drawer' | 'info'>('none')
   const [tappedPixelId, setTappedPixelId] = useState<number | null>(null)
@@ -213,21 +213,24 @@ export default function Home() {
             {pixelCount} selected
           </span>
         )}
-        <button
-          onClick={() => setHeatmapMode(h => !h)}
-          style={{
-            fontSize: 7,
-            letterSpacing: 0.5,
-            borderRadius: 10,
-            padding: '3px 8px',
-            background: heatmapMode ? 'var(--button-bg)' : 'transparent',
-            color: heatmapMode ? 'var(--button-text)' : 'var(--text)',
-            border: '1px solid var(--border)',
-            cursor: 'pointer',
-          }}
-        >
-          heatmap
-        </button>
+        {(['heatmap', 'myland'] as const).map(v => (
+          <button
+            key={v}
+            onClick={() => setMapView(mapView === v ? 'normal' : v)}
+            style={{
+              fontSize: 7,
+              letterSpacing: 0.5,
+              borderRadius: 10,
+              padding: '3px 8px',
+              background: mapView === v ? 'var(--button-bg)' : 'transparent',
+              color: mapView === v ? 'var(--button-text)' : 'var(--text)',
+              border: '1px solid var(--border)',
+              cursor: 'pointer',
+            }}
+          >
+            {v === 'myland' ? 'my land' : v}
+          </button>
+        ))}
       </TopBar>
 
       {/* WorldCanvas */}
@@ -243,7 +246,7 @@ export default function Home() {
         <WorldCanvas
           ref={canvasRef}
           pixelData={pixelDataRef.current}
-          isHeatmap={heatmapMode}
+          mapView={mapView}
           isDark={isDark}
           selectedIds={selectedIds}
           onTogglePixel={handleTogglePixel}
@@ -299,7 +302,7 @@ export default function Home() {
       />
 
       {/* Heatmap legend */}
-      <HeatmapLegend visible={heatmapMode} />
+      <HeatmapLegend visible={mapView === 'heatmap'} />
 
       {/* Zoom hint toast */}
       <ZoomHintToast hasZoomedPast4x={hasZoomedPast4xRef.current} />

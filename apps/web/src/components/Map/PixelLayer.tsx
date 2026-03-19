@@ -5,6 +5,8 @@ import { idToXY } from '@/lib/pixelMath'
 import { isLand } from '@/lib/landMask'
 import type { PixelView } from '@/lib/mock'
 
+export type MapView = 'normal' | 'heatmap' | 'myland'
+
 // Warm heatmap: yellow → orange → red
 function interpolateWarmGradient(ratio: number): string {
   const t = Math.max(0, Math.min(1, ratio))
@@ -25,20 +27,10 @@ function interpolateWarmGradient(ratio: number): string {
   return `rgb(${r},${g},${b})`
 }
 
-// Brighten a hex color by a factor (1.0 = no change, 1.3 = 30% brighter)
-function brighten(hex: string, factor: number): string {
-  const m = hex.match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
-  if (!m) return hex
-  const r = Math.min(255, Math.round(parseInt(m[1], 16) * factor))
-  const g = Math.min(255, Math.round(parseInt(m[2], 16) * factor))
-  const b = Math.min(255, Math.round(parseInt(m[3], 16) * factor))
-  return `rgb(${r},${g},${b})`
-}
-
 export function drawPixels(
   ctx: CanvasRenderingContext2D,
   pixelData: PixelView[],
-  isHeatmap: boolean,
+  mapView: MapView,
   isDark: boolean,
   userAddress?: string,
 ) {
@@ -47,9 +39,10 @@ export function drawPixels(
   const gap = TILE_GAP
   const rad = TILE_RADIUS
   const userAddr = userAddress?.toLowerCase()
+  const unownedColor = isDark ? '#dddddd' : '#555555'
+  const fadedColor = isDark ? 'rgba(221,221,221,0.25)' : 'rgba(85,85,85,0.25)'
 
-  if (isHeatmap) {
-    // Find max sale count for gradient normalization
+  if (mapView === 'heatmap') {
     let maxSales = 0
     for (let i = 0; i < pixelData.length; i++) {
       if (pixelData[i].saleCount > maxSales) {
@@ -57,18 +50,14 @@ export function drawPixels(
       }
     }
 
-    const unownedColor = isDark ? '#dddddd' : '#555555'
-
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
       const pixel = pixelData[i]
       const { x, y } = idToXY(i)
 
       if (pixel.saleCount === 0) {
-        // Unowned land — same subtle color as normal map
         ctx.fillStyle = unownedColor
       } else {
-        // Owned land — gradient by sale count for clear differentiation
         const ratio = maxSales > 0 ? pixel.saleCount / maxSales : 0
         ctx.fillStyle = interpolateWarmGradient(ratio)
       }
@@ -77,9 +66,7 @@ export function drawPixels(
       ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
       ctx.fill()
     }
-  } else {
-    const unownedColor = isDark ? '#dddddd' : '#555555'
-
+  } else if (mapView === 'myland') {
     for (let i = 0; i < pixelData.length; i++) {
       if (!isLand(i)) continue
       const pixel = pixelData[i]
@@ -87,9 +74,27 @@ export function drawPixels(
       const isOwned = pixel.owner !== ZERO_ADDRESS
       const isMine = userAddr && isOwned && pixel.owner.toLowerCase() === userAddr
 
+      if (isMine) {
+        // My pixels: full color
+        ctx.fillStyle = pixel.color || '#888888'
+      } else {
+        // Everything else: faded out
+        ctx.fillStyle = fadedColor
+      }
+
+      ctx.beginPath()
+      ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
+      ctx.fill()
+    }
+  } else {
+    for (let i = 0; i < pixelData.length; i++) {
+      if (!isLand(i)) continue
+      const pixel = pixelData[i]
+      const { x, y } = idToXY(i)
+      const isOwned = pixel.owner !== ZERO_ADDRESS
+
       if (isOwned) {
-        // Brighten own pixels
-        ctx.fillStyle = isMine ? brighten(pixel.color || '#888888', 1.3) : (pixel.color || '#888888')
+        ctx.fillStyle = pixel.color || '#888888'
       } else {
         ctx.fillStyle = unownedColor
       }
@@ -97,22 +102,13 @@ export function drawPixels(
       ctx.beginPath()
       ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
       ctx.fill()
-
-      // Draw brighter edge for own pixels
-      if (isMine) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)'
-        ctx.lineWidth = 0.06
-        ctx.beginPath()
-        ctx.roundRect(x + gap / 2, y + gap / 2, 1 - gap, 1 - gap, rad)
-        ctx.stroke()
-      }
     }
   }
 }
 
 interface PixelLayerProps {
   pixelData: PixelView[]
-  isHeatmap: boolean
+  mapView: MapView
   isDark: boolean
   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>
 }

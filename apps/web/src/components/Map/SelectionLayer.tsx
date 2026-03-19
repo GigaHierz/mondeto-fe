@@ -13,6 +13,8 @@ interface SelectionLayerProps {
   onInspectPixel?: (id: number) => void
 }
 
+const S = 4 // render scale for high-res overlay
+
 export default function SelectionLayer({
   selectedIds,
   isPaintMode,
@@ -21,34 +23,72 @@ export default function SelectionLayer({
   onAddPixel,
   onInspectPixel,
 }: SelectionLayerProps) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const interactionRef = useRef<HTMLCanvasElement | null>(null)
+  const overlayRef = useRef<HTMLCanvasElement | null>(null)
+  const rafRef = useRef<number>(0)
   const isPaintingRef = useRef(false)
   const startPosRef = useRef<{ x: number; y: number } | null>(null)
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const longPressFiredRef = useRef(false)
   const movedRef = useRef(false)
 
+  // Animate selection overlay: pulsing green border + stud
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = overlayRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    ctx.clearRect(0, 0, WIDTH, HEIGHT)
 
-    selectedIds.forEach(id => {
-      const { x, y } = idToXY(id)
-      ctx.fillStyle = '#1a1a1a'
-      ctx.fillRect(x + 0.04, y + 0.04, 0.92, 0.92)
-      ctx.strokeStyle = '#ffffff'
-      ctx.lineWidth = 0.08
-      ctx.strokeRect(x + 0.04, y + 0.04, 0.92, 0.92)
-    })
+    if (selectedIds.size === 0) {
+      ctx.clearRect(0, 0, WIDTH * S, HEIGHT * S)
+      cancelAnimationFrame(rafRef.current)
+      return
+    }
+
+    // Pre-compute positions
+    const positions = Array.from(selectedIds).map(id => idToXY(id))
+
+    const animate = () => {
+      ctx.clearRect(0, 0, WIDTH * S, HEIGHT * S)
+
+      const t = (Date.now() % 2000) / 2000
+      const alpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(t * Math.PI * 2))
+      const accent = `rgba(0,255,65,${alpha})`
+      const highlight = `rgba(255,255,255,${alpha * 0.5})`
+
+      for (const { x, y } of positions) {
+        const sx = x * S
+        const sy = y * S
+
+        // Border
+        ctx.strokeStyle = accent
+        ctx.lineWidth = 1
+        ctx.strokeRect(sx + 0.5, sy + 0.5, S - 1, S - 1)
+
+        // Center stud
+        ctx.fillStyle = accent
+        ctx.beginPath()
+        ctx.arc(sx + S / 2, sy + S / 2, S * 0.22, 0, Math.PI * 2)
+        ctx.fill()
+
+        // Stud highlight
+        ctx.fillStyle = highlight
+        ctx.beginPath()
+        ctx.arc(sx + S / 2 - S * 0.05, sy + S / 2 - S * 0.05, S * 0.12, 0, Math.PI * 2)
+        ctx.fill()
+      }
+
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    rafRef.current = requestAnimationFrame(animate)
+    return () => cancelAnimationFrame(rafRef.current)
   }, [selectedIds])
 
   const handlePointerDown = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>) => {
       if (!isPaintMode) return
-      const canvas = canvasRef.current
+      const canvas = interactionRef.current
       if (!canvas) return
 
       isPaintingRef.current = true
@@ -73,7 +113,7 @@ export default function SelectionLayer({
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLCanvasElement>) => {
       if (!isPaintingRef.current || !isPaintMode) return
-      const canvas = canvasRef.current
+      const canvas = interactionRef.current
       if (!canvas) return
 
       const start = startPosRef.current
@@ -109,7 +149,7 @@ export default function SelectionLayer({
       }
 
       if (!longPressFiredRef.current && !movedRef.current) {
-        const canvas = canvasRef.current
+        const canvas = interactionRef.current
         if (canvas) {
           const pixel = screenToPixel(e.clientX, e.clientY, canvas, scale)
           if (pixel && isLandXY(pixel.x, pixel.y)) {
@@ -125,22 +165,39 @@ export default function SelectionLayer({
   )
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={WIDTH}
-      height={HEIGHT}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: WIDTH,
-        height: HEIGHT,
-        pointerEvents: isPaintMode ? 'auto' : 'none',
-        imageRendering: 'pixelated',
-      }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-    />
+    <>
+      {/* High-res visual overlay (no pixelated, smooth rendering) */}
+      <canvas
+        ref={overlayRef}
+        width={WIDTH * S}
+        height={HEIGHT * S}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: WIDTH,
+          height: HEIGHT,
+          pointerEvents: 'none',
+        }}
+      />
+      {/* Interaction canvas (handles pointer events) */}
+      <canvas
+        ref={interactionRef}
+        width={WIDTH}
+        height={HEIGHT}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: WIDTH,
+          height: HEIGHT,
+          pointerEvents: isPaintMode ? 'auto' : 'none',
+          opacity: 0,
+        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      />
+    </>
   )
 }

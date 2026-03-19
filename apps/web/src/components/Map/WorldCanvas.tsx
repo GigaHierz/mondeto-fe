@@ -17,7 +17,6 @@ import { idToXY } from '@/lib/pixelMath'
 import type { PixelView } from '@/lib/mock'
 import type { LoadState } from '@/hooks/usePixelMap'
 import PixelLayer, { drawPixels } from './PixelLayer'
-import OwnershipPulse from './OwnershipPulse'
 import FlashLayer from './FlashLayer'
 import TerritoryLabels from './TerritoryLabels'
 import SelectionLayer from './SelectionLayer'
@@ -31,7 +30,7 @@ export interface WorldCanvasRef {
 
 interface WorldCanvasProps {
   pixelData: PixelView[]
-  isHeatmap: boolean
+  mapView: 'normal' | 'heatmap' | 'myland'
   isDark: boolean
   selectedIds: Set<number>
   onTogglePixel: (id: number) => void
@@ -52,7 +51,7 @@ interface InnerCanvasProps extends WorldCanvasProps {
 
 function InnerCanvas({
   pixelData,
-  isHeatmap,
+  mapView,
   isDark,
   selectedIds,
   onTogglePixel,
@@ -89,18 +88,17 @@ function InnerCanvas({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    drawPixels(ctx, pixelData, isHeatmap, isDark, userAddress)
-  }, [pixelData, isHeatmap, isDark, pixelCanvasRef, version, userAddress])
+    drawPixels(ctx, pixelData, mapView, isDark, userAddress)
+  }, [pixelData, mapView, isDark, pixelCanvasRef, version, userAddress])
 
   return (
     <div style={{ position: 'relative', width: WIDTH, height: HEIGHT }}>
       <PixelLayer
         pixelData={pixelData}
-        isHeatmap={isHeatmap}
+        mapView={mapView}
         isDark={isDark}
         canvasRef={pixelCanvasRef}
       />
-      <OwnershipPulse pixelData={pixelData} userAddress={userAddress} />
       <FlashLayer changedIds={changedIds ?? []} pixelData={pixelData} />
       <TerritoryLabels pixelData={pixelData} scale={scale} profilesMap={profilesMap} />
       <SelectionLayer
@@ -177,7 +175,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
       <TransformWrapper
         minScale={1}
         maxScale={40}
-        initialScale={4}
+        initialScale={3}
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
         doubleClick={{ disabled: true }}
