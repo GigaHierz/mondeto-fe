@@ -3,7 +3,8 @@
 import { PrivyProvider } from "@privy-io/react-auth";
 import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { http } from "wagmi";
+import { useEffect } from "react";
+import { http, useConnect } from "wagmi";
 import { celo, celoSepolia } from "viem/chains";
 
 const wagmiConfig = createConfig({
@@ -15,6 +16,21 @@ const wagmiConfig = createConfig({
 });
 
 const queryClient = new QueryClient();
+
+function MiniPayAutoConnect({ children }: { children: React.ReactNode }) {
+  const { connect, connectors } = useConnect();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ethereum && (window.ethereum as any).isMiniPay) {
+      const injected = connectors.find((c) => c.id === "injected");
+      if (injected) {
+        connect({ connector: injected });
+      }
+    }
+  }, [connect, connectors]);
+
+  return <>{children}</>;
+}
 
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   return (
@@ -31,7 +47,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig}>
-          {children}
+          <MiniPayAutoConnect>{children}</MiniPayAutoConnect>
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>
