@@ -12,7 +12,7 @@ describe('StatsRow', () => {
   it('shows usdt value', () => {
     render(<StatsRow pixels={42} usdt="10.00" rank={3} />)
     expect(screen.getByText('10.00')).toBeInTheDocument()
-    expect(screen.getByText('USDT')).toBeInTheDocument()
+    expect(screen.getByText('BALANCE')).toBeInTheDocument()
   })
 
   it('shows rank with # prefix', () => {

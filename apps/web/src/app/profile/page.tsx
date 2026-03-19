@@ -11,6 +11,7 @@ import { useProfile } from '@/hooks/useProfile'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
+import { formatUSDT } from '@/lib/colorUtils'
 import { isLand } from '@/lib/landMask'
 
 export default function ProfilePage() {
@@ -22,6 +23,8 @@ export default function ProfilePage() {
 
   const [pixelCount, setPixelCount] = useState(0)
   const [rank, setRank] = useState(0)
+  const [spent, setSpent] = useState(0n)
+  const [earned, setEarned] = useState(0n)
 
   // Fetch owned pixel count from contract
   useEffect(() => {
@@ -71,6 +74,58 @@ export default function ProfilePage() {
     }
 
     fetchStats()
+
+    // Fetch P&L from PixelsPurchased events
+    async function fetchPnL() {
+      try {
+        const { parseAbiItem } = await import('viem')
+        const currentBlock = await publicClient!.getBlockNumber()
+        // Search last 500k blocks (~1 week on Celo)
+        const fromBlock = currentBlock > 500000n ? currentBlock - 500000n : 0n
+
+        const logs = await publicClient!.getLogs({
+          address: MONDETO_ADDRESS,
+          event: parseAbiItem('event PixelsPurchased(address indexed buyer, uint256[] ids, uint256 totalCost)'),
+          fromBlock,
+          toBlock: currentBlock,
+        })
+
+        const addr = addrStr!.toLowerCase()
+        let totalSpent = 0n
+        let totalEarned = 0n
+
+        // Track pixel ownership over time to compute earnings
+        const ownerOf = new Map<string, string>()
+
+        for (const log of logs) {
+          const buyer = (log.args.buyer as string).toLowerCase()
+          const ids = log.args.ids as bigint[]
+          const totalCost = log.args.totalCost as bigint
+
+          if (buyer === addr) {
+            totalSpent += totalCost
+          }
+
+          const perPixelCost = ids.length > 0 ? totalCost / BigInt(ids.length) : 0n
+
+          for (const id of ids) {
+            const idStr = id.toString()
+            const prevOwner = ownerOf.get(idStr)
+            if (prevOwner === addr) {
+              totalEarned += perPixelCost
+            }
+            ownerOf.set(idStr, buyer)
+          }
+        }
+
+        setSpent(totalSpent)
+        setEarned(totalEarned)
+      } catch (e) {
+        console.warn('Failed to fetch P&L:', e)
+      }
+    }
+
+    fetchPnL()
   }, [publicClient, addrStr])
 
   const saveLabel =
@@ -99,6 +154,8 @@ export default function ProfilePage() {
           pixels={pixelCount}
           usdt={parseFloat(walletBalance.balance) < 1 ? parseFloat(walletBalance.balance).toFixed(4) : parseFloat(walletBalance.balance) >= 100 ? Math.floor(parseFloat(walletBalance.balance)).toString() : parseFloat(walletBalance.balance).toFixed(2)}
           rank={rank}
+          spent={formatUSDT(spent)}
+          earned={formatUSDT(earned)}
         />
 
         <div style={{ width: '100%', maxWidth: 460, padding: '0 16px' }}>
