@@ -97,7 +97,7 @@ export default function RanksPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 60 }}>
-      <TopBar title="RANKS" />
+      <TopBar title="MONDETO" />
       <LeaderboardTabs activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setShowAll(false) }} />
       <div
         style={{

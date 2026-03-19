@@ -81,7 +81,7 @@ export default function ProfilePage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 60 }}>
-      <TopBar title="PROFILE" />
+      <TopBar title="MONDETO" />
       <div
         style={{
           flex: 1,

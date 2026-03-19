@@ -266,7 +266,7 @@ export default function Home() {
               padding: '3px 6px',
               background: mapView === v ? 'var(--button-bg)' : 'transparent',
               color: mapView === v ? 'var(--button-text)' : 'var(--text)',
-              border: '1px solid var(--border)',
+              border: '1px solid var(--text-muted)',
               cursor: 'pointer',
             }}
           >
