@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 
 interface SuccessStateProps {
   pixelCount: number
@@ -9,8 +9,31 @@ interface SuccessStateProps {
   onDone: () => void
 }
 
+const TITLES = [
+  'POWER MOVE',
+  'NAILED IT',
+  'BIG FLEX',
+  'GG WP',
+]
+
+const CELEBRATIONS = [
+  'World domination in progress...',
+  'The map looks better with you on it.',
+  "You're on the map — literally.",
+  "Someone's gonna be mad about this.",
+  'Plot twist: it\'s yours now.',
+  'Main character energy.',
+  "They didn't see that coming.",
+  'New spot unlocked. Looking good.',
+  'Power move. Respect.',
+  "Flex. They'll notice.",
+  'Smooth operator.',
+  "That's how you play the game.",
+]
+
 export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: SuccessStateProps) {
-  const truncatedHash = txHash.slice(0, 8) + '...' + txHash.slice(-6)
+  const title = useMemo(() => TITLES[Math.floor(Math.random() * TITLES.length)], [])
+  const celebration = useMemo(() => CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)], [])
 
   return (
     <div>
@@ -27,7 +50,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
           justifyContent: 'center',
         }}
       >
-        <span style={{ fontSize: 20, color: 'white' }}>✓</span>
+        <span style={{ fontSize: 20, color: 'white' }}>✦</span>
       </div>
 
       {/* Title */}
@@ -40,23 +63,37 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
           textAlign: 'center',
         }}
       >
-        LAND CLAIMED
+        {title}
       </div>
 
-      {/* Subtitle */}
+      {/* Celebration message */}
       <div
         style={{
           fontSize: 8,
           color: 'var(--text-muted)',
           marginTop: 4,
           textAlign: 'center',
+          fontStyle: 'italic',
         }}
       >
-        {pixelCount} pixels now yours
+        {celebration}
+      </div>
+
+      {/* Stats */}
+      <div
+        style={{
+          fontSize: 9,
+          color: 'var(--text)',
+          marginTop: 8,
+          textAlign: 'center',
+          fontWeight: 500,
+        }}
+      >
+        +{pixelCount} spots grabbed
       </div>
 
       {/* Receipt */}
-      <div style={{ fontSize: 8, color: 'var(--text-muted)', textAlign: 'center', marginTop: 8 }}>
+      <div style={{ fontSize: 8, color: 'var(--text-muted)', textAlign: 'center', marginTop: 4 }}>
         paid {totalPaid}
       </div>
 
@@ -78,7 +115,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
           cursor: 'pointer',
         }}
       >
-        [ DONE ]
+        [ LET'S GO ]
       </button>
     </div>
   )

@@ -84,7 +84,7 @@ export default function PaintModeBanner({
           letterSpacing: 1,
         }}
       >
-        PAINT MODE — drag to select pixels
+        GAME ON — pick your next move
       </span>
       <span
         style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 4 }}

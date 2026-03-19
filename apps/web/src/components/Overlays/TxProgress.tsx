@@ -16,12 +16,12 @@ interface StepDef {
 
 const steps: StepDef[] = [
   {
-    label: 'USDT approved',
+    label: 'FUNDS UNLOCKED',
     getState: (step) =>
       ['buying', 'confirming', 'success'].includes(step) ? 'done' : 'active',
   },
   {
-    label: 'buying land...',
+    label: 'LOCKING IT IN...',
     getState: (step) =>
       ['confirming', 'success'].includes(step)
         ? 'done'
@@ -30,7 +30,7 @@ const steps: StepDef[] = [
           : 'pending',
   },
   {
-    label: 'confirmed',
+    label: 'SEALING THE DEAL...',
     getState: (step) =>
       step === 'success'
         ? 'done'

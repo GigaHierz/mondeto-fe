@@ -157,6 +157,10 @@ export default function Home() {
     togglePixel(id)
   }, [togglePixel])
 
+  const handleTapWhileZoomedOut = useCallback((id: number) => {
+    canvasRef.current?.zoomToPixel(id)
+  }, [])
+
   const handleInspectPixel = useCallback((id: number) => {
     setTappedPixelId(id)
     setActiveOverlay('info')
@@ -296,6 +300,7 @@ export default function Home() {
           onAddPixel={handleAddPixel}
           onInspectPixel={handleInspectPixel}
           onScaleChange={handleScaleChange}
+          onTapWhileZoomedOut={handleTapWhileZoomedOut}
           version={version}
           loadState={loadState}
           userAddress={addrStr}
@@ -373,7 +378,7 @@ export default function Home() {
             cursor: 'pointer',
           }}
         >
-          [ REVIEW {pixelCount} PIXELS ]
+          [ MAKE YOUR MOVE — {pixelCount} px ]
         </button>
       )}
 

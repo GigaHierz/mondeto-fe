@@ -126,14 +126,14 @@ export default function SelectionDrawer({
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 14px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
             <div>
-              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>TOTAL COST</div>
+              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>THE DAMAGE</div>
               <div style={{ fontSize: 18, fontWeight: 500, color: 'var(--text)' }}>{formatUSDT(totalPrice)} USDT</div>
             </div>
           </div>
           <TxProgress step={txStep} />
           <div style={{ flex: 1 }} />
           <button disabled style={{ background: 'var(--button-bg)', color: 'var(--button-text)', opacity: 0.5, borderRadius: 11, padding: 12, fontSize: 10, fontFamily: 'monospace', letterSpacing: 1.5, textAlign: 'center', width: '100%', border: 'none', pointerEvents: 'none' }}>
-            [ PROCESSING... ]
+            [ MAKING MOVES... ]
           </button>
         </div>
       )}
@@ -144,12 +144,12 @@ export default function SelectionDrawer({
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4, flexShrink: 0 }}>
             <div>
-              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>TOTAL COST</div>
+              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>THE DAMAGE</div>
               <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--text)' }}>
                 {priceLoading ? '...' : `${formatUSDT(totalPrice)}`} <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>USDT</span>
               </div>
               <div style={{ fontSize: 7, color: 'var(--text-muted)', marginTop: 2 }}>
-                {pixelCount} pixels · {ownerCount > 0 ? `${ownerCount} owner${ownerCount > 1 ? 's' : ''} to pay` : 'all unowned'}
+                {pixelCount} spots · {ownerCount > 0 ? `${ownerCount} player${ownerCount > 1 ? 's' : ''} to outbid` : 'free real estate'}
               </div>
             </div>
             <button
@@ -176,7 +176,7 @@ export default function SelectionDrawer({
           )}
 
           {/* Breakdown list */}
-          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 4, flexShrink: 0 }}>BREAKDOWN</div>
+          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, marginBottom: 4, flexShrink: 0 }}>THE LOWDOWN</div>
           <div style={{ flex: 1, overflowY: 'auto', marginBottom: 8 }}>
             {groups.map((group) => {
               const isUnowned = group.owner === ZERO_ADDRESS
@@ -238,7 +238,7 @@ export default function SelectionDrawer({
           {/* Error */}
           {txStep === 'error' && (
             <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 4, flexShrink: 0 }}>
-              Transaction failed. Try again.
+              That didn't work. Try again?
             </div>
           )}
 
@@ -262,7 +262,7 @@ export default function SelectionDrawer({
               flexShrink: 0,
             }}
           >
-            {priceLoading ? '[ CALCULATING... ]' : insufficientBalance ? '[ INSUFFICIENT BALANCE ]' : `[ BUY ALL — ${formatUSDT(totalPrice)} USDT ]`}
+            {priceLoading ? '[ CHECKING PRICES... ]' : insufficientBalance ? '[ NOT ENOUGH FUNDS ]' : `[ LOCK IT IN — ${formatUSDT(totalPrice)} USDT ]`}
           </button>
         </div>
       )}
