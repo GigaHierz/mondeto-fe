@@ -364,7 +364,7 @@ export default function Home() {
 
       {/* Zoom hint toast */}
       <ZoomHintToast hasZoomedPast4x={hasZoomedPast4xRef.current} />
-      <CampaignBanner />
+      {/* <CampaignBanner /> */}
 
       {/* Selection review pill — user taps this to open drawer */}
       {pixelCount > 0 && activeOverlay === 'none' && (
