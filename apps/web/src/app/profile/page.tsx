@@ -80,7 +80,7 @@ export default function ProfilePage() {
     '[ SAVE ]'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 56 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', paddingTop: 60 }}>
       <TopBar title="PROFILE" />
       <div
         style={{
@@ -88,6 +88,10 @@ export default function ProfilePage() {
           overflowY: 'auto',
           background: 'var(--bg)',
           paddingBottom: 56,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <AvatarBlock color={color} name={name} />
@@ -97,81 +101,83 @@ export default function ProfilePage() {
           rank={rank}
         />
 
-        {/* Name field */}
-        <div
-          style={{
-            background: 'var(--card-bg)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            padding: '6px 9px',
-            margin: '0 10px 6px',
-          }}
-        >
-          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 }}>
-            NAME
+        <div style={{ width: '100%', maxWidth: 460, padding: '0 16px' }}>
+          {/* Name field */}
+          <div
+            style={{
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              padding: '10px 12px',
+              marginBottom: 8,
+            }}
+          >
+            <div style={{ fontSize: 6, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 6 }}>
+              NAME
+            </div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={32}
+              placeholder="enter name..."
+              style={{ fontSize: 10, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1, color: 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
+            />
           </div>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={32}
-            placeholder="enter name..."
-            style={{ fontSize: 9, fontFamily: 'monospace', color: 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
-          />
+
+          {/* URL field */}
+          <div
+            style={{
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              padding: '10px 12px',
+              marginBottom: 8,
+            }}
+          >
+            <div style={{ fontSize: 6, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 6 }}>
+              URL
+            </div>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://..."
+              style={{ fontSize: 9, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1, color: url ? 'var(--accent)' : 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
+            />
+          </div>
+
+          <ColorPicker color={color} onChange={setColor} />
+
+          {/* Save button */}
+          <button
+            onClick={save}
+            disabled={saveState === 'saving' || saveState === 'confirming'}
+            style={{
+              display: 'block',
+              margin: '8px 0',
+              width: '100%',
+              background: (saveState === 'saving' || saveState === 'confirming') ? 'var(--text-muted)' : 'var(--button-bg)',
+              color: 'var(--button-text)',
+              borderRadius: 10,
+              padding: 12,
+              fontSize: 8,
+              fontFamily: "'Press Start 2P', monospace",
+              letterSpacing: 2,
+              textAlign: 'center',
+              border: 'none',
+              cursor: (saveState === 'saving' || saveState === 'confirming') ? 'default' : 'pointer',
+            }}
+          >
+            {saveLabel}
+          </button>
+
+          {!addrStr && (
+            <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', textAlign: 'center', marginTop: 8, letterSpacing: 1 }}>
+              connect wallet to save on-chain
+            </div>
+          )}
         </div>
-
-        {/* URL field */}
-        <div
-          style={{
-            background: 'var(--card-bg)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            padding: '6px 9px',
-            margin: '0 10px 6px',
-          }}
-        >
-          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 }}>
-            URL
-          </div>
-          <input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://..."
-            style={{ fontSize: 9, fontFamily: 'monospace', color: url ? 'var(--accent)' : 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
-          />
-        </div>
-
-        <ColorPicker color={color} onChange={setColor} />
-
-        {/* Save button */}
-        <button
-          onClick={save}
-          disabled={saveState === 'saving' || saveState === 'confirming'}
-          style={{
-            display: 'block',
-            margin: '6px 10px',
-            width: 'calc(100% - 20px)',
-            background: (saveState === 'saving' || saveState === 'confirming') ? 'var(--text-muted)' : 'var(--button-bg)',
-            color: 'var(--button-text)',
-            borderRadius: 10,
-            padding: 9,
-            fontSize: 8,
-            fontFamily: 'monospace',
-            letterSpacing: 1.5,
-            textAlign: 'center',
-            border: 'none',
-            cursor: (saveState === 'saving' || saveState === 'confirming') ? 'default' : 'pointer',
-          }}
-        >
-          {saveLabel}
-        </button>
-
-        {!addrStr && (
-          <div style={{ fontSize: 7, color: 'var(--text-muted)', textAlign: 'center', marginTop: 6 }}>
-            connect wallet to save on-chain
-          </div>
-        )}
       </div>
       <BottomNav activeRoute="/profile" />
     </div>

@@ -29,17 +29,18 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
         background: 'var(--card-bg)',
         border: '1px solid var(--border)',
         borderRadius: 8,
-        padding: '8px 9px',
-        margin: '0 10px 6px',
+        padding: '10px 12px',
+        marginBottom: 8,
       }}
     >
       <div
         style={{
           fontSize: 6,
+          fontFamily: "'Press Start 2P', monospace",
           color: 'var(--text-muted)',
-          letterSpacing: 1,
+          letterSpacing: 2,
           textTransform: 'uppercase',
-          marginBottom: 4,
+          marginBottom: 6,
         }}
       >
         COLOR

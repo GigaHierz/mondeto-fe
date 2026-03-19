@@ -20,7 +20,7 @@ export default function TopBar({ title, children }: TopBarProps) {
         top: 0,
         left: 0,
         right: 0,
-        height: 56,
+        height: 60,
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
@@ -30,9 +30,10 @@ export default function TopBar({ title, children }: TopBarProps) {
     >
       <span
         style={{
-          fontSize: 17,
-          fontWeight: 600,
-          letterSpacing: 3,
+          fontSize: 14,
+          fontWeight: 700,
+          letterSpacing: 4,
+          fontFamily: "'Press Start 2P', monospace",
           color: 'var(--text)',
         }}
       >

@@ -1,5 +1,7 @@
 'use client'
 
+const PIXEL_FONT = "'Press Start 2P', monospace"
+
 interface StatsRowProps {
   pixels: number
   usdt: string
@@ -14,7 +16,7 @@ export default function StatsRow({ pixels, usdt, rank }: StatsRowProps) {
   ]
 
   return (
-    <div style={{ display: 'flex', gap: 5, margin: '0 10px 8px' }}>
+    <div style={{ display: 'flex', gap: 8, margin: '0 auto 12px', maxWidth: 460, padding: '0 16px', width: '100%' }}>
       {cards.map((card) => (
         <div
           key={card.label}
@@ -23,14 +25,14 @@ export default function StatsRow({ pixels, usdt, rank }: StatsRowProps) {
             background: 'var(--card-bg)',
             border: '1px solid var(--border)',
             borderRadius: 8,
-            padding: '5px 3px',
+            padding: '10px 6px',
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text)' }}>
+          <div style={{ fontSize: 14, fontFamily: PIXEL_FONT, letterSpacing: 2, color: 'var(--text)' }}>
             {card.value}
           </div>
-          <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 0.5, marginTop: 1 }}>
+          <div style={{ fontSize: 6, fontFamily: PIXEL_FONT, letterSpacing: 2, color: 'var(--text-muted)', marginTop: 4 }}>
             {card.label}
           </div>
         </div>

@@ -60,7 +60,7 @@ export default function PaintModeBanner({
     <div
       style={{
         position: 'absolute',
-        top: 56,
+        top: 60,
         left: 0,
         right: 0,
         height: 30,

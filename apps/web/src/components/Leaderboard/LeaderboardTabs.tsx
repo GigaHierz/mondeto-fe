@@ -32,7 +32,7 @@ export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardT
     <div>
       <div
         style={{
-          height: 30,
+          height: 34,
           background: 'var(--card-bg)',
           borderBottom: '1px solid var(--border)',
           display: 'flex',
@@ -47,10 +47,10 @@ export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardT
               style={{
                 flex: 1,
                 textAlign: 'center',
-                fontSize: 7,
-                fontFamily: 'monospace',
-                letterSpacing: 0.3,
-                lineHeight: '30px',
+                fontSize: 8,
+                fontFamily: "'Press Start 2P', monospace",
+                letterSpacing: 2,
+                lineHeight: '34px',
                 cursor: 'pointer',
                 color: isActive ? 'var(--text)' : 'var(--text-muted)',
                 background: 'none',
@@ -69,11 +69,11 @@ export default function LeaderboardTabs({ activeTab, onTabChange }: LeaderboardT
       {active && (
         <div
           style={{
-            padding: '6px 12px',
+            padding: '8px 12px',
             fontSize: 7,
             color: 'var(--text-muted)',
-            fontFamily: 'monospace',
-            letterSpacing: 0.3,
+            fontFamily: "'Press Start 2P', monospace",
+            letterSpacing: 1,
             borderBottom: '1px solid var(--border)',
             background: 'var(--card-bg)',
           }}

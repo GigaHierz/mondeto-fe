@@ -280,7 +280,7 @@ export default function Home() {
       <div
         style={{
           position: 'absolute',
-          top: 56,
+          top: 60,
           bottom: 56,
           left: 0,
           right: 0,
