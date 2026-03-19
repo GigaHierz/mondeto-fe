@@ -20,9 +20,16 @@ interface LabelInfo {
 }
 
 const MIN_CLUSTER = 10
-const SHOW_LIMIT = 10
 const MIN_SCALE = 2.5
 const COLLISION_PX = 20
+
+// Gradually reveal more labels as user zooms in
+function labelBudget(scale: number): number {
+  if (scale < 4) return 2
+  if (scale < 8) return 4
+  if (scale < 15) return 6
+  return 10
+}
 
 export default function TerritoryLabels({ pixelData, scale, profilesMap }: TerritoryLabelsProps) {
   const labels = useMemo(() => {
@@ -72,9 +79,9 @@ export default function TerritoryLabels({ pixelData, scale, profilesMap }: Terri
       result.push({ owner, label, color, cx, cy, size: emp.size })
     }
 
-    // Sort by size descending, take top SHOW_LIMIT
+    // Sort by size descending, take top N based on zoom level
     result.sort((a, b) => b.size - a.size)
-    const top = result.slice(0, SHOW_LIMIT)
+    const top = result.slice(0, labelBudget(scale))
 
     // Collision avoidance: hide smaller label if within COLLISION_PX of larger
     const visible: LabelInfo[] = []
