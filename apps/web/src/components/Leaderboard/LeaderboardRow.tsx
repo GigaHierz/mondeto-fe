@@ -88,7 +88,7 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
               marginTop: 3,
               display: 'block',
               textDecoration: 'none',
-              fontFamily: 'monospace',
+              fontFamily: "'IBM Plex Mono', monospace",
             }}
           >
             {displayUrl}

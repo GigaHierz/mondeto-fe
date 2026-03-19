@@ -269,7 +269,7 @@ export default function Home() {
               padding: '3px 6px',
               background: mapView === v ? 'var(--button-bg)' : 'transparent',
               color: mapView === v ? 'var(--button-text)' : 'var(--text)',
-              border: mapView === v ? '1px solid var(--button-bg)' : '1px solid rgba(0,255,65,0.3)',
+              border: '1px solid var(--border)',
               cursor: 'pointer',
             }}
           >
@@ -368,7 +368,7 @@ export default function Home() {
             background: 'var(--button-bg)',
             color: 'var(--button-text)',
             fontSize: 12,
-            fontFamily: 'monospace',
+            fontFamily: "'Press Start 2P', monospace",
             fontWeight: 500,
             letterSpacing: 1.5,
             padding: '12px 28px',

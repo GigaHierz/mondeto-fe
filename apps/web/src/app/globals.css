@@ -167,7 +167,7 @@
   animation: spin 0.8s linear infinite;
 }
 
-/* Shake animation for max-selection feedback */
+/* Shake animation for max-selection feedback (300ms per UX timing guide) */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20% { transform: translateX(-3px); }
@@ -177,7 +177,7 @@
 }
 
 .animate-shake {
-  animation: shake 0.4s ease;
+  animation: shake 0.3s ease;
 }
 
 /* Float-up animation for +1 feedback */

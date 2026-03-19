@@ -107,7 +107,7 @@ export default function SuccessState({ pixelCount, totalPaid, txHash, onDone }: 
           borderRadius: 11,
           padding: 10,
           fontSize: 9,
-          fontFamily: 'monospace',
+          fontFamily: "'Press Start 2P', monospace",
           letterSpacing: 1.5,
           textAlign: 'center',
           width: 'calc(100% - 28px)',

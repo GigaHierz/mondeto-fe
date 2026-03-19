@@ -1,10 +1,17 @@
 import { describe, it, expect, vi } from 'vitest'
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook, act, waitFor } from '@testing-library/react'
 import { usePixelPrice } from '@/hooks/usePixelPrice'
 
-vi.mock('@/lib/mock', () => ({
-  selectionPrice: vi.fn((ids: number[]) => Promise.resolve(BigInt(ids.length) * 10000n)),
+vi.mock('wagmi', () => ({
+  usePublicClient: () => null,
 }))
+
+vi.mock('@/lib/contract', () => ({
+  MONDETO_ADDRESS: '0x0000000000000000000000000000000000000000',
+  MONDETO_ABI: [],
+}))
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 describe('usePixelPrice', () => {
   it('returns 0 price and isLoading false for empty selection', () => {
@@ -18,15 +25,19 @@ describe('usePixelPrice', () => {
     expect(result.current.isLoading).toBe(true)
   })
 
-  it('returns totalPrice after debounce resolves', async () => {
-    const { result } = renderHook(() => usePixelPrice(new Set([1, 2, 3])))
+  it('falls back to 0n when publicClient is null', async () => {
+    const ids = new Set([1, 2, 3])
+    const { result } = renderHook(() => usePixelPrice(ids))
 
     expect(result.current.isLoading).toBe(true)
 
-    // Wait for the 200ms debounce + async resolution
-    await waitFor(() => {
-      expect(result.current.totalPrice).toBe(30000n) // 3 * 10000n
-    }, { timeout: 1000 })
+    // Wait for debounce + async resolution
+    await act(async () => {
+      await delay(350)
+    })
+
+    expect(result.current.totalPrice).toBe(0n)
+    expect(result.current.isLoading).toBe(false)
   })
 
   it('resets to 0 when selection becomes empty', async () => {
@@ -35,10 +46,12 @@ describe('usePixelPrice', () => {
       { initialProps: { ids: new Set([1, 2]) } },
     )
 
-    // Wait for price to load
-    await waitFor(() => {
-      expect(result.current.totalPrice).toBe(20000n)
-    }, { timeout: 1000 })
+    // Wait for debounce to settle
+    await act(async () => {
+      await delay(350)
+    })
+
+    expect(result.current.isLoading).toBe(false)
 
     // Clear selection
     rerender({ ids: new Set<number>() })

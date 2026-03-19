@@ -7,11 +7,10 @@ vi.mock('next/link', () => ({
 }))
 
 describe('BottomNav', () => {
-  it('renders three nav items: RANKS, MAP, PROFILE', () => {
+  it('renders three nav links (icons only, no text labels)', () => {
     render(<BottomNav activeRoute="/" />)
-    expect(screen.getByText('RANKS')).toBeInTheDocument()
-    expect(screen.getByText('MAP')).toBeInTheDocument()
-    expect(screen.getByText('PROFILE')).toBeInTheDocument()
+    const links = screen.getAllByRole('link')
+    expect(links).toHaveLength(3)
   })
 
   it('links point to correct routes', () => {
@@ -23,12 +22,15 @@ describe('BottomNav', () => {
     expect(hrefs).toContain('/profile')
   })
 
-  it('active route item uses theme text color', () => {
+  it('active route icon uses theme stroke color', () => {
     render(<BottomNav activeRoute="/ranks" />)
-    const ranksLabel = screen.getByText('RANKS')
-    expect(ranksLabel).toHaveStyle({ color: 'var(--text)' })
+    const links = screen.getAllByRole('link')
+    // First link is /ranks — its icon wrapper span should have stroke var(--text)
+    const ranksIconSpan = links[0].querySelector('span')
+    expect(ranksIconSpan).toHaveStyle({ stroke: 'var(--text)' })
 
-    const mapLabel = screen.getByText('MAP')
-    expect(mapLabel).toHaveStyle({ color: 'var(--text-muted)' })
+    // Second link is / (MAP) — should have muted stroke
+    const mapIconSpan = links[1].querySelector('span')
+    expect(mapIconSpan).toHaveStyle({ stroke: 'var(--text-muted)' })
   })
 })

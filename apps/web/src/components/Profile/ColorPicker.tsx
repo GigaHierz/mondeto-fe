@@ -83,7 +83,7 @@ export default function ColorPicker({ color, onChange }: ColorPickerProps) {
             onChange={handleHexInput}
             style={{
               fontSize: 8,
-              fontFamily: 'monospace',
+              fontFamily: "'IBM Plex Mono', monospace",
               background: 'var(--bg)',
               border: '1px solid var(--border)',
               borderRadius: 4,

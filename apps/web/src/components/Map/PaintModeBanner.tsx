@@ -27,7 +27,7 @@ export default function PaintModeBanner({
   useEffect(() => {
     if (limitBump > prevBumpRef.current) {
       setShaking(true)
-      const t = setTimeout(() => setShaking(false), 400)
+      const t = setTimeout(() => setShaking(false), 300)
       prevBumpRef.current = limitBump
       return () => clearTimeout(t)
     }

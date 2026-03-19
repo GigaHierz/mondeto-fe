@@ -5,8 +5,8 @@ import HeatmapLegend from '@/components/Map/HeatmapLegend'
 describe('HeatmapLegend', () => {
   it('renders gradient and labels when visible', () => {
     render(<HeatmapLegend visible={true} />)
-    expect(screen.getByText('cheap')).toBeInTheDocument()
-    expect(screen.getByText('hot')).toBeInTheDocument()
+    expect(screen.getByText('1 sale')).toBeInTheDocument()
+    expect(screen.getByText('most sold')).toBeInTheDocument()
   })
 
   it('returns null when not visible', () => {

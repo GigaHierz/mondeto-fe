@@ -72,9 +72,10 @@ export default function BottomNav({ activeRoute }: BottomNavProps) {
             href={item.href}
             style={{
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              gap: 2,
+              justifyContent: 'center',
+              width: 44,
+              height: 44,
               textDecoration: 'none',
             }}
           >

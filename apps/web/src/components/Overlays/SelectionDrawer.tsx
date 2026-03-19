@@ -132,7 +132,7 @@ export default function SelectionDrawer({
           </div>
           <TxProgress step={txStep} />
           <div style={{ flex: 1 }} />
-          <button disabled style={{ background: 'var(--button-bg)', color: 'var(--button-text)', opacity: 0.5, borderRadius: 11, padding: 12, fontSize: 10, fontFamily: 'monospace', letterSpacing: 1.5, textAlign: 'center', width: '100%', border: 'none', pointerEvents: 'none' }}>
+          <button disabled style={{ background: 'var(--button-bg)', color: 'var(--button-text)', opacity: 0.5, borderRadius: 11, padding: 12, fontSize: 8, fontFamily: "'Press Start 2P', monospace", letterSpacing: 2, textAlign: 'center', width: '100%', border: 'none', pointerEvents: 'none' }}>
             [ MAKING MOVES... ]
           </button>
         </div>

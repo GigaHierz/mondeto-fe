@@ -10,9 +10,16 @@ describe('SuccessState', () => {
     onDone: vi.fn(),
   }
 
-  it('shows pixel count', () => {
+  it('shows pixel count as spots grabbed', () => {
     render(<SuccessState {...defaultProps} />)
-    expect(screen.getByText('5 pixels now yours')).toBeInTheDocument()
+    expect(screen.getByText('+5 spots grabbed')).toBeInTheDocument()
+  })
+
+  it('shows a random title from the list', () => {
+    render(<SuccessState {...defaultProps} />)
+    const titles = ['POWER MOVE', 'NAILED IT', 'BIG FLEX', 'GG WP']
+    const foundTitle = titles.some((t) => screen.queryByText(t) !== null)
+    expect(foundTitle).toBe(true)
   })
 
   it('shows paid amount', () => {
@@ -23,7 +30,7 @@ describe('SuccessState', () => {
   it('calls onDone when button clicked', () => {
     const onDone = vi.fn()
     render(<SuccessState {...defaultProps} onDone={onDone} />)
-    fireEvent.click(screen.getByText('[ DONE ]'))
+    fireEvent.click(screen.getByText("[ LET'S GO ]"))
     expect(onDone).toHaveBeenCalledTimes(1)
   })
 })

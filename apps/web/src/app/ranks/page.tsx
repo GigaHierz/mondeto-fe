@@ -131,7 +131,7 @@ export default function RanksPage() {
                   display: 'block',
                   margin: '8px auto',
                   fontSize: 7,
-                  fontFamily: 'monospace',
+                  fontFamily: "'Press Start 2P', monospace",
                   color: 'var(--text-muted)',
                   background: 'none',
                   border: '1px solid var(--border)',
