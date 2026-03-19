@@ -131,12 +131,8 @@ export default function SelectionLayer({
         }
       }
 
-      if (movedRef.current) {
-        const pixel = screenToPixel(e.clientX, e.clientY, canvas, scale)
-        if (pixel && isLandXY(pixel.x, pixel.y)) {
-          onAddPixel(pixelId(pixel.x, pixel.y))
-        }
-      }
+      // Dragging only marks movement — no pixel selection on drag
+      // Users must click individual pixels to select
     },
     [isPaintMode, scale, onAddPixel],
   )

@@ -62,20 +62,17 @@ export default function Home() {
 
   const isPaintMode = currentScale >= PAINT_SCALE
 
+  // Fetch land mask and reload when chain changes
   useEffect(() => {
-    load()
-    // Fetch land mask from contract (replaces static fallback)
+    clearSelection()
     if (publicClient) {
       fetchLandMaskFromContract(
         publicClient.readContract.bind(publicClient) as Parameters<typeof fetchLandMaskFromContract>[0],
         MONDETO_ADDRESS,
         MONDETO_ABI,
-      ).then(() => {
-        // Reload pixel data after mask is updated so rendering uses new mask
-        load()
-      })
+      ).then(() => load())
     }
-  }, [load, walletBalance.isConnected, publicClient])
+  }, [publicClient, load])
 
   // Fetch profiles for territory labels
   useEffect(() => {
@@ -330,6 +327,20 @@ export default function Home() {
           }}
         >+</button>
         <button
+          onClick={() => canvasRef.current?.recenter()}
+          style={{
+            width: 40, height: 40, borderRadius: 8,
+            background: 'var(--card-bg)', border: '1px solid var(--border)',
+            fontSize: 12, color: 'var(--text)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <circle cx={12} cy={12} r={3} />
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
+          </svg>
+        </button>
+        <button
           onClick={() => canvasRef.current?.zoomOut()}
           style={{
             width: 40, height: 40, borderRadius: 8,
@@ -374,9 +385,10 @@ export default function Home() {
             borderRadius: 11,
             border: 'none',
             cursor: 'pointer',
+            whiteSpace: 'nowrap',
           }}
         >
-          [ MAKE YOUR MOVE — {pixelCount} px ]
+          [ REVIEW {pixelCount} PIXELS ]
         </button>
       )}
 

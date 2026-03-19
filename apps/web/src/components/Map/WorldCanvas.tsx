@@ -27,6 +27,7 @@ export interface WorldCanvasRef {
   zoomIn: () => void
   zoomOut: () => void
   zoomToPixel: (pixelId: number) => void
+  recenter: () => void
 }
 
 interface WorldCanvasProps {
@@ -159,6 +160,21 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
         if (!wrapper) return
         const tx = -x * s + wrapper.clientWidth / 2
         const ty = -y * s + wrapper.clientHeight / 2
+        ctrl.setTransform(tx, ty, s, 300)
+      },
+      recenter() {
+        const ctrl = zoomControlsRef.current
+        if (!ctrl) return
+        // Find the TransformWrapper's outer wrapper element
+        const canvas = pixelCanvasRef.current
+        if (!canvas) return
+        const wrapper = canvas.closest('.react-transform-wrapper')
+        if (!wrapper) return
+        const s = 3
+        const ww = (wrapper as HTMLElement).clientWidth
+        const wh = (wrapper as HTMLElement).clientHeight
+        const tx = (ww - WIDTH * s) / 2
+        const ty = (wh - HEIGHT * s) / 2
         ctrl.setTransform(tx, ty, s, 300)
       },
       drawInspectRing(pid: number) {

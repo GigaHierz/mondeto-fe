@@ -20,10 +20,21 @@ function lerpColor(a: string, b: string, t: number): string {
 }
 
 export function formatUSDT(amount: bigint, decimals = 6): string {
+  if (amount === 0n) return '0.00'
   const whole = amount / BigInt(10 ** decimals)
   const frac = amount % BigInt(10 ** decimals)
-  const fracStr = frac.toString().padStart(decimals, '0').slice(0, 2)
-  return `${whole}.${fracStr}`
+  const fracStr = frac.toString().padStart(decimals, '0')
+  // Show enough decimals so the value isn't "0.00"
+  if (whole > 0n) return `${whole}.${fracStr.slice(0, 2)}`
+  // Find first non-zero digit and show enough to be meaningful
+  const firstNonZero = fracStr.search(/[1-9]/)
+  if (firstNonZero < 0) return '0.00'
+  // Show up to the first non-zero digit + 1 more
+  const end = Math.max(firstNonZero + 2, 2)
+  // Trim trailing zeros
+  const raw = fracStr.slice(0, end)
+  const trimmed = raw.replace(/0+$/, '') || '00'
+  return `0.${trimmed.length < 2 ? trimmed.padEnd(2, '0') : trimmed}`
 }
 
 export function isValidHex(hex: string): boolean {

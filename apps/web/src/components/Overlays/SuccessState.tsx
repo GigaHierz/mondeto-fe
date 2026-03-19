@@ -15,7 +15,7 @@ const TITLES = [
   'POWER MOVE',
   'NAILED IT',
   'BIG FLEX',
-  'GG WP',
+  'NICE ONE',
 ]
 
 const CELEBRATIONS = [

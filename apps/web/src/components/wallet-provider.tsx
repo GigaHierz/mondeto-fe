@@ -22,9 +22,8 @@ const connectors = connectorsForWallets(
   }
 );
 
-// TODO: flip to [celo, celoSepolia] before production launch
 const wagmiConfig = createConfig({
-  chains: [celoSepolia, celo],
+  chains: [celo, celoSepolia],
   connectors,
   transports: {
     [celo.id]: http(),

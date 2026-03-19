@@ -1,6 +1,8 @@
 'use client'
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { usePublicClient } from 'wagmi'
+import { createPublicClient, http } from 'viem'
+import { celo } from 'viem/chains'
 import type { PixelView } from '@/lib/mock'
 import { fetchAllPixelsFromContract } from '@/lib/contractReads'
 
@@ -8,19 +10,29 @@ export type LoadState = 'loading' | 'ready' | 'error'
 
 const POLL_INTERVAL = 30_000
 
+// Fallback client for read-only calls when wagmi isn't ready
+const fallbackClient = createPublicClient({
+  chain: celo,
+  transport: http(),
+})
+
 export function usePixelMap() {
-  const publicClient = usePublicClient()
+  const wagmiClient = usePublicClient()
   const pixelDataRef = useRef<PixelView[]>([])
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [version, setVersion] = useState(0)
   const [changedIds, setChangedIds] = useState<number[]>([])
 
+  const getClient = useCallback(() => {
+    return wagmiClient ?? fallbackClient
+  }, [wagmiClient])
+
   const fetchData = useCallback(async (): Promise<PixelView[]> => {
-    if (!publicClient) throw new Error('No wallet connected')
+    const client = getClient()
     return await fetchAllPixelsFromContract(
-      publicClient.readContract.bind(publicClient) as Parameters<typeof fetchAllPixelsFromContract>[0]
+      client.readContract.bind(client) as Parameters<typeof fetchAllPixelsFromContract>[0]
     )
-  }, [publicClient])
+  }, [getClient])
 
   const load = useCallback(async () => {
     try {
@@ -29,10 +41,16 @@ export function usePixelMap() {
       pixelDataRef.current = data
       setLoadState('ready')
       setVersion(v => v + 1)
-    } catch {
+    } catch (e) {
+      console.warn('Failed to load pixel data:', e)
       setLoadState('error')
     }
   }, [fetchData])
+
+  // Auto-load on mount and when client changes
+  useEffect(() => {
+    load()
+  }, [load])
 
   const refresh = useCallback(async () => {
     try {
@@ -45,7 +63,6 @@ export function usePixelMap() {
     }
   }, [fetchData])
 
-  // Silent poll: fetch new data, diff against current, emit changedIds
   const poll = useCallback(async () => {
     try {
       const newData = await fetchData()
@@ -70,7 +87,6 @@ export function usePixelMap() {
     }
   }, [fetchData])
 
-  // Start polling after initial load
   useEffect(() => {
     if (loadState !== 'ready') return
     const interval = setInterval(poll, POLL_INTERVAL)
