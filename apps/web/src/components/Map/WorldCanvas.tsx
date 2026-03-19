@@ -26,6 +26,7 @@ export interface WorldCanvasRef {
   clearInspectRing: () => void
   zoomIn: () => void
   zoomOut: () => void
+  zoomToPixel: (pixelId: number) => void
 }
 
 interface WorldCanvasProps {
@@ -37,6 +38,7 @@ interface WorldCanvasProps {
   onAddPixel: (id: number) => void
   onInspectPixel?: (id: number) => void
   onScaleChange?: (scale: number) => void
+  onTapWhileZoomedOut?: (id: number) => void
   loadState: LoadState
   version?: number
   userAddress?: string
@@ -63,6 +65,7 @@ function InnerCanvas({
   userAddress,
   changedIds,
   profilesMap,
+  onTapWhileZoomedOut,
 }: InnerCanvasProps) {
   const context = useTransformContext()
   const prevScaleRef = useRef(1)
@@ -110,17 +113,18 @@ function InnerCanvas({
         onTogglePixel={onTogglePixel}
         onAddPixel={onAddPixel}
         onInspectPixel={onInspectPixel}
+        onTapWhileZoomedOut={onTapWhileZoomedOut}
       />
     </div>
   )
 }
 
 // Invisible component that captures zoom controls into a ref
-function ZoomCapture({ controlsRef }: { controlsRef: React.MutableRefObject<{ zoomIn: () => void; zoomOut: () => void } | null> }) {
-  const { zoomIn, zoomOut } = useControls()
+function ZoomCapture({ controlsRef }: { controlsRef: React.MutableRefObject<{ zoomIn: () => void; zoomOut: () => void; setTransform: (x: number, y: number, s: number, ms?: number) => void } | null> }) {
+  const { zoomIn, zoomOut, setTransform } = useControls()
   useEffect(() => {
-    controlsRef.current = { zoomIn, zoomOut }
-  }, [zoomIn, zoomOut, controlsRef])
+    controlsRef.current = { zoomIn, zoomOut, setTransform }
+  }, [zoomIn, zoomOut, setTransform, controlsRef])
   return null
 }
 
@@ -137,7 +141,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
     const savedZoom = useRef(getSavedZoom())
     const pixelCanvasRef = useRef<HTMLCanvasElement | null>(null)
     const selectionCanvasRef = useRef<HTMLCanvasElement | null>(null)
-    const zoomControlsRef = useRef<{ zoomIn: () => void; zoomOut: () => void } | null>(null)
+    const zoomControlsRef = useRef<{ zoomIn: () => void; zoomOut: () => void; setTransform: (x: number, y: number, s: number, ms?: number) => void } | null>(null)
     const inspectRingRef = useRef<{
       x: number
       y: number
@@ -146,6 +150,17 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
     useImperativeHandle(ref, () => ({
       zoomIn() { zoomControlsRef.current?.zoomIn() },
       zoomOut() { zoomControlsRef.current?.zoomOut() },
+      zoomToPixel(pid: number) {
+        const ctrl = zoomControlsRef.current
+        if (!ctrl) return
+        const { x, y } = idToXY(pid)
+        const s = PAINT_SCALE + 1
+        const wrapper = pixelCanvasRef.current?.parentElement?.parentElement
+        if (!wrapper) return
+        const tx = -x * s + wrapper.clientWidth / 2
+        const ty = -y * s + wrapper.clientHeight / 2
+        ctrl.setTransform(tx, ty, s, 300)
+      },
       drawInspectRing(pid: number) {
         const canvas = selectionCanvasRef.current
         if (!canvas) return
@@ -189,7 +204,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
         initialScale={savedZoom.current}
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
-        doubleClick={{ disabled: true }}
+        doubleClick={{ step: 0.7 }}
         centerOnInit
         smooth
       >

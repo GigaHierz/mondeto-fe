@@ -11,6 +11,7 @@ interface SelectionLayerProps {
   onTogglePixel: (id: number) => void
   onAddPixel: (id: number) => void
   onInspectPixel?: (id: number) => void
+  onTapWhileZoomedOut?: (id: number) => void
 }
 
 const S = 4 // render scale for high-res overlay
@@ -22,6 +23,7 @@ export default function SelectionLayer({
   onTogglePixel,
   onAddPixel,
   onInspectPixel,
+  onTapWhileZoomedOut,
 }: SelectionLayerProps) {
   const interactionRef = useRef<HTMLCanvasElement | null>(null)
   const overlayRef = useRef<HTMLCanvasElement | null>(null)
