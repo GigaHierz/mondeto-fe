@@ -78,8 +78,8 @@ export default function PaintModeBanner({
     >
       <span
         style={{
-          fontSize: 9,
-          fontWeight: 600,
+          fontSize: 8,
+          fontFamily: "'Press Start 2P', monospace",
           color: 'var(--text)',
           letterSpacing: 1,
         }}
@@ -96,8 +96,8 @@ export default function PaintModeBanner({
             style={{
               position: 'absolute',
               right: 0,
-              fontSize: 9,
-              fontWeight: 700,
+              fontSize: 8,
+              fontFamily: "'Press Start 2P', monospace",
               color: 'var(--text)',
               pointerEvents: 'none',
               animation: 'floatUp 0.6s ease-out forwards',
@@ -109,8 +109,8 @@ export default function PaintModeBanner({
         <span
           className={shaking ? 'animate-shake' : ''}
           style={{
-            fontSize: 11,
-            fontWeight: 600,
+            fontSize: 9,
+            fontFamily: "'Press Start 2P', monospace",
             color: isAtLimit ? 'var(--error)' : 'var(--text)',
             display: 'flex',
             alignItems: 'center',

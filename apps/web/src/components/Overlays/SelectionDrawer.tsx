@@ -140,29 +140,29 @@ export default function SelectionDrawer({
 
       {/* Idle / error — full buy view with breakdown */}
       {(txStep === 'idle' || txStep === 'error') && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 14px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 20px', overflow: 'hidden', maxWidth: 500, margin: '0 auto', width: '100%' }}>
           {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4, flexShrink: 0 }}>
-            <div>
-              <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>THE DAMAGE</div>
-              <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--text)' }}>
-                {priceLoading ? '...' : `${formatUSDT(totalPrice)}`} <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>USDT</span>
-              </div>
-              <div style={{ fontSize: 7, color: 'var(--text-muted)', marginTop: 2 }}>
-                {pixelCount} spots · {ownerCount > 0 ? `${ownerCount} player${ownerCount > 1 ? 's' : ''} to outbid` : 'free real estate'}
-              </div>
+          <div style={{ textAlign: 'center', marginBottom: 8, flexShrink: 0 }}>
+            <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 6 }}>THE DAMAGE</div>
+            <div style={{ fontSize: 18, fontFamily: "'Press Start 2P', monospace", color: 'var(--text)' }}>
+              {priceLoading ? '...' : `${formatUSDT(totalPrice)}`} <span style={{ fontSize: 9, color: 'var(--text-muted)' }}>USDT</span>
             </div>
+            <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', marginTop: 6, letterSpacing: 1 }}>
+              {pixelCount} spots · {ownerCount > 0 ? `${ownerCount} player${ownerCount > 1 ? 's' : ''} to outbid` : 'free real estate'}
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6, flexShrink: 0 }}>
             <button
               onClick={onClear}
-              style={{ fontSize: 7, color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 8px', cursor: 'pointer', background: 'transparent' }}
+              style={{ fontSize: 6, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: 8, padding: '3px 8px', cursor: 'pointer', background: 'transparent', letterSpacing: 1 }}
             >
-              ✕ clear
+              x clear
             </button>
           </div>
 
           {/* Balance + warnings */}
-          <div style={{ fontSize: 7, color: 'var(--text-muted)', marginBottom: 2, flexShrink: 0 }}>
-            your balance: {formatUSDT(userBalance)} USDT
+          <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', marginBottom: 4, flexShrink: 0, textAlign: 'center', letterSpacing: 1 }}>
+            balance: {formatUSDT(userBalance)} USDT
           </div>
           {insufficientBalance && (
             <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 2, flexShrink: 0 }}>
@@ -251,9 +251,9 @@ export default function SelectionDrawer({
               opacity: insufficientBalance || priceLoading ? 0.5 : 1,
               borderRadius: 11,
               padding: 14,
-              fontSize: 11,
-              fontFamily: 'monospace',
-              letterSpacing: 1.5,
+              fontSize: 8,
+              fontFamily: "'Press Start 2P', monospace",
+              letterSpacing: 2,
               textAlign: 'center',
               border: 'none',
               cursor: insufficientBalance || priceLoading ? 'default' : 'pointer',

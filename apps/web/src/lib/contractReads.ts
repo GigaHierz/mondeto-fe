@@ -1,7 +1,8 @@
-import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
+import { WIDTH, HEIGHT, ZERO_ADDRESS, INITIAL_PRICE, MIN_PRICE, HALVING_TIME } from '@/constants/map'
 import { MONDETO_ADDRESS, MONDETO_ABI } from './contract'
 import { isLand } from './landMask'
 import { uint24ToHex } from './colorUtils'
+import { pixelPrice } from './priceCalc'
 import type { PixelView } from './mock'
 
 /**
@@ -76,5 +77,28 @@ export async function fetchAllPixelsFromContract(
     args: [0, 0, WIDTH, HEIGHT],
   }) as `0x${string}`
 
-  return decodePixelBatch(batchData, 0, 0, WIDTH, HEIGHT)
+  const pixels = decodePixelBatch(batchData, 0, 0, WIDTH, HEIGHT)
+
+  // Compute client-side prices using priceCalc
+  let deployTs: bigint
+  try {
+    deployTs = await readContract({
+      address: MONDETO_ADDRESS,
+      abi: MONDETO_ABI,
+      functionName: 'deployTimestamp',
+      args: [],
+    }) as bigint
+  } catch {
+    deployTs = 0n
+  }
+
+  if (deployTs > 0n) {
+    const now = BigInt(Math.floor(Date.now() / 1000))
+    const config = { initialPrice: INITIAL_PRICE, minPrice: MIN_PRICE, deployTimestamp: deployTs, halvingTime: HALVING_TIME }
+    for (const px of pixels) {
+      px.currentPrice = pixelPrice(px.saleCount, now, config)
+    }
+  }
+
+  return pixels
 }

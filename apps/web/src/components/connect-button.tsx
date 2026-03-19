@@ -30,9 +30,9 @@ export function ConnectButton() {
               onClick={openConnectModal}
               style={{
                 fontSize: 7,
-                fontFamily: "monospace",
-                letterSpacing: 0.5,
-                padding: "3px 8px",
+                fontFamily: "'Press Start 2P', monospace",
+                letterSpacing: 1,
+                padding: "4px 8px",
                 borderRadius: 10,
                 border: "1px solid var(--border)",
                 background: "transparent",
@@ -50,9 +50,9 @@ export function ConnectButton() {
             onClick={openChainModal}
             style={{
               fontSize: 6,
-              fontFamily: "monospace",
-              letterSpacing: 0.3,
-              padding: "2px 6px",
+              fontFamily: "'Press Start 2P', monospace",
+              letterSpacing: 1,
+              padding: "4px 8px",
               borderRadius: 8,
               border: "1px solid var(--border)",
               background: "transparent",

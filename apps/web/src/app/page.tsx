@@ -6,6 +6,7 @@ import TopBar from '@/components/Layout/TopBar'
 import PaintModeBanner from '@/components/Map/PaintModeBanner'
 import HeatmapLegend from '@/components/Map/HeatmapLegend'
 import ZoomHintToast from '@/components/Layout/ZoomHintToast'
+import CampaignBanner from '@/components/Layout/CampaignBanner'
 import BottomNav from '@/components/Layout/BottomNav'
 import DimLayer from '@/components/Overlays/DimLayer'
 import SelectionDrawer from '@/components/Overlays/SelectionDrawer'
@@ -261,13 +262,14 @@ export default function Home() {
             key={v}
             onClick={() => setMapView(mapView === v ? 'normal' : v)}
             style={{
-              fontSize: 7,
-              letterSpacing: 0.5,
-              borderRadius: 10,
-              padding: '3px 8px',
+              fontSize: 6,
+              fontFamily: "'Press Start 2P', monospace",
+              letterSpacing: 1,
+              borderRadius: 8,
+              padding: '3px 6px',
               background: mapView === v ? 'var(--button-bg)' : 'transparent',
               color: mapView === v ? 'var(--button-text)' : 'var(--text)',
-              border: '1px solid var(--border)',
+              border: mapView === v ? '1px solid var(--button-bg)' : '1px solid rgba(0,255,65,0.3)',
               cursor: 'pointer',
             }}
           >
@@ -351,6 +353,7 @@ export default function Home() {
 
       {/* Zoom hint toast */}
       <ZoomHintToast hasZoomedPast4x={hasZoomedPast4xRef.current} />
+      <CampaignBanner />
 
       {/* Selection review pill — user taps this to open drawer */}
       {pixelCount > 0 && activeOverlay === 'none' && (
@@ -358,7 +361,7 @@ export default function Home() {
           onClick={handleOpenDrawer}
           style={{
             position: 'absolute',
-            bottom: 70,
+            bottom: 90,
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 15,

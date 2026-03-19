@@ -30,11 +30,12 @@ export default function TopBar({ title, children }: TopBarProps) {
     >
       <span
         style={{
-          fontSize: 14,
+          fontSize: 11,
           fontWeight: 700,
-          letterSpacing: 4,
+          letterSpacing: 3,
           fontFamily: "'Press Start 2P', monospace",
           color: 'var(--text)',
+          flexShrink: 0,
         }}
       >
         {title}
