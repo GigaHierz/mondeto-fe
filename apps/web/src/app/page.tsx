@@ -143,6 +143,8 @@ export default function Home() {
     if (scale >= PAINT_SCALE) {
       hasZoomedPast4xRef.current = true
     }
+    // Persist zoom for navigation back
+    try { sessionStorage.setItem('mondeto-zoom', String(scale)) } catch {}
   }, [])
 
   const effectiveAddr = addrStr || '0xYOUR000000000000000000000000000000000001'
@@ -176,7 +178,9 @@ export default function Home() {
     clearSelection()
     setActiveOverlay('none')
     buy.reset()
+    // Refresh immediately, then again after 2s to catch RPC propagation delay
     refresh()
+    setTimeout(() => refresh(), 2000)
   }, [clearSelection, buy, refresh])
 
   const handleRemovePixels = useCallback((ids: number[]) => {

@@ -124,8 +124,17 @@ function ZoomCapture({ controlsRef }: { controlsRef: React.MutableRefObject<{ zo
   return null
 }
 
+function getSavedZoom(): number {
+  try {
+    const v = sessionStorage.getItem('mondeto-zoom')
+    if (v) { const n = parseFloat(v); if (n >= 1 && n <= 40) return n }
+  } catch {}
+  return 3
+}
+
 const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
   function WorldCanvas(props, ref) {
+    const savedZoom = useRef(getSavedZoom())
     const pixelCanvasRef = useRef<HTMLCanvasElement | null>(null)
     const selectionCanvasRef = useRef<HTMLCanvasElement | null>(null)
     const zoomControlsRef = useRef<{ zoomIn: () => void; zoomOut: () => void } | null>(null)
@@ -177,7 +186,7 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
       <TransformWrapper
         minScale={1}
         maxScale={40}
-        initialScale={3}
+        initialScale={savedZoom.current}
         wheel={{ step: 2 }}
         pinch={{ step: 5 }}
         doubleClick={{ disabled: true }}
