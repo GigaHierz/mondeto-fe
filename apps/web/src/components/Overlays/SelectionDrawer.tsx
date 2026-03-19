@@ -29,6 +29,7 @@ interface SelectionDrawerProps {
   txStep: TxStep
   txHash: string | null
   userAddress?: string
+  profilesMap?: Map<string, { label: string; url: string }>
   onRemovePixels: (ids: number[]) => void
   onClear: () => void
   onBuy: () => void
@@ -50,6 +51,7 @@ export default function SelectionDrawer({
   txStep,
   txHash,
   userAddress,
+  profilesMap,
   onRemovePixels,
   onClear,
   onBuy,
@@ -198,14 +200,23 @@ export default function SelectionDrawer({
 
                   {/* Name + link */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 8, color: isUnowned ? 'var(--text-muted)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {isUnowned ? 'unowned' : (group.label || truncAddr(group.owner))}
-                    </div>
-                    {!isUnowned && group.url && (
-                      <a href={group.url.startsWith('http') ? group.url : `https://${group.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 6, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', textDecoration: 'none' }}>
-                        {group.url.replace('https://', '').replace('http://', '')}
-                      </a>
-                    )}
+                    {(() => {
+                      const prof = profilesMap?.get(group.owner.toLowerCase())
+                      const name = prof?.label || group.label || (isUnowned ? 'unowned' : truncAddr(group.owner))
+                      const url = prof?.url || group.url
+                      return (
+                        <>
+                          <div style={{ fontSize: 8, color: isUnowned ? 'var(--text-muted)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {name}
+                          </div>
+                          {!isUnowned && url && (
+                            <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 6, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', textDecoration: 'none' }}>
+                              {url.replace('https://', '').replace('http://', '').replace(/\/$/, '')}
+                            </a>
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
 
                   {/* Count + price */}

@@ -20,7 +20,7 @@ export default function TopBar({ title, children }: TopBarProps) {
         top: 0,
         left: 0,
         right: 0,
-        height: 36,
+        height: 48,
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
@@ -30,7 +30,7 @@ export default function TopBar({ title, children }: TopBarProps) {
     >
       <span
         style={{
-          fontSize: 11,
+          fontSize: 14,
           fontWeight: 500,
           letterSpacing: 3,
           color: 'var(--text)',

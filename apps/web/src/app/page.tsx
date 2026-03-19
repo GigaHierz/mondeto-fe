@@ -10,6 +10,7 @@ import BottomNav from '@/components/Layout/BottomNav'
 import DimLayer from '@/components/Overlays/DimLayer'
 import SelectionDrawer from '@/components/Overlays/SelectionDrawer'
 import PixelInfoPanel from '@/components/Overlays/PixelInfoPanel'
+import IntroScreen from '@/components/Overlays/IntroScreen'
 import { usePixelMap } from '@/hooks/usePixelMap'
 import { useSelection } from '@/hooks/useSelection'
 import { usePixelPrice } from '@/hooks/usePixelPrice'
@@ -19,6 +20,8 @@ import { getUSDTBalance } from '@/lib/mock'
 import { useUSDTBalance } from '@/hooks/useUSDTBalance'
 import { fetchLandMaskFromContract } from '@/lib/landMask'
 import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
+import { decodeBytes } from '@/lib/decodeBytes'
+import { uint24ToHex } from '@/lib/colorUtils'
 import { PAINT_SCALE } from '@/constants/map'
 import { useTheme } from '@/lib/theme'
 
@@ -43,6 +46,8 @@ export default function Home() {
   const profile = useProfile(addrStr)
 
   const walletBalance = useUSDTBalance()
+
+  const [drawerProfiles, setDrawerProfiles] = useState<Map<string, { label: string; url: string }>>(new Map())
 
   const [heatmapMode, setHeatmapMode] = useState(false)
   const [currentScale, setCurrentScale] = useState(1)
@@ -155,10 +160,44 @@ export default function Home() {
   }, [clearSelection, addPixel])
 
   // Open drawer only when user taps the review pill
-  const handleOpenDrawer = useCallback(() => {
+  const handleOpenDrawer = useCallback(async () => {
     buy.reset()
     setActiveOverlay('drawer')
-  }, [buy])
+
+    // Fetch profiles for owners in selection
+    if (publicClient) {
+      const owners = new Set<string>()
+      for (const id of selectedIds) {
+        const px = pixelDataRef.current[id]
+        if (px && px.owner !== '0x0000000000000000000000000000000000000000') {
+          owners.add(px.owner.toLowerCase())
+        }
+      }
+      const profiles = new Map<string, { label: string; url: string }>()
+      const results = await Promise.allSettled(
+        [...owners].map(addr =>
+          publicClient.readContract({
+            address: MONDETO_ADDRESS,
+            abi: MONDETO_ABI,
+            functionName: 'profiles',
+            args: [addr as `0x${string}`],
+          })
+        )
+      )
+      const ownerArr = [...owners]
+      for (let i = 0; i < results.length; i++) {
+        const r = results[i]
+        if (r.status === 'fulfilled' && r.value) {
+          const [, labelBytes, urlBytes] = r.value as [number, unknown, unknown]
+          profiles.set(ownerArr[i], {
+            label: decodeBytes(labelBytes),
+            url: decodeBytes(urlBytes),
+          })
+        }
+      }
+      setDrawerProfiles(profiles)
+    }
+  }, [buy, selectedIds, pixelDataRef, publicClient])
 
   const tappedPixel = tappedPixelId !== null ? pixelDataRef.current[tappedPixelId] ?? null : null
   const showDim = activeOverlay !== 'none'
@@ -202,7 +241,7 @@ export default function Home() {
       <div
         style={{
           position: 'absolute',
-          top: 36,
+          top: 48,
           bottom: 56,
           left: 0,
           right: 0,
@@ -281,10 +320,11 @@ export default function Home() {
             zIndex: 15,
             background: 'var(--button-bg)',
             color: 'var(--button-text)',
-            fontSize: 9,
+            fontSize: 12,
             fontFamily: 'monospace',
-            letterSpacing: 1,
-            padding: '8px 20px',
+            fontWeight: 500,
+            letterSpacing: 1.5,
+            padding: '12px 28px',
             borderRadius: 11,
             border: 'none',
             cursor: 'pointer',
@@ -316,6 +356,7 @@ export default function Home() {
           txStep={buy.step}
           txHash={buy.txHash}
           userAddress={effectiveAddr}
+          profilesMap={drawerProfiles}
           onRemovePixels={handleRemovePixels}
           onClear={handleClear}
           onBuy={handleBuy}
@@ -336,6 +377,7 @@ export default function Home() {
 
       {/* Bottom nav */}
       <BottomNav activeRoute="/" />
+      <IntroScreen />
     </div>
   )
 }

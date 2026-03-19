@@ -43,7 +43,7 @@ export default function PaintModeBanner({
       >
         PAINT MODE — drag to select pixels
       </span>
-      <span style={{ fontSize: 7, color: 'var(--text-muted)' }}>
+      <span style={{ fontSize: 10, fontWeight: 500, color: 'var(--text)' }}>
         {pixelCount} selected
       </span>
     </div>
