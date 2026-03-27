@@ -6,6 +6,9 @@ import { ThemeProvider } from "@/lib/theme"
 export const metadata: Metadata = {
   title: 'Mondeto',
   description: 'Own the world, one pixel at a time',
+  other: {
+    'talentapp:project_verification': 'a80e900fa7d73b76b19ceb2f9d6a5c7c7ea7a1c44a2e83a1008417c256b302e30a7961e29790868f11ebce8ca3477d21b934f544f4b1a676e1a097df4487dded',
+  },
 };
 
 export const viewport: Viewport = {
