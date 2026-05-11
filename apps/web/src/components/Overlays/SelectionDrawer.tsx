@@ -5,6 +5,7 @@ import type { PixelView } from '@/lib/mock'
 import type { TxStep } from '@/hooks/useBuyPixels'
 import { ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
+import { MINIPAY_DEPOSIT_URL } from '@/lib/deeplinks'
 import TxProgress from './TxProgress'
 import SuccessState from './SuccessState'
 
@@ -163,8 +164,28 @@ export default function SelectionDrawer({
             balance: {formatUSDT(userBalance)} USDT
           </div>
           {insufficientBalance && (
-            <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 2, flexShrink: 0 }}>
-              not enough balance — you need {formatUSDT(totalPrice)} but only have {formatUSDT(userBalance)}
+            <div style={{ marginBottom: 6, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+              <div style={{ fontSize: 7, color: 'var(--error)', textAlign: 'center', letterSpacing: 1, fontFamily: "'Press Start 2P', monospace" }}>
+                short {formatUSDT(totalPrice - userBalance)} USDT
+              </div>
+              <a
+                href={MINIPAY_DEPOSIT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--accent)',
+                  border: '1px solid var(--accent)',
+                  borderRadius: 11,
+                  padding: '8px 16px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                }}
+              >
+                [ DEPOSIT IN MINIPAY ]
+              </a>
             </div>
           )}
           {userAddress && groups.some(g => g.owner.toLowerCase() === userAddress.toLowerCase()) && (

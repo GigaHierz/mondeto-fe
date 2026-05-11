@@ -15,7 +15,12 @@ import { ConnectButton } from "@/components/connect-button"
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Docs", href: "https://docs.celo.org", external: true },
+  { name: "Support", href: "https://t.me/mondetoSupport", external: true },
+]
+
+const legalLinks = [
+  { name: "Terms", href: "/terms" },
+  { name: "Privacy", href: "/privacy" },
 ]
 
 export function Navbar() {
@@ -59,6 +64,17 @@ export function Navbar() {
                   <Button asChild className="w-full">
                     <ConnectButton />
                   </Button>
+                </div>
+                <div className="mt-6 pt-4 border-t flex flex-col gap-2">
+                  {legalLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs text-foreground/60 hover:text-foreground transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
                 </div>
               </nav>
             </SheetContent>
