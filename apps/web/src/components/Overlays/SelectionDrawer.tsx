@@ -172,7 +172,7 @@ export default function SelectionDrawer({
           {insufficient && (
             <div style={{ marginBottom: 6, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
               <div style={{ fontSize: 7, color: 'var(--error)', textAlign: 'center', letterSpacing: 1, fontFamily: "'Press Start 2P', monospace" }}>
-                short {formatUSDT(totalPrice - userBalance)} USDT
+                need {formatUSDT(totalPrice - userBalance)} more USDT
               </div>
               <a
                 href={MINIPAY_DEPOSIT_URL}
@@ -190,7 +190,7 @@ export default function SelectionDrawer({
                   textAlign: 'center',
                 }}
               >
-                [ DEPOSIT IN MINIPAY ]
+                [ TOP UP BALANCE ]
               </a>
             </div>
           )}
