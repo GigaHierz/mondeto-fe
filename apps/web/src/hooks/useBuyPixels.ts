@@ -2,14 +2,13 @@
 
 import { useState, useCallback } from 'react'
 import { useWriteContract, useAccount, usePublicClient } from 'wagmi'
-import { celoSepolia } from 'wagmi/chains'
 import { MONDETO_ABI, MONDETO_ADDRESS, USDT_ABI } from '@/lib/contract'
 import { USDT_ADDRESS } from '@/lib/contract'
 
 export type TxStep = 'idle' | 'approving' | 'buying' | 'confirming' | 'success' | 'error'
 
 export function useBuyPixels() {
-  const { chain, address } = useAccount()
+  const { address } = useAccount()
   const publicClient = usePublicClient()
   const [step, setStep] = useState<TxStep>('idle')
   const [error, setError] = useState<string | null>(null)
