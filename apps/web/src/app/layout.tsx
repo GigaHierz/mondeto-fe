@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { WalletProvider } from "@/components/wallet-provider"
 import { ThemeProvider } from "@/lib/theme"
@@ -54,6 +55,7 @@ export default function RootLayout({
             </ThemeProvider>
           </WalletProvider>
         </div>
+        <SpeedInsights />
       </body>
     </html>
   );
