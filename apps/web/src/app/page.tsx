@@ -93,19 +93,38 @@ export default function Home() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { x, y } = geoToPixel(pos.coords.latitude, pos.coords.longitude)
+        const targetId = pixelIdFn(x, y)
         try {
           localStorage.setItem('mondeto-geo-decision', 'granted')
           sessionStorage.setItem('mondeto-geo-zoomed', '1')
         } catch {}
-        // Give the canvas a tick to lay out before commanding the zoom.
-        setTimeout(() => canvasRef.current?.zoomToPixel(pixelIdFn(x, y)), 200)
+
+        // The canvas ref + its internal TransformWrapper need a few frames
+        // to be ready after loadState flips to 'ready'. Retry up to ~2s
+        // until the ref is attached, then fire the zoom.
+        const start = Date.now()
+        const tryZoom = () => {
+          const ref = canvasRef.current
+          if (ref) {
+            ref.zoomToPixel(targetId)
+            console.log(`[geo] zoomed to pixel (${x}, ${y}) from lat/lng ${pos.coords.latitude.toFixed(2)},${pos.coords.longitude.toFixed(2)}`)
+            return
+          }
+          if (Date.now() - start > 2000) {
+            console.warn('[geo] canvas ref never attached, giving up')
+            return
+          }
+          setTimeout(tryZoom, 100)
+        }
+        tryZoom()
       },
-      () => {
+      (err) => {
+        console.warn('[geo] permission denied or error:', err.message)
         try {
           localStorage.setItem('mondeto-geo-decision', 'declined')
         } catch {}
       },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 },
     )
   }, [loadState])
 
