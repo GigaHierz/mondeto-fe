@@ -239,17 +239,18 @@ export default function ProfilePage() {
 
           {/* Support + legal footer — boxed card so it reads as a distinct
               section. MiniPay requires Support / Terms / Privacy to be
-              reachable in-app. */}
+              reachable in-app. Uses a 2px accent border so it pops in dark
+              mode where card-bg is nearly identical to the page bg. */}
           <div
             style={{
               marginTop: 32,
               background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
+              border: '2px solid var(--text-muted)',
               borderRadius: 10,
               padding: '14px 12px',
               display: 'flex',
               flexDirection: 'column',
-              gap: 10,
+              gap: 12,
               alignItems: 'center',
             }}
           >
@@ -271,11 +272,12 @@ export default function ProfilePage() {
                 fontSize: 8,
                 fontFamily: "'Press Start 2P', monospace",
                 letterSpacing: 2,
-                color: 'var(--accent)',
-                border: '1px solid var(--accent)',
+                background: 'var(--button-bg)',
+                color: 'var(--button-text)',
                 borderRadius: 8,
-                padding: '6px 14px',
+                padding: '8px 18px',
                 textDecoration: 'none',
+                border: 'none',
               }}
             >
               [ SUPPORT ]
@@ -284,11 +286,10 @@ export default function ProfilePage() {
               style={{
                 display: 'flex',
                 gap: 18,
-                paddingTop: 6,
-                borderTop: '1px solid var(--border)',
+                paddingTop: 10,
+                borderTop: '1px solid var(--text-muted)',
                 width: '100%',
                 justifyContent: 'center',
-                marginTop: 4,
               }}
             >
               <Link
@@ -298,7 +299,8 @@ export default function ProfilePage() {
                   fontFamily: "'Press Start 2P', monospace",
                   letterSpacing: 2,
                   color: 'var(--text-muted)',
-                  textDecoration: 'none',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
                 }}
               >
                 terms
@@ -310,7 +312,8 @@ export default function ProfilePage() {
                   fontFamily: "'Press Start 2P', monospace",
                   letterSpacing: 2,
                   color: 'var(--text-muted)',
-                  textDecoration: 'none',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
                 }}
               >
                 privacy
