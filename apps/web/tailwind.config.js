@@ -17,6 +17,16 @@ const config = {
         "2xl": "1400px",
       },
     },
+    screens: {
+      // MiniPay's minimum supported viewport is 360x640 — keep this in sync
+      // with the submission checklist in docs/MINIPAY_SUBMISSION.md.
+      xs: "360px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1400px",
+    },
     extend: {
       fontFamily: {
         mono: ['IBM Plex Mono', 'Courier New', 'monospace'],

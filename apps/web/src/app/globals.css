@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap');
+/* Fonts are loaded via <link> in app/layout.tsx with preconnect, which
+   parallelizes DNS + TLS with the rest of the head and avoids the
+   render-blocking behavior of @import inside CSS. */
 
 @tailwind base;
 @tailwind components;

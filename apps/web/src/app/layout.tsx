@@ -25,6 +25,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Pre-warm Google Fonts DNS + TLS so the @font-face requests don't
+            block first paint. Combined with preload below this is the
+            highest-impact PageSpeed change for our mobile target. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Press+Start+2P&display=swap"
+        />
+      </head>
       <body
         className="font-mono antialiased"
         style={{ backgroundColor: 'var(--bg)', color: 'var(--text)' }}
