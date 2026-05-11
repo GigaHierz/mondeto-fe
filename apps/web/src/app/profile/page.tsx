@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { useAccount, usePublicClient } from 'wagmi'
 import TopBar from '@/components/Layout/TopBar'
 import BottomNav from '@/components/Layout/BottomNav'
@@ -13,6 +14,7 @@ import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
 import { isLand } from '@/lib/landMask'
+import { SUPPORT_URL } from '@/lib/deeplinks'
 
 export default function ProfilePage() {
   const { address } = useAccount()
@@ -234,6 +236,60 @@ export default function ProfilePage() {
               connect wallet to save on-chain
             </div>
           )}
+
+          {/* Support + legal footer (MiniPay submission requires reachable in-app) */}
+          <div
+            style={{
+              marginTop: 32,
+              paddingTop: 16,
+              borderTop: '1px solid var(--border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              alignItems: 'center',
+            }}
+          >
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 7,
+                fontFamily: "'Press Start 2P', monospace",
+                letterSpacing: 2,
+                color: 'var(--accent)',
+                textDecoration: 'none',
+              }}
+            >
+              [ SUPPORT ]
+            </a>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <Link
+                href="/terms"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'none',
+                }}
+              >
+                terms
+              </Link>
+              <Link
+                href="/privacy"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'none',
+                }}
+              >
+                privacy
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
       <BottomNav activeRoute="/profile" />

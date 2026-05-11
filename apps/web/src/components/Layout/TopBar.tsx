@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Link from 'next/link'
 import { ConnectButton } from '@/components/connect-button'
 import { useTheme } from '@/lib/theme'
 
@@ -28,7 +29,8 @@ export default function TopBar({ title, children }: TopBarProps) {
         padding: '0 14px',
       }}
     >
-      <span
+      <Link
+        href="/"
         style={{
           fontSize: 11,
           fontWeight: 700,
@@ -36,10 +38,11 @@ export default function TopBar({ title, children }: TopBarProps) {
           fontFamily: "'Press Start 2P', monospace",
           color: 'var(--text)',
           flexShrink: 0,
+          textDecoration: 'none',
         }}
       >
         {title}
-      </span>
+      </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         {children}
