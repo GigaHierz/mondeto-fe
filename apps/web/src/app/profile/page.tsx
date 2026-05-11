@@ -237,33 +237,60 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* Support + legal footer (MiniPay submission requires reachable in-app) */}
+          {/* Support + legal footer — boxed card so it reads as a distinct
+              section. MiniPay requires Support / Terms / Privacy to be
+              reachable in-app. */}
           <div
             style={{
               marginTop: 32,
-              paddingTop: 16,
-              borderTop: '1px solid var(--border)',
+              background: 'var(--card-bg)',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              padding: '14px 12px',
               display: 'flex',
               flexDirection: 'column',
               gap: 10,
               alignItems: 'center',
             }}
           >
+            <div
+              style={{
+                fontSize: 6,
+                fontFamily: "'Press Start 2P', monospace",
+                color: 'var(--text-muted)',
+                letterSpacing: 2,
+              }}
+            >
+              HELP &amp; LEGAL
+            </div>
             <a
               href={SUPPORT_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={{
-                fontSize: 7,
+                fontSize: 8,
                 fontFamily: "'Press Start 2P', monospace",
                 letterSpacing: 2,
                 color: 'var(--accent)',
+                border: '1px solid var(--accent)',
+                borderRadius: 8,
+                padding: '6px 14px',
                 textDecoration: 'none',
               }}
             >
               [ SUPPORT ]
             </a>
-            <div style={{ display: 'flex', gap: 16 }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 18,
+                paddingTop: 6,
+                borderTop: '1px solid var(--border)',
+                width: '100%',
+                justifyContent: 'center',
+                marginTop: 4,
+              }}
+            >
               <Link
                 href="/terms"
                 style={{

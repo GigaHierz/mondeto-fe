@@ -7,7 +7,25 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <article style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px', fontFamily: "'IBM Plex Mono', monospace", color: 'var(--text)', lineHeight: 1.6 }}>
+    <article style={{ maxWidth: 720, margin: '0 auto', padding: '20px 20px 32px', fontFamily: "'IBM Plex Mono', monospace", color: 'var(--text)', lineHeight: 1.6 }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <Link
+          href="/profile"
+          aria-label="Close"
+          style={{
+            fontSize: 16,
+            fontFamily: "'Press Start 2P', monospace",
+            color: 'var(--text-muted)',
+            textDecoration: 'none',
+            padding: '4px 10px',
+            border: '1px solid var(--border)',
+            borderRadius: 6,
+            lineHeight: 1,
+          }}
+        >
+          ✕
+        </Link>
+      </div>
       <h1 style={{ fontSize: 22, marginBottom: 8 }}>Privacy Policy</h1>
       <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 24 }}>
         Last updated: <span style={{ fontStyle: 'italic' }}>DRAFT — pending legal review</span>

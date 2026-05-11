@@ -61,6 +61,12 @@ export default function SelectionDrawer({
   const isTxActive = txStep === 'approving' || txStep === 'buying' || txStep === 'confirming'
   const pixelCount = selectedIds.size
 
+  // Compute insufficient locally from the values we already render. The
+  // parent also derives this through useBuyPixels.checkBalance, but that path
+  // sets state in an effect and can lag the first render of the drawer —
+  // computing here keeps the CTA state in sync with the numbers on screen.
+  const insufficient = totalPrice > 0n && userBalance < totalPrice || insufficientBalance
+
   // Group selected pixels by owner
   const groups = useMemo(() => {
     const map = new Map<string, OwnerGroup>()
@@ -163,7 +169,7 @@ export default function SelectionDrawer({
           <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', marginBottom: 4, flexShrink: 0, textAlign: 'center', letterSpacing: 1 }}>
             balance: {formatUSDT(userBalance)} USDT
           </div>
-          {insufficientBalance && (
+          {insufficient && (
             <div style={{ marginBottom: 6, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
               <div style={{ fontSize: 7, color: 'var(--error)', textAlign: 'center', letterSpacing: 1, fontFamily: "'Press Start 2P', monospace" }}>
                 short {formatUSDT(totalPrice - userBalance)} USDT
@@ -267,7 +273,7 @@ export default function SelectionDrawer({
             style={{
               background: 'var(--button-bg)',
               color: 'var(--button-text)',
-              opacity: insufficientBalance || priceLoading ? 0.5 : 1,
+              opacity: insufficient || priceLoading ? 0.5 : 1,
               borderRadius: 11,
               padding: 14,
               fontSize: 8,
@@ -275,13 +281,13 @@ export default function SelectionDrawer({
               letterSpacing: 2,
               textAlign: 'center',
               border: 'none',
-              cursor: insufficientBalance || priceLoading ? 'default' : 'pointer',
+              cursor: insufficient || priceLoading ? 'default' : 'pointer',
               width: '100%',
-              pointerEvents: insufficientBalance || priceLoading ? 'none' : 'auto',
+              pointerEvents: insufficient || priceLoading ? 'none' : 'auto',
               flexShrink: 0,
             }}
           >
-            {priceLoading ? '[ CHECKING PRICES... ]' : insufficientBalance ? '[ NOT ENOUGH FUNDS ]' : `[ LOCK IT IN — ${formatUSDT(totalPrice)} USDT ]`}
+            {priceLoading ? '[ CHECKING PRICES... ]' : insufficient ? '[ NOT ENOUGH FUNDS ]' : `[ LOCK IT IN — ${formatUSDT(totalPrice)} USDT ]`}
           </button>
         </div>
       )}
