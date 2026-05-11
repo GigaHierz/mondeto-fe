@@ -6,6 +6,7 @@ import type { TxStep } from '@/hooks/useBuyPixels'
 import { ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
 import { generateUsername } from '@/lib/username'
+import { MINIPAY_DEPOSIT_URL } from '@/lib/deeplinks'
 import TxProgress from './TxProgress'
 import SuccessState from './SuccessState'
 
@@ -56,6 +57,12 @@ export default function SelectionDrawer({
 }: SelectionDrawerProps) {
   const isTxActive = txStep === 'approving' || txStep === 'buying' || txStep === 'confirming'
   const pixelCount = selectedIds.size
+
+  // Compute insufficient locally from the values we already render. The
+  // parent also derives this through useBuyPixels.checkBalance, but that path
+  // sets state in an effect and can lag the first render of the drawer —
+  // computing here keeps the CTA state in sync with the numbers on screen.
+  const insufficient = totalPrice > 0n && userBalance < totalPrice || insufficientBalance
 
   // Group selected pixels by owner
   const groups = useMemo(() => {
@@ -159,9 +166,29 @@ export default function SelectionDrawer({
           <div style={{ fontSize: 7, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', marginBottom: 4, flexShrink: 0, textAlign: 'center', letterSpacing: 1 }}>
             balance: {formatUSDT(userBalance)} USDT
           </div>
-          {insufficientBalance && (
-            <div style={{ fontSize: 7, color: 'var(--error)', marginBottom: 2, flexShrink: 0 }}>
-              not enough balance — you need {formatUSDT(totalPrice)} but only have {formatUSDT(userBalance)}
+          {insufficient && (
+            <div style={{ marginBottom: 6, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+              <div style={{ fontSize: 7, color: 'var(--error)', textAlign: 'center', letterSpacing: 1, fontFamily: "'Press Start 2P', monospace" }}>
+                need {formatUSDT(totalPrice - userBalance)} more USDT
+              </div>
+              <a
+                href={MINIPAY_DEPOSIT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--accent)',
+                  border: '1px solid var(--accent)',
+                  borderRadius: 11,
+                  padding: '8px 16px',
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                }}
+              >
+                [ TOP UP BALANCE ]
+              </a>
             </div>
           )}
           {userAddress && groups.some(g => g.owner.toLowerCase() === userAddress.toLowerCase()) && (
@@ -243,7 +270,7 @@ export default function SelectionDrawer({
             style={{
               background: 'var(--button-bg)',
               color: 'var(--button-text)',
-              opacity: insufficientBalance || priceLoading ? 0.5 : 1,
+              opacity: insufficient || priceLoading ? 0.5 : 1,
               borderRadius: 11,
               padding: 14,
               fontSize: 8,
@@ -251,13 +278,13 @@ export default function SelectionDrawer({
               letterSpacing: 2,
               textAlign: 'center',
               border: 'none',
-              cursor: insufficientBalance || priceLoading ? 'default' : 'pointer',
+              cursor: insufficient || priceLoading ? 'default' : 'pointer',
               width: '100%',
-              pointerEvents: insufficientBalance || priceLoading ? 'none' : 'auto',
+              pointerEvents: insufficient || priceLoading ? 'none' : 'auto',
               flexShrink: 0,
             }}
           >
-            {priceLoading ? '[ CHECKING PRICES... ]' : insufficientBalance ? '[ NOT ENOUGH FUNDS ]' : `[ LOCK IT IN — ${formatUSDT(totalPrice)} USDT ]`}
+            {priceLoading ? '[ CHECKING PRICES... ]' : insufficient ? '[ NOT ENOUGH FUNDS ]' : `[ LOCK IT IN — ${formatUSDT(totalPrice)} USDT ]`}
           </button>
         </div>
       )}

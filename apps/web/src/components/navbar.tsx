@@ -15,7 +15,12 @@ import { ConnectButton } from "@/components/connect-button"
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "Docs", href: "https://docs.celo.org", external: true },
+  { name: "Support", href: "https://t.me/mondetoSupport", external: true },
+]
+
+const legalLinks = [
+  { name: "Terms", href: "/terms" },
+  { name: "Privacy", href: "/privacy" },
 ]
 
 export function Navbar() {
@@ -35,9 +40,8 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="left" className="w-80">
               <div className="flex items-center gap-2 mb-8">
-
                 <span className="font-bold text-lg">
-                  my-celo-app
+                  Mondeto
                 </span>
               </div>
               <nav className="flex flex-col gap-4">
@@ -60,15 +64,25 @@ export function Navbar() {
                     <ConnectButton />
                   </Button>
                 </div>
+                <div className="mt-6 pt-4 border-t flex flex-col gap-2">
+                  {legalLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-xs text-foreground/60 hover:text-foreground transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-
             <span className="hidden font-bold text-xl sm:inline-block">
-              my-celo-app
+              Mondeto
             </span>
           </Link>
         </div>
