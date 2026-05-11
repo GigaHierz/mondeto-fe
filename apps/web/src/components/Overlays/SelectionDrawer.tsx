@@ -220,23 +220,15 @@ export default function SelectionDrawer({
                     <div style={{ width: 12, height: 12, borderRadius: 3, background: group.color || '#888', flexShrink: 0 }} />
                   )}
 
-                  {/* Name + link */}
+                  {/* Name — URL hidden per MiniPay product review (XSS risk) */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {(() => {
                       const prof = profilesMap?.get(group.owner.toLowerCase())
                       const name = prof?.label || group.label || (isUnowned ? 'unowned' : generateUsername(group.owner))
-                      const url = prof?.url || group.url
                       return (
-                        <>
-                          <div style={{ fontSize: 8, color: isUnowned ? 'var(--text-muted)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {name}
-                          </div>
-                          {!isUnowned && url && (
-                            <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 6, color: 'var(--accent)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', textDecoration: 'none' }}>
-                              {url.replace('https://', '').replace('http://', '').replace(/\/$/, '')}
-                            </a>
-                          )}
-                        </>
+                        <div style={{ fontSize: 8, color: isUnowned ? 'var(--text-muted)' : 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {name}
+                        </div>
                       )
                     })()}
                   </div>
