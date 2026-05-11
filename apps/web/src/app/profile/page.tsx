@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import { useAccount, usePublicClient } from 'wagmi'
 import TopBar from '@/components/Layout/TopBar'
 import BottomNav from '@/components/Layout/BottomNav'
@@ -13,6 +14,7 @@ import { MONDETO_ADDRESS, MONDETO_ABI } from '@/lib/contract'
 import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
 import { isLand } from '@/lib/landMask'
+import { SUPPORT_URL } from '@/lib/deeplinks'
 
 export default function ProfilePage() {
   const { address } = useAccount()
@@ -234,6 +236,90 @@ export default function ProfilePage() {
               connect wallet to save on-chain
             </div>
           )}
+
+          {/* Support + legal footer — boxed card so it reads as a distinct
+              section. MiniPay requires Support / Terms / Privacy to be
+              reachable in-app. Uses a 2px accent border so it pops in dark
+              mode where card-bg is nearly identical to the page bg. */}
+          <div
+            style={{
+              marginTop: 32,
+              background: 'var(--card-bg)',
+              border: '2px solid var(--text-muted)',
+              borderRadius: 10,
+              padding: '14px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 12,
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                fontSize: 6,
+                fontFamily: "'Press Start 2P', monospace",
+                color: 'var(--text-muted)',
+                letterSpacing: 2,
+              }}
+            >
+              HELP &amp; LEGAL
+            </div>
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 8,
+                fontFamily: "'Press Start 2P', monospace",
+                letterSpacing: 2,
+                background: 'var(--button-bg)',
+                color: 'var(--button-text)',
+                borderRadius: 8,
+                padding: '8px 18px',
+                textDecoration: 'none',
+                border: 'none',
+              }}
+            >
+              [ SUPPORT ]
+            </a>
+            <div
+              style={{
+                display: 'flex',
+                gap: 18,
+                paddingTop: 10,
+                borderTop: '1px solid var(--text-muted)',
+                width: '100%',
+                justifyContent: 'center',
+              }}
+            >
+              <Link
+                href="/terms"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
+                }}
+              >
+                terms
+              </Link>
+              <Link
+                href="/privacy"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
+                }}
+              >
+                privacy
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
       <BottomNav activeRoute="/profile" />
