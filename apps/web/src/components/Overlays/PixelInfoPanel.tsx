@@ -3,6 +3,7 @@
 import React from 'react'
 import type { PixelView } from '@/lib/mock'
 import { formatUSDT } from '@/lib/colorUtils'
+import { generateUsername } from '@/lib/username'
 
 interface PixelInfoPanelProps {
   visible: boolean
@@ -28,7 +29,7 @@ export default function PixelInfoPanel({
   const firstLetter = pixel.label ? pixel.label[0].toUpperCase() : '?'
   const firstLetterColor = pixel.label ? 'white' : 'var(--text-muted)'
   const prevPrice = pixel.currentPrice / 2n
-  const ownerDisplay = pixel.label || truncateAddress(pixel.owner)
+  const ownerDisplay = pixel.label || generateUsername(pixel.owner)
 
   return (
     <div

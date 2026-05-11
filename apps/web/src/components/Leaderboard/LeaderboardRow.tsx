@@ -1,6 +1,7 @@
 'use client'
 
 import type { LeaderboardEntry } from '@/hooks/useLeaderboard'
+import { generateUsername } from '@/lib/username'
 
 interface LeaderboardRowProps {
   entry: LeaderboardEntry
@@ -20,10 +21,6 @@ function rankColor(rank: number): string {
   if (rank === 2) return '#8a9aaa'
   if (rank === 3) return '#a07050'
   return 'var(--text-muted)'
-}
-
-function truncateAddress(addr: string): string {
-  return `0x${addr.slice(2, 6)}...${addr.slice(-3)}`
 }
 
 export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
@@ -72,7 +69,7 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
             textOverflow: 'ellipsis',
           }}
         >
-          {entry.label || truncateAddress(entry.owner)}
+          {entry.label || generateUsername(entry.owner)}
         </div>
         {displayUrl && (
           <a

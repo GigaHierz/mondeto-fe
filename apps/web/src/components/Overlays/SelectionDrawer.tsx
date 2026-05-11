@@ -5,6 +5,7 @@ import type { PixelView } from '@/lib/mock'
 import type { TxStep } from '@/hooks/useBuyPixels'
 import { ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
+import { generateUsername } from '@/lib/username'
 import TxProgress from './TxProgress'
 import SuccessState from './SuccessState'
 
@@ -34,10 +35,6 @@ interface SelectionDrawerProps {
   onClear: () => void
   onBuy: () => void
   onDone: () => void
-}
-
-function truncAddr(addr: string): string {
-  return addr.slice(0, 6) + '...' + addr.slice(-3)
 }
 
 export default function SelectionDrawer({
@@ -200,7 +197,7 @@ export default function SelectionDrawer({
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {(() => {
                       const prof = profilesMap?.get(group.owner.toLowerCase())
-                      const name = prof?.label || group.label || (isUnowned ? 'unowned' : truncAddr(group.owner))
+                      const name = prof?.label || group.label || (isUnowned ? 'unowned' : generateUsername(group.owner))
                       const url = prof?.url || group.url
                       return (
                         <>
