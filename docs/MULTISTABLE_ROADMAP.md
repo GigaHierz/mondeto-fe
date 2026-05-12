@@ -2,7 +2,19 @@
 
 > Audience: the smart-contract developer maintaining the Mondeto contract.
 > Goal: Enable MiniPay users to buy pixels with their preferred stablecoin (USDT, USDC, or USDm/cUSD) without forcing a swap.
-> Status: v1 ships USDT-only. This document plans the contract redesign for v2.
+> Status: **v1 ships USDT-only — multi-stable v2 is paused** pending the MiniPay in-app swap timeline (see "Why this is paused" below). This document captures the design so we can pick it back up cleanly.
+
+---
+
+## Why this is paused
+
+In Mondeto, sellers receive most of the buyer's payment. If buyers can pay in any of the three stablecoins, **sellers receive whatever currency the buyer paid in** — not the currency they originally paid with. So a player who put in USDT could later receive USDC when their pixel sells. Mechanically this works (stablecoins are fungible), but the UX is confusing.
+
+In parallel, MiniPay is shipping an **in-app Squid-based universal swap**. Once that lands, the multi-stable problem disappears: users with USDC / USDm swap inside MiniPay on the way in, and Mondeto stays USDT-only on the backend.
+
+Current plan: **stay USDT-only for v1**, with the existing "swap inside MiniPay first" explainer in the wallet section (already shipped). Pick this roadmap back up only if (a) MiniPay's swap is delayed materially, or (b) the data shows non-USDT holders churning at the funnel.
+
+Draft message to MiniPay confirming this approach lives in `docs/MESSAGE_TO_MINIPAY.md`.
 
 ---
 
