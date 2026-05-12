@@ -12,6 +12,14 @@ const BLOCKS_PER_WEEK = 604_800n
 // How far back to fetch event logs. Anything older than this won't count
 // toward "all-time" metrics. Bump when we have a real indexer.
 const LOOKBACK_BLOCKS = 700_000n
+// Forno occasionally rejects large single getLogs windows with
+// "block is out of range". Chunk into batches small enough to stay within
+// any provider-side limit, fired in parallel.
+const CHUNK_BLOCKS = 50_000n
+const MAX_PARALLEL = 4
+// Cache TTL so navigating away + back doesn't re-fetch the whole history.
+const CACHE_KEY = 'mondeto-analytics-cache'
+const CACHE_TTL_MS = 60_000
 
 export interface AnalyticsData {
   loading: boolean
@@ -46,6 +54,18 @@ const EVENT_PURCHASED = parseAbiItem(
   'event PixelsPurchased(address indexed buyer, uint256[] ids, uint256 totalCost)',
 )
 
+function serializeWithBigInts(data: AnalyticsData): string {
+  return JSON.stringify(data, (_, v) =>
+    typeof v === 'bigint' ? v.toString() + 'n' : v,
+  )
+}
+
+function parseWithBigInts(str: string): AnalyticsData {
+  return JSON.parse(str, (_, v) =>
+    typeof v === 'string' && /^\d+n$/.test(v) ? BigInt(v.slice(0, -1)) : v,
+  ) as AnalyticsData
+}
+
 export function useAnalytics(): AnalyticsData {
   const publicClient = usePublicClient()
   const [data, setData] = useState<AnalyticsData>({
@@ -74,18 +94,52 @@ export function useAnalytics(): AnalyticsData {
 
     async function fetchAnalytics() {
       try {
+        // Serve from session cache if fresh — avoids re-hammering Forno
+        // when the user navigates away and back to /analytics.
+        try {
+          const cached = sessionStorage.getItem(CACHE_KEY)
+          if (cached) {
+            const parsed = JSON.parse(cached) as { ts: number; data: string }
+            if (Date.now() - parsed.ts < CACHE_TTL_MS) {
+              const cachedData = parseWithBigInts(parsed.data)
+              if (!cancelled) setData(cachedData)
+              return
+            }
+          }
+        } catch {}
+
         const currentBlock = await publicClient!.getBlockNumber()
         const fromBlock =
           currentBlock > LOOKBACK_BLOCKS ? currentBlock - LOOKBACK_BLOCKS : 0n
 
-        // Pull all PixelsPurchased events in the window. profile page uses
-        // the same single-call pattern and forno is happy with it.
-        const logs = await publicClient!.getLogs({
-          address: MONDETO_ADDRESS,
-          event: EVENT_PURCHASED,
-          fromBlock,
-          toBlock: currentBlock,
-        })
+        // Build chunk ranges. Each chunk is well under any provider limit.
+        const ranges: Array<{ from: bigint; to: bigint }> = []
+        for (let start = fromBlock; start <= currentBlock; start += CHUNK_BLOCKS) {
+          const end =
+            start + CHUNK_BLOCKS - 1n > currentBlock
+              ? currentBlock
+              : start + CHUNK_BLOCKS - 1n
+          ranges.push({ from: start, to: end })
+        }
+
+        // Run in parallel, capped at MAX_PARALLEL to stay polite to Forno.
+        const client = publicClient!
+        type LogShape = Awaited<ReturnType<typeof client.getLogs<typeof EVENT_PURCHASED>>>[number]
+        const logs: LogShape[] = []
+        for (let i = 0; i < ranges.length; i += MAX_PARALLEL) {
+          const batch = ranges.slice(i, i + MAX_PARALLEL)
+          const results = await Promise.all(
+            batch.map((r) =>
+              publicClient!.getLogs({
+                address: MONDETO_ADDRESS,
+                event: EVENT_PURCHASED,
+                fromBlock: r.from,
+                toBlock: r.to,
+              }),
+            ),
+          )
+          for (const chunk of results) logs.push(...chunk)
+        }
 
         // Read the fee rate from the contract (basis points, e.g. 300 = 3%)
         let feeRateBps = 0
@@ -135,11 +189,6 @@ export function useAnalytics(): AnalyticsData {
           }
         }
 
-        // Platform revenue estimate. Real on-chain split is determined by the
-        // contract — first-time sales of unowned pixels may go entirely to
-        // the platform, while resales split feeRate% to platform / rest to
-        // previous owner. This is a reasonable lower-bound proxy for the
-        // analytics view; the actual withdrawable balance lives on-chain.
         const revenueAllTime =
           feeRateBps > 0
             ? (volumeAllTime * BigInt(feeRateBps)) / 10_000n
@@ -147,7 +196,7 @@ export function useAnalytics(): AnalyticsData {
 
         if (cancelled) return
 
-        setData({
+        const fresh: AnalyticsData = {
           loading: false,
           error: null,
           dailyActiveUsers: dailyBuyers.size,
@@ -164,7 +213,16 @@ export function useAnalytics(): AnalyticsData {
           windowStartBlock: fromBlock,
           windowEndBlock: currentBlock,
           fetchedAt: Date.now(),
-        })
+        }
+
+        setData(fresh)
+
+        try {
+          sessionStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ ts: Date.now(), data: serializeWithBigInts(fresh) }),
+          )
+        } catch {}
       } catch (e) {
         if (cancelled) return
         setData((prev) => ({
