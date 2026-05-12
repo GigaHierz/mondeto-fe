@@ -24,7 +24,8 @@ function rankColor(rank: number): string {
 }
 
 export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
-  const displayUrl = entry.url?.replace('https://', '').replace('http://', '').replace(/\/$/, '')
+  // URL field hidden per MiniPay product review (2026-05-11) — URLs are
+  // an injection vector until we add verification.
   const isTop3 = entry.rank <= 3
 
   return (
@@ -56,7 +57,7 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
         {rankSuffix(entry.rank)}
       </span>
 
-      {/* Name + URL */}
+      {/* Name */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
@@ -71,26 +72,6 @@ export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
         >
           {entry.label || generateUsername(entry.owner)}
         </div>
-        {displayUrl && (
-          <a
-            href={entry.url.startsWith('http') ? entry.url : `https://${entry.url}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontSize: 7,
-              color: 'var(--accent)',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              marginTop: 3,
-              display: 'block',
-              textDecoration: 'none',
-              fontFamily: "'IBM Plex Mono', monospace",
-            }}
-          >
-            {displayUrl}
-          </a>
-        )}
       </div>
 
       {/* Score */}

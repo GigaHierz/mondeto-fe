@@ -15,13 +15,19 @@ import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
 import { formatUSDT } from '@/lib/colorUtils'
 import { isLand } from '@/lib/landMask'
 import { SUPPORT_URL } from '@/lib/deeplinks'
+import { checkProfanity } from '@/lib/profanity'
 
 export default function ProfilePage() {
   const { address } = useAccount()
   const addrStr = address as string | undefined
-  const { name, setName, url, setUrl, color, setColor, saveState, save } = useProfile(addrStr)
+  // URL input was removed per MiniPay product review (2026-05-11) — URLs
+  // are an injection vector. setUrl is left wired but unused so existing
+  // useProfile callers keep their shape; updateProfile is called below
+  // with an empty string for url.
+  const { name, setName, color, setColor, saveState, save } = useProfile(addrStr)
   const walletBalance = useUSDTBalance()
   const publicClient = usePublicClient()
+  const [nameError, setNameError] = useState<string | null>(null)
 
   const [pixelCount, setPixelCount] = useState(0)
   const [rank, setRank] = useState(0)
@@ -177,40 +183,44 @@ export default function ProfilePage() {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (nameError) setNameError(null)
+              }}
               maxLength={32}
               placeholder="enter name..."
               style={{ fontSize: 10, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1, color: 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
             />
           </div>
 
-          {/* URL field */}
-          <div
-            style={{
-              background: 'var(--card-bg)',
-              border: '1px solid var(--border)',
-              borderRadius: 8,
-              padding: '10px 12px',
-              marginBottom: 8,
-            }}
-          >
-            <div style={{ fontSize: 6, fontFamily: "'Press Start 2P', monospace", color: 'var(--text-muted)', letterSpacing: 2, marginBottom: 6 }}>
-              URL
+          {nameError && (
+            <div
+              style={{
+                fontSize: 7,
+                fontFamily: "'Press Start 2P', monospace",
+                color: 'var(--error)',
+                letterSpacing: 1,
+                marginBottom: 8,
+                paddingLeft: 4,
+              }}
+            >
+              {nameError}
             </div>
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://..."
-              style={{ fontSize: 9, fontFamily: "'Press Start 2P', monospace", letterSpacing: 1, color: url ? 'var(--accent)' : 'var(--text)', background: 'transparent', border: 'none', width: '100%', outline: 'none' }}
-            />
-          </div>
+          )}
 
           <ColorPicker color={color} onChange={setColor} />
 
           {/* Save button */}
           <button
-            onClick={save}
+            onClick={() => {
+              const check = checkProfanity(name)
+              if (!check.ok) {
+                setNameError(check.reason ?? 'invalid name')
+                return
+              }
+              setNameError(null)
+              save()
+            }}
             disabled={saveState === 'saving' || saveState === 'confirming'}
             style={{
               display: 'block',
@@ -290,8 +300,22 @@ export default function ProfilePage() {
                 borderTop: '1px solid var(--text-muted)',
                 width: '100%',
                 justifyContent: 'center',
+                flexWrap: 'wrap',
               }}
             >
+              <Link
+                href="/faq"
+                style={{
+                  fontSize: 7,
+                  fontFamily: "'Press Start 2P', monospace",
+                  letterSpacing: 2,
+                  color: 'var(--text-muted)',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: 3,
+                }}
+              >
+                faq
+              </Link>
               <Link
                 href="/terms"
                 style={{

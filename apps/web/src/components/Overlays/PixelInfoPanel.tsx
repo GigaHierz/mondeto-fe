@@ -105,17 +105,8 @@ export default function PixelInfoPanel({
         <div style={{ fontSize: 9, color: 'var(--text)' }}>{pixel.label || '—'}</div>
       </div>
 
-      {/* URL field */}
-      <div style={{ padding: '7px 14px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 6, color: 'var(--text-muted)', letterSpacing: 1 }}>URL</div>
-        {pixel.url ? (
-          <a href={pixel.url.startsWith('http') ? pixel.url : `https://${pixel.url}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 9, color: 'var(--accent)', textDecoration: 'none' }}>
-            {pixel.url} →
-          </a>
-        ) : (
-          <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>—</div>
-        )}
-      </div>
+      {/* URL field removed per MiniPay product review (2026-05-11) —
+          unverified user-entered URLs are an injection / phishing vector. */}
 
       {/* Price cards row */}
       <div style={{ padding: '8px 14px', display: 'flex', gap: 8 }}>

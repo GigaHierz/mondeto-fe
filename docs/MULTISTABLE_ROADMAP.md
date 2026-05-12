@@ -186,6 +186,9 @@ The old single-arg signature can stay as a thin wrapper around `withdraw(usdt, .
 2. **Pricing parity**: are you OK with the 1e12 rounding loss when paying in USDC/USDT? Worst case is fractions of a cent per purchase.
 3. **Reinitialize timing**: who triggers the `reinitialize(2)` call? Recommend owner multisig, same day as the frontend deploy.
 4. **Indexer/subgraph**: any off-chain indexers that need updating? `PixelsPurchased` event signature would change (adds `address token`).
+5. **Approval cap (MiniPay listing requirement)**: per the 2026-05-11 product review with Vinay at MiniPay, the frontend must cap user approvals at a small fixed amount — agreed starting point **$10** — instead of the current "10× the purchase" generous approve. This is so that if the contract is ever compromised, user funds beyond the cap remain safe. Confirm the contract is happy with a `approve(spender, 10_000_000)` followed by `buyPixels`, and re-approves cleanly when the user later spends past the cap (the current `useBuyPixels.ts` checks allowance before approve, so this should "just work" — please verify on a Foundry test).
+
+   Implementation note: the cap change is purely a frontend tweak in `apps/web/src/hooks/useBuyPixels.ts` (replacing `realPrice * 10n` with a fixed `10_000_000n`). No contract change required.
 
 ---
 

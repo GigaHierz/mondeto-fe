@@ -4,6 +4,25 @@ export function pixelId(x: number, y: number): number {
   return y * WIDTH + x
 }
 
+// Approximate (lat, lng) → grid (x, y).
+//
+// The on-chain land mask is Equal Earth projected (Šavrič et al. 2018), but
+// implementing the full inverse here would be overkill for "zoom roughly to
+// the player's location". Simple equirectangular gets within a few pixels
+// at temperate latitudes — close enough that a 4× zoom lands on the user's
+// continent / country. If precision becomes important later, swap this for
+// the full Equal Earth inverse.
+export function geoToPixel(latDeg: number, lngDeg: number): { x: number; y: number } {
+  const lat = Math.max(-90, Math.min(90, latDeg))
+  const lng = Math.max(-180, Math.min(180, lngDeg))
+  const x = Math.round(((lng + 180) / 360) * WIDTH)
+  const y = Math.round(((90 - lat) / 180) * HEIGHT)
+  return {
+    x: Math.max(0, Math.min(WIDTH - 1, x)),
+    y: Math.max(0, Math.min(HEIGHT - 1, y)),
+  }
+}
+
 export function idToXY(id: number): { x: number; y: number } {
   return { x: id % WIDTH, y: Math.floor(id / WIDTH) }
 }

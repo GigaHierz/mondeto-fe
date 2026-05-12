@@ -24,6 +24,7 @@ import { decodeBytes } from '@/lib/decodeBytes'
 import { uint24ToHex } from '@/lib/colorUtils'
 import { PAINT_SCALE } from '@/constants/map'
 import { useTheme } from '@/lib/theme'
+import { geoToPixel, pixelId as pixelIdFn } from '@/lib/pixelMath'
 
 export default function Home() {
   const { isDark } = useTheme()
@@ -73,6 +74,59 @@ export default function Home() {
       ).then(() => load())
     }
   }, [publicClient, load])
+
+  // Geolocation auto-zoom on first visit. Requested by Vinay at MiniPay:
+  // "the moment user lands on this page they should be able to see their
+  // location and basis that pick up the stuff they want." We ask once,
+  // remember the decision, and skip on subsequent visits.
+  useEffect(() => {
+    if (loadState !== 'ready') return
+    if (typeof window === 'undefined' || !navigator.geolocation) return
+
+    try {
+      const decided = localStorage.getItem('mondeto-geo-decision')
+      if (decided === 'declined') return
+      const alreadyZoomed = sessionStorage.getItem('mondeto-geo-zoomed')
+      if (alreadyZoomed) return
+    } catch {}
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { x, y } = geoToPixel(pos.coords.latitude, pos.coords.longitude)
+        const targetId = pixelIdFn(x, y)
+        try {
+          localStorage.setItem('mondeto-geo-decision', 'granted')
+          sessionStorage.setItem('mondeto-geo-zoomed', '1')
+        } catch {}
+
+        // The canvas ref + its internal TransformWrapper need a few frames
+        // to be ready after loadState flips to 'ready'. Retry up to ~2s
+        // until the ref is attached, then fire the zoom.
+        const start = Date.now()
+        const tryZoom = () => {
+          const ref = canvasRef.current
+          if (ref) {
+            ref.zoomToPixel(targetId)
+            console.log(`[geo] zoomed to pixel (${x}, ${y}) from lat/lng ${pos.coords.latitude.toFixed(2)},${pos.coords.longitude.toFixed(2)}`)
+            return
+          }
+          if (Date.now() - start > 2000) {
+            console.warn('[geo] canvas ref never attached, giving up')
+            return
+          }
+          setTimeout(tryZoom, 100)
+        }
+        tryZoom()
+      },
+      (err) => {
+        console.warn('[geo] permission denied or error:', err.message)
+        try {
+          localStorage.setItem('mondeto-geo-decision', 'declined')
+        } catch {}
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 },
+    )
+  }, [loadState])
 
   // Fetch profiles for territory labels
   useEffect(() => {
