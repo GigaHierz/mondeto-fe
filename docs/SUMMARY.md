@@ -134,7 +134,7 @@
 ## Phase 6: Mainnet Launch
 
 ### 6.1 — Deploy
-- [ ] Karl deploys to Celo Mainnet
+- [ ] Deploy contract to Celo Mainnet
 - [ ] Update contract address + USDT address
 - [ ] Flip default chain from Sepolia to Mainnet
 - [ ] Test full flow

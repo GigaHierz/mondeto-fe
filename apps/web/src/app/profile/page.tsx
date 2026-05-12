@@ -20,10 +20,9 @@ import { checkProfanity } from '@/lib/profanity'
 export default function ProfilePage() {
   const { address } = useAccount()
   const addrStr = address as string | undefined
-  // URL input was removed per MiniPay product review (2026-05-11) — URLs
-  // are an injection vector. setUrl is left wired but unused so existing
-  // useProfile callers keep their shape; updateProfile is called below
-  // with an empty string for url.
+  // URL input removed — unverified user URLs are an injection vector.
+  // setUrl is left wired but unused so existing useProfile callers keep
+  // their shape; updateProfile is called below with an empty string for url.
   const { name, setName, color, setColor, saveState, save } = useProfile(addrStr)
   const walletBalance = useUSDTBalance()
   const publicClient = usePublicClient()

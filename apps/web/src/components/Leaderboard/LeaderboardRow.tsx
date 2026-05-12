@@ -24,8 +24,8 @@ function rankColor(rank: number): string {
 }
 
 export default function LeaderboardRow({ entry }: LeaderboardRowProps) {
-  // URL field hidden per MiniPay product review (2026-05-11) — URLs are
-  // an injection vector until we add verification.
+  // URL field hidden — unverified user-entered URLs are an injection /
+  // phishing vector. Re-enable once URL verification is in place.
   const isTop3 = entry.rank <= 3
 
   return (

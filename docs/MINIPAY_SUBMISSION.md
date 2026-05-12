@@ -24,7 +24,7 @@ For the "Transaction Samples" submission field (every user-facing method):
 | `approve` (USDT → Mondeto) | https://celoscan.io/tx/0xc47b7f8db12b33482b5de0129fc1da66f7b6cb45e56d1d16954ba7e0532bf4d5 |
 | `buyPixels` | https://celoscan.io/tx/0xbf65cbfbc2635e80087654688a8a3c5d4da763502a548e6cdf55d9df833cba96 |
 | `updateProfile` | https://celoscan.io/tx/0x7084222577f1b681612f047d4a4a4384738b9d0bff92a787b69cd6c0dd2836b2 |
-| `withdraw` (owner-only) | ⏳ ask **karlb** (contract owner) for a sample mainnet `withdraw` tx hash |
+| `withdraw` (owner-only) | ⏳ pending — needs a sample mainnet `withdraw` tx hash from the contract owner |
 
 ## URL / origin manifest
 
@@ -56,7 +56,7 @@ submitting):
 - [ ] PageSpeed Insights score (mobile, target 90+) — pending
 - [ ] URL / origin manifest — TODO
 - [x] All contracts verified on Celoscan
-- [ ] Sample tx hashes for every method — 3 of 4 captured (waiting on karlb for `withdraw`)
+- [ ] Sample tx hashes for every method — 3 of 4 captured (waiting on the contract owner for `withdraw`)
 - [x] Redirects to Deposit deeplink on insufficient balance
 - [x] In-app support link (t.me/mondetoSupport)
 - [ ] 24h SLA commitment — needs founder ack
@@ -67,7 +67,7 @@ submitting):
 
 - [ ] Logo PNG/SVG (1024×1024 master + 360×360 for MiniPay tile)
 - [ ] Legal copy review (lawyer) for `/terms` and `/privacy` — current drafts are placeholders
-- [ ] **Ask karlb for a sample mainnet `withdraw` tx hash** (owner-only function)
+- [ ] **Sample mainnet `withdraw` tx hash** from the contract owner (owner-only function)
 - [ ] PageSpeed Insights run on <https://mondeto-fe.vercel.app/> + capture mobile screenshot
 - [ ] 24h critical-fix SLA commitment
 - [ ] Walk `docs/MOBILE_QA.md` 360×640 checklist

@@ -75,10 +75,9 @@ export default function Home() {
     }
   }, [publicClient, load])
 
-  // Geolocation auto-zoom on first visit. Requested by Vinay at MiniPay:
-  // "the moment user lands on this page they should be able to see their
-  // location and basis that pick up the stuff they want." We ask once,
-  // remember the decision, and skip on subsequent visits.
+  // Geolocation auto-zoom on first visit. Lands the user on their region
+  // so they can start picking pixels right away. We ask once, remember the
+  // decision, and skip on subsequent visits.
   useEffect(() => {
     if (loadState !== 'ready') return
     if (typeof window === 'undefined' || !navigator.geolocation) return
