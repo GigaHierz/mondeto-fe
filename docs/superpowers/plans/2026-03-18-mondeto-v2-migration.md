@@ -35,7 +35,7 @@ After Phase 0 (foundation), these are independent:
 
 **Files:** `src/data/landMask.ts`, `scripts/generate-land-mask.py`
 
-- [ ] Get Karl's `land_mask.json` (67 uint256 words) or `world_map_bw.png`
+- [ ] Get the upstream `land_mask.json` (67 uint256 words) or `world_map_bw.png`
 - [ ] Convert to our `Uint8Array` format (1/0 per pixel, 17000 entries)
 - [ ] Or: write a script that reads the bit-packed uint256 words and outputs per-pixel booleans
 - [ ] Update `src/lib/landMask.ts` if needed (uses WIDTH from constants, should auto-adjust)

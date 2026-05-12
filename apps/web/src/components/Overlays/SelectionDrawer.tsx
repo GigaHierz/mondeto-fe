@@ -220,7 +220,7 @@ export default function SelectionDrawer({
                     <div style={{ width: 12, height: 12, borderRadius: 3, background: group.color || '#888', flexShrink: 0 }} />
                   )}
 
-                  {/* Name — URL hidden per MiniPay product review (XSS risk) */}
+                  {/* Name — URL hidden, unverified user URLs are an XSS / phishing risk */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {(() => {
                       const prof = profilesMap?.get(group.owner.toLowerCase())

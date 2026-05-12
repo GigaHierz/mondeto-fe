@@ -105,8 +105,8 @@ export default function PixelInfoPanel({
         <div style={{ fontSize: 9, color: 'var(--text)' }}>{pixel.label || '—'}</div>
       </div>
 
-      {/* URL field removed per MiniPay product review (2026-05-11) —
-          unverified user-entered URLs are an injection / phishing vector. */}
+      {/* URL field removed — unverified user-entered URLs are an injection /
+          phishing vector. Re-add once URL verification is in place. */}
 
       {/* Price cards row */}
       <div style={{ padding: '8px 14px', display: 'flex', gap: 8 }}>
