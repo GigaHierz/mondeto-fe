@@ -4,8 +4,9 @@
 > Requirements doc: https://docs.minipay.xyz/ + Celopedia `minipay-requirements.md`
 
 ## Production URL
-- Production: `https://<TODO-prod-url>` — fill in after Vercel deploy
+- Production: <https://mondeto-fe.vercel.app/>
 - Staging: `https://<TODO-staging-url>`
+- Real-user perf: Vercel Speed Insights enabled (LCP / FID / CLS / INP / TTFB / FCP from real traffic) — dashboard in Vercel project → Speed Insights tab
 
 ## Contract
 
@@ -22,18 +23,24 @@ For the "Transaction Samples" submission field (every user-facing method):
 |--------|---------|
 | `approve` (USDT → Mondeto) | https://celoscan.io/tx/0xc47b7f8db12b33482b5de0129fc1da66f7b6cb45e56d1d16954ba7e0532bf4d5 |
 | `buyPixels` | https://celoscan.io/tx/0xbf65cbfbc2635e80087654688a8a3c5d4da763502a548e6cdf55d9df833cba96 |
-| `updateProfile` | TODO — capture from mainnet |
-| `withdraw` (owner-only) | TODO — capture from mainnet |
+| `updateProfile` | https://celoscan.io/tx/0x7084222577f1b681612f047d4a4a4384738b9d0bff92a787b69cd6c0dd2836b2 |
+| `withdraw` (owner-only) | ⏳ ask **karlb** (contract owner) for a sample mainnet `withdraw` tx hash |
 
 ## URL / origin manifest
 
-For the "Network Transparency" submission field. Audit what the app calls:
+For the "Network Transparency" submission field — every external server the
+app contacts on a cold load. MiniPay reviewers use this for supply-chain
+risk assessment. How to gather: open the prod URL in Chrome → DevTools →
+Network → "Disable cache" → hard reload → group by Domain.
 
-- App: `https://<TODO-prod-url>`
+Current expected manifest (verify against the actual network trace before
+submitting):
+
+- App: <https://mondeto-fe.vercel.app/>
 - RPC: `https://forno.celo.org` (Celo mainnet)
-- Wallet: `https://auth.privy.io/`, `https://api.privy.io/`, `https://*.walletconnect.com/`
-- Analytics: `<TODO — none currently>`
-- Fonts: Google Fonts (Press Start 2P, IBM Plex Mono) — `https://fonts.googleapis.com`, `https://fonts.gstatic.com`
+- Wallet (web only — NOT loaded inside MiniPay): `https://auth.privy.io/`, `https://api.privy.io/`, `https://*.walletconnect.com/`
+- Fonts: `https://fonts.googleapis.com`, `https://fonts.gstatic.com`
+- Real-user perf: `https://vitals.vercel-insights.com` (Vercel Speed Insights beacon)
 - TODO: run the prod build with the network inspector and capture every domain hit on cold load + buy flow.
 
 ## Pre-submission checklist (from `minipay-requirements.md`)
@@ -49,7 +56,7 @@ For the "Network Transparency" submission field. Audit what the app calls:
 - [ ] PageSpeed Insights score (mobile, target 90+) — pending
 - [ ] URL / origin manifest — TODO
 - [x] All contracts verified on Celoscan
-- [ ] Sample tx hashes for every method — 2 of 4 captured
+- [ ] Sample tx hashes for every method — 3 of 4 captured (waiting on karlb for `withdraw`)
 - [x] Redirects to Deposit deeplink on insufficient balance
 - [x] In-app support link (t.me/mondetoSupport)
 - [ ] 24h SLA commitment — needs founder ack
@@ -59,11 +66,11 @@ For the "Network Transparency" submission field. Audit what the app calls:
 ## Outstanding owner asks
 
 - [ ] Logo PNG/SVG (1024×1024 master + 360×360 for MiniPay tile)
-- [ ] Production URL (Vercel)
 - [ ] Legal copy review (lawyer) for `/terms` and `/privacy` — current drafts are placeholders
-- [ ] Mainnet `updateProfile` and `withdraw` tx hashes
-- [ ] PageSpeed Insights run (after deploy)
+- [ ] **Ask karlb for a sample mainnet `withdraw` tx hash** (owner-only function)
+- [ ] PageSpeed Insights run on <https://mondeto-fe.vercel.app/> + capture mobile screenshot
 - [ ] 24h critical-fix SLA commitment
+- [ ] Walk `docs/MOBILE_QA.md` 360×640 checklist
 
 ## Sign-offs
 
