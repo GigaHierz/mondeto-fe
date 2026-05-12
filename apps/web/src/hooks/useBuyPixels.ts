@@ -60,13 +60,19 @@ export function useBuyPixels() {
       const approveAmount = realPrice * 102n / 100n
 
       if (currentAllowance < approveAmount) {
-        // Need to approve — use a generous amount to avoid future approvals
-        const generousApprove = realPrice * 10n // 10x the price
+        // MiniPay security rule: cap standing approvals at $10 USDT so that
+        // if the contract is ever compromised, user funds beyond the cap
+        // remain safe. Approval limits can only be enforced on the spender
+        // side (the frontend, here) — the Mondeto contract has no view into
+        // the token's allowance ledger. For purchases above the cap we
+        // approve the exact amount + 2% drift buffer.
+        const APPROVAL_CAP_USDT = 10_000_000n // $10 USDT (6 decimals)
+        const safeApprove = approveAmount > APPROVAL_CAP_USDT ? approveAmount : APPROVAL_CAP_USDT
         const approveHash = await writeContractAsync({
           address: usdtAddress,
           abi: USDT_ABI,
           functionName: 'approve',
-          args: [MONDETO_ADDRESS, generousApprove],
+          args: [MONDETO_ADDRESS, safeApprove],
         })
 
         // Wait for approve to fully confirm
