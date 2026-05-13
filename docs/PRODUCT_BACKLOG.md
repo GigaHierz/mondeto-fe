@@ -150,6 +150,15 @@ See `docs/SUPPORT_AGENTS_PLAN.md` + `apps/support-agents/` package. Phase 1 sile
 ### Tracking SDK partnership
 Delivering a tracking SDK to a partner data team for dashboard work. Not Mondeto-specific.
 
+### Dependency upgrades (deferred to post-launch)
+Renovate opened these as security PRs; both closed pre-launch because they're major version bumps with breaking changes and unresolvable lockfile conflicts against our recent dependency additions. Revisit after MiniPay submission is locked.
+
+- [ ] **pnpm 8 → 10** (closed PR #16). Addresses CVE-2024-53866 (cross-workspace cache poisoning via overrides). Doesn't apply to our single-workspace CI install, so low actual risk. v10 changes workspace config + lockfile format — needs full repo reinstall + CI update.
+- [ ] **Next.js 14 → 15** (closed PR #17). Breaking changes: caching defaults flipped from cache-by-default to opt-in, request memoization changes, async params in dynamic routes (`page.tsx` `params` becomes a Promise). Will require auditing every route + a careful prod test pass.
+- [ ] **postcss 8.4.x → 8.5.10** — landed via PR #15 (low-risk patch).
+
+When ready, **don't** rebase the closed Renovate PRs (lockfile conflicts will recur). Either let Renovate reopen them with fresh lockfiles, or do each major upgrade in a fresh branch with manual reinstall + targeted testing.
+
 ---
 
 ## 🛠️ Internal notes
