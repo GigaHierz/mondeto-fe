@@ -159,16 +159,102 @@ User-facing copy rules (MiniPay listing):
 
 ---
 
+## 24h SLA workflow (how the agents satisfy MiniPay's listing rule)
+
+MiniPay requires every listed Mini App to commit to fixing **critical issues within 24 hours**. Instead of relying on a human checking Telegram round the clock, the agent loop is the SLA implementation.
+
+### What "critical" means
+Defined per category. The router applies these tags up-front so the SLA clock only starts ticking on the right tickets.
+
+- **`critical-blocker`** — app fully broken / can't load, buy flow broken, content-safety violation (something offensive surfaced), security issue (phishing surface, leaked keys)
+- **`critical-funds`** — funds lost / stuck. Always pings the on-call human immediately.
+- **`major`** — feature broken on a common path, but app still usable
+- **`minor`** — typo, edge-case layout bug, feature request
+
+Only `critical-*` tickets start the 24h clock.
+
+### The loop
+
+```
+┌──────────────────────────┐
+│ user reports issue in    │
+│ t.me/mondetoSupport      │
+└────────────┬─────────────┘
+             ▼
+┌──────────────────────────┐
+│ Router classifies        │
+│ + severity-tags          │
+└────────────┬─────────────┘
+             ▼
+┌──────────────────────────┐
+│ Specialist agent drafts  │
+│ a GitHub issue body      │
+└────────────┬─────────────┘
+             ▼
+┌──────────────────────────┐
+│ create_github_issue()    │ ← labels: from-support,
+│ in mondeto-fe repo       │   ui-ux | financial | campaign,
+└────────────┬─────────────┘   severity:critical-*|major|minor
+             ▼
+┌──────────────────────────────────────────────┐
+│ if severity == critical-* :                   │
+│   1. ping the on-call human (Telegram DM)     │
+│   2. start the 24h SLA timer (Postgres row)   │
+│   3. acknowledge the user in the support      │
+│      group: "filed as #123, fix incoming"     │
+└────────────┬──────────────────────────────────┘
+             ▼
+┌──────────────────────────────────────────────┐
+│ if T+12h and issue still open:                │
+│   second ping to on-call + cc the founder     │
+│ if T+20h and issue still open:                │
+│   final ping ("4h to SLA breach")             │
+│ if T+24h and issue still open:                │
+│   page everyone + auto-comment on the issue   │
+│   ("SLA breached, MiniPay may delist")        │
+└────────────┬──────────────────────────────────┘
+             ▼
+┌──────────────────────────────────────────────┐
+│ issue closed → bot replies in the original    │
+│ Telegram thread: "fixed in commit abc, live   │
+│ on prod in ~5 min"                            │
+│ + stops the timer                             │
+└──────────────────────────────────────────────┘
+```
+
+### New tooling the UI/UX agent needs
+- `create_github_issue(title, body, labels)` → `mondeto-fe` repo
+- `ping_oncall(message, severity)` → Telegram DM to the on-call rotation
+- `start_sla_timer(issue_url, deadline)` → Postgres row + cron worker checks every 15 min
+- `notify_user_resolved(issue_url, telegram_message_id)` → bot posts in the original thread when the issue closes
+
+### Who's on-call
+- v1: just the founder. One person, Telegram DM, no rotation.
+- v2: rotate between the founder + 1-2 collaborators on a weekly schedule. Bot reads the current week's on-call from a `oncall.json` in the repo or a Notion DB.
+- v3: hand off across timezones so nobody gets paged at 3am.
+
+### How fixes actually ship
+Three paths, fastest to slowest:
+1. **Trivial frontend bug** — on-call resolves in Claude Code on their phone if needed, pushes, Vercel ships in <5 min.
+2. **Backend / contract issue** — on-call diagnoses, dispatches to the right person (smart-contract dev for on-chain, etc.).
+3. **Content violation** — on-call de-lists the offending pixel from the frontend immediately (the on-chain record stays); the moderation list lives in a small JSON file the bot can also write to.
+
+### Why this works for the SLA ack
+The MiniPay submission asks "do you commit to fixing critical issues within 24h?" — the honest answer is "yes, and here's the system that enforces it." Pasting a one-paragraph summary of the above into the submission form is fine. If they ever audit, the GitHub issue history + SLA timer logs are the evidence.
+
+---
+
 ## Phased rollout
 
 | Phase | Scope | Effort |
 |-------|-------|--------|
 | 0 — Manual | Just monitor t.me/mondetoSupport with a real person, log everything to a Notion db | 0 |
-| 1 — Router only | Add the bot, classify silently, write to Notion but no auto-replies. Use the data to refine the router prompt. | 2 days |
-| 2 — UI/UX agent live | Auto-file GitHub issues with human review (label `needs-confirm` until validated) | 2 days |
-| 3 — Financial agent live | With strict guardrails + founder ping | 3 days |
+| 1 — Router only | Add the bot, classify + severity-tag silently, write to Notion but no auto-replies. Use the data to refine the router prompt. | 2 days |
+| 2 — UI/UX agent + GitHub issues | Auto-file GitHub issues with `needs-confirm` label until validated. **Wire up the SLA timer + on-call ping for `critical-*` severities.** | 3 days |
+| 3 — Financial agent live | With strict guardrails + founder ping on loss-of-funds | 3 days |
 | 4 — Campaign agent live | Add Notion lead capture + marketing ping | 2 days |
-| 5 — Polish | Dedupe, conversation memory, multi-language (Swahili, Hausa, French — common in MiniPay countries) | ongoing |
+| 5 — Auto-resolution replies | Bot posts back in the original Telegram thread when the GitHub issue closes, plus the 12h / 20h / 24h SLA escalation pings | 1–2 days |
+| 6 — Polish | Dedupe, conversation memory, multi-language (Swahili, Hausa, French — common in MiniPay countries) | ongoing |
 
 ---
 
@@ -177,6 +263,7 @@ User-facing copy rules (MiniPay listing):
 - [ ] Create the Telegram bot via @BotFather, add to `t.me/mondetoSupport` as admin.
 - [ ] Decide where the agent service runs (Vercel? Railway?). I recommend Vercel since the rest of the stack is there.
 - [ ] Create the Notion databases (or pick a different home — Linear works too).
+- [ ] Confirm the **on-call rotation** for v1 — just the founder, or a small group? Their Telegram user id(s) go in `.env` as `ONCALL_TG_USER_IDS`.
 - [ ] Generate a fine-grained GitHub PAT for `GigaHierz/mondeto-fe` with issue write scope.
 - [ ] Provide a founder Telegram user id for high-severity pings.
 - [ ] Pick languages: English only at launch, or add one Global South language from day 1?
