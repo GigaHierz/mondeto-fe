@@ -17,14 +17,14 @@
 
 ## Sample transactions (mainnet)
 
-For the "Transaction Samples" submission field (every user-facing method):
+For the "Transaction Samples" submission field. Per MiniPay: *"for every user-facing method your app uses, provide a sample transaction link on Celoscan."* `withdraw` is owner-only and not user-facing, so it's **not required**.
 
-| Method | Tx Hash |
-|--------|---------|
-| `approve` (USDT → Mondeto) | https://celoscan.io/tx/0xc47b7f8db12b33482b5de0129fc1da66f7b6cb45e56d1d16954ba7e0532bf4d5 |
-| `buyPixels` | https://celoscan.io/tx/0xbf65cbfbc2635e80087654688a8a3c5d4da763502a548e6cdf55d9df833cba96 |
-| `updateProfile` | https://celoscan.io/tx/0x7084222577f1b681612f047d4a4a4384738b9d0bff92a787b69cd6c0dd2836b2 |
-| `withdraw` (owner-only) | ⏳ pending — needs a sample mainnet `withdraw` tx hash from the contract owner |
+| Method | User-facing? | Tx Hash |
+|--------|---|---------|
+| `approve` (USDT → Mondeto) | yes | https://celoscan.io/tx/0xc47b7f8db12b33482b5de0129fc1da66f7b6cb45e56d1d16954ba7e0532bf4d5 |
+| `buyPixels` | yes | https://celoscan.io/tx/0xbf65cbfbc2635e80087654688a8a3c5d4da763502a548e6cdf55d9df833cba96 |
+| `updateProfile` | yes | https://celoscan.io/tx/0x7084222577f1b681612f047d4a4a4384738b9d0bff92a787b69cd6c0dd2836b2 |
+| `withdraw` | no (owner-only) | not required by MiniPay |
 
 ## URL / origin manifest
 
@@ -47,30 +47,34 @@ submitting):
 
 - [x] Zero-click connect (Connect Wallet button hidden when `window.ethereum.isMiniPay`)
 - [x] No `personal_sign` / `eth_signTypedData` anywhere
-- [ ] No raw `0x…` shown as primary identifier — partially done; username system pending
+- [x] No raw `0x…` shown as primary identifier — deterministic `{fruit}-{figure}` nicknames generated when no on-chain label set; truncated address only as a secondary hint
 - [x] Only USDT / USDC / USDm — no CELO in balances or copy
-- [ ] Picks user's highest-balance stablecoin OR explains single-token UX — explainer added; multi-token = v2
-- [x] UI copy uses Network fee / Deposit / Withdraw / Stablecoin (no banned terms)
-- [ ] Tested at 360 × 640
-- [ ] Images SVG/WebP — pending
-- [ ] PageSpeed Insights score (mobile, target 90+) — pending
-- [ ] URL / origin manifest — TODO
+- [x] Picks user's highest-balance stablecoin OR explains single-token UX — explainer shipped; multi-token deferred to v2 pending MiniPay's in-app swap
+- [x] UI copy uses Network fee / Top up / Withdraw / Stablecoin (no banned terms)
+- [x] $10 USDT approval cap on every `approve()` call (security)
+- [x] Profanity filter on user-entered names (obscenity package)
+- [x] Custom on-theme 404 with a way back home (no dead ends in the WebView)
 - [x] All contracts verified on Celoscan
-- [ ] Sample tx hashes for every method — 3 of 4 captured (waiting on the contract owner for `withdraw`)
-- [x] Redirects to Deposit deeplink on insufficient balance
+- [x] Sample tx hashes for every user-facing method (3 of 3; `withdraw` is owner-only and not required)
+- [x] Redirects to Top up (MiniPay deposit deeplink) on insufficient balance
 - [x] In-app support link (t.me/mondetoSupport)
+- [x] ToS + Privacy linked in-app
+- [x] FAQ page linked in-app
+- [ ] Tested at 360 × 640 — walk the `docs/MOBILE_QA.md` checklist on a real device
+- [ ] Images SVG/WebP — `public/screenshots/*.jpeg` are marketing assets, not loaded in-app; verify nothing else is. WebP optimization not needed for app perf
+- [ ] PageSpeed Insights score (mobile, target 90+) — needs production run + screenshot
+- [ ] URL / origin manifest — needs a network-tab capture on cold load
 - [ ] 24h SLA commitment — needs founder ack
 - [ ] App name + logo visible — name done, logo TODO
-- [x] ToS + Privacy linked in-app (mobile drawer)
 
 ## Outstanding owner asks
 
 - [ ] Logo PNG/SVG (1024×1024 master + 360×360 for MiniPay tile)
 - [ ] Legal copy review (lawyer) for `/terms` and `/privacy` — current drafts are placeholders
-- [ ] **Sample mainnet `withdraw` tx hash** from the contract owner (owner-only function)
 - [ ] PageSpeed Insights run on <https://mondeto-fe.vercel.app/> + capture mobile screenshot
 - [ ] 24h critical-fix SLA commitment
-- [ ] Walk `docs/MOBILE_QA.md` 360×640 checklist
+- [ ] Walk `docs/MOBILE_QA.md` 360×640 checklist on a real device
+- [ ] Capture URL / origin manifest from a cold load network trace
 
 ## Sign-offs
 
