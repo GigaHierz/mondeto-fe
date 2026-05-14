@@ -4,7 +4,7 @@
 > Requirements doc: https://docs.minipay.xyz/ + Celopedia `minipay-requirements.md`
 
 ## Production URL
-- Production: <https://mondeto-fe.vercel.app/>
+- Production: <https://mondeto-web.vercel.app/>
 - Staging: `https://<TODO-staging-url>`
 - Real-user perf: Vercel Speed Insights enabled (LCP / FID / CLS / INP / TTFB / FCP from real traffic) — dashboard in Vercel project → Speed Insights tab
 
@@ -36,7 +36,7 @@ Network → "Disable cache" → hard reload → group by Domain.
 Current expected manifest (verify against the actual network trace before
 submitting):
 
-- App: <https://mondeto-fe.vercel.app/>
+- App: <https://mondeto-web.vercel.app/>
 - RPC: `https://forno.celo.org` (Celo mainnet)
 - Wallet (web only — NOT loaded inside MiniPay): `https://auth.privy.io/`, `https://api.privy.io/`, `https://*.walletconnect.com/`
 - Fonts: `https://fonts.googleapis.com`, `https://fonts.gstatic.com`
@@ -71,7 +71,7 @@ submitting):
 
 - [ ] Logo PNG/SVG (1024×1024 master + 360×360 for MiniPay tile)
 - [ ] Legal copy review (lawyer) for `/terms` and `/privacy` — current drafts are placeholders
-- [ ] PageSpeed Insights run on <https://mondeto-fe.vercel.app/> + capture mobile screenshot
+- [ ] PageSpeed Insights run on <https://mondeto-web.vercel.app/> + capture mobile screenshot
 - [ ] 24h critical-fix SLA commitment
 - [ ] Walk `docs/MOBILE_QA.md` 360×640 checklist on a real device
 - [ ] Capture URL / origin manifest from a cold load network trace

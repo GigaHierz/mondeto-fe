@@ -107,7 +107,7 @@ Need to handle ~10,000 simultaneous users.
 - [ ] Logo PNG/SVG (1024×1024 master + 360×360 MiniPay tile)
 - [ ] Legal copy review (lawyer) for `/terms` and `/privacy`
 - [ ] Sample mainnet `withdraw` tx hash from the contract owner (owner-only function)
-- [ ] PageSpeed Insights run on https://mondeto-fe.vercel.app/
+- [ ] PageSpeed Insights run on https://mondeto-web.vercel.app/
 - [ ] 24h critical-fix SLA founder commitment
 - [ ] Walk the 360×640 checklist in `docs/MOBILE_QA.md`
 
