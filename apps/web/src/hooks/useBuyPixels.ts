@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { useWriteContract, useAccount, usePublicClient } from 'wagmi'
 import { MONDETO_ABI, MONDETO_ADDRESS, USDT_ABI } from '@/lib/contract'
 import { USDT_ADDRESS } from '@/lib/contract'
+import { getBuilderCodeSuffix } from '@/lib/builderCode'
 
 export type TxStep = 'idle' | 'approving' | 'buying' | 'confirming' | 'success' | 'error'
 
@@ -33,6 +34,7 @@ export function useBuyPixels() {
       setError(null)
 
       const bigIds = ids.map(id => BigInt(id))
+      const dataSuffix = getBuilderCodeSuffix()
 
       // Get real price from contract
       let realPrice = _totalPriceHint
@@ -73,6 +75,7 @@ export function useBuyPixels() {
           abi: USDT_ABI,
           functionName: 'approve',
           args: [MONDETO_ADDRESS, safeApprove],
+          dataSuffix,
         })
 
         // Wait for approve to fully confirm
@@ -91,6 +94,7 @@ export function useBuyPixels() {
         abi: MONDETO_ABI,
         functionName: 'buyPixels',
         args: [bigIds],
+        dataSuffix,
       })
 
       setTxHash(buyHash)
