@@ -152,15 +152,30 @@ const WorldCanvas = forwardRef<WorldCanvasRef, WorldCanvasProps>(
       zoomIn() { zoomControlsRef.current?.zoomIn() },
       zoomOut() { zoomControlsRef.current?.zoomOut() },
       zoomToPixel(pid: number) {
-        const ctrl = zoomControlsRef.current
-        if (!ctrl) return
-        const { x, y } = idToXY(pid)
-        const s = PAINT_SCALE + 1
-        const wrapper = pixelCanvasRef.current?.parentElement?.parentElement
-        if (!wrapper) return
-        const tx = -x * s + wrapper.clientWidth / 2
-        const ty = -y * s + wrapper.clientHeight / 2
-        ctrl.setTransform(tx, ty, s, 300)
+        // Retry until both the zoom controls and the wrapper element are
+        // ready. The geo-auto-zoom path calls this right after the map's
+        // loadState flips to 'ready', which can be a few frames before
+        // <ZoomCapture>'s useEffect attaches zoomControlsRef.
+        const tryNow = (): boolean => {
+          const ctrl = zoomControlsRef.current
+          if (!ctrl) return false
+          const wrapper = pixelCanvasRef.current?.parentElement?.parentElement
+          if (!wrapper) return false
+          const { x, y } = idToXY(pid)
+          const s = PAINT_SCALE + 1
+          const tx = -x * s + wrapper.clientWidth / 2
+          const ty = -y * s + wrapper.clientHeight / 2
+          ctrl.setTransform(tx, ty, s, 300)
+          return true
+        }
+        if (tryNow()) return
+        const start = Date.now()
+        const retry = () => {
+          if (tryNow()) return
+          if (Date.now() - start > 2000) return
+          setTimeout(retry, 50)
+        }
+        setTimeout(retry, 50)
       },
       recenter() {
         const ctrl = zoomControlsRef.current

@@ -1,4 +1,4 @@
-import { WIDTH, HEIGHT, ZERO_ADDRESS, INITIAL_PRICE, MIN_PRICE, HALVING_TIME } from '@/constants/map'
+import { WIDTH, HEIGHT, ZERO_ADDRESS } from '@/constants/map'
 import { MONDETO_ADDRESS, MONDETO_ABI } from './contract'
 import { isLand } from './landMask'
 import { uint24ToHex } from './colorUtils'
@@ -79,25 +79,27 @@ export async function fetchAllPixelsFromContract(
 
   const pixels = decodePixelBatch(batchData, 0, 0, WIDTH, HEIGHT)
 
-  // Compute client-side prices using priceCalc
-  let deployTs: bigint
+  // Read REAL pricing params from the contract — the constants in
+  // src/constants/map.ts were placeholders from the v2 migration and
+  // don't match what's actually deployed. config() returns:
+  //   [width, height, halvingTime, initialPrice, minPrice, deployTimestamp, feeRate]
   try {
-    deployTs = await readContract({
+    const cfg = (await readContract({
       address: MONDETO_ADDRESS,
       abi: MONDETO_ABI,
-      functionName: 'deployTimestamp',
+      functionName: 'config',
       args: [],
-    }) as bigint
-  } catch {
-    deployTs = 0n
-  }
-
-  if (deployTs > 0n) {
-    const now = BigInt(Math.floor(Date.now() / 1000))
-    const config = { initialPrice: INITIAL_PRICE, minPrice: MIN_PRICE, deployTimestamp: deployTs, halvingTime: HALVING_TIME }
-    for (const px of pixels) {
-      px.currentPrice = pixelPrice(px.saleCount, now, config)
+    })) as readonly [number, number, bigint, bigint, bigint, bigint, bigint]
+    const [, , halvingTime, initialPrice, minPrice, deployTimestamp] = cfg
+    if (deployTimestamp > 0n) {
+      const now = BigInt(Math.floor(Date.now() / 1000))
+      const priceCfg = { initialPrice, minPrice, deployTimestamp, halvingTime }
+      for (const px of pixels) {
+        px.currentPrice = pixelPrice(px.saleCount, now, priceCfg)
+      }
     }
+  } catch (e) {
+    console.warn('Failed to read pricing config from contract:', e)
   }
 
   return pixels
