@@ -12,6 +12,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@celo/builder-codes": "^0.2.0",
     "@privy-io/react-auth": "^3.17.0",
     "@privy-io/wagmi": "^4.0.2",
     "@radix-ui/react-dialog": "^1.0.5",

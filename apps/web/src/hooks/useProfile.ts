@@ -5,6 +5,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useReadContract } from 
 import { MONDETO_ABI, MONDETO_ADDRESS } from '@/lib/contract'
 import { uint24ToHex, hexToUint24 } from '@/lib/colorUtils'
 import { decodeBytes } from '@/lib/decodeBytes'
+import { getBuilderCodeSuffix } from '@/lib/builderCode'
 
 export type ProfileSaveState = 'idle' | 'saving' | 'confirming' | 'saved' | 'error'
 
@@ -64,6 +65,7 @@ export function useProfile(address: string | undefined) {
         abi: MONDETO_ABI,
         functionName: 'updateProfile',
         args: [hexToUint24(color), name, url],
+        dataSuffix: getBuilderCodeSuffix(),
       })
     } catch {
       setSaveState('error')
